@@ -14,6 +14,7 @@ public class Perso {
 	String _player;
 	/** Nom de l'orga */
 	String _zorga;
+	
 
 	
 	/**

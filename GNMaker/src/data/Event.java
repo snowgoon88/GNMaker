@@ -1,6 +1,8 @@
 package data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Un événement composé de :
@@ -17,8 +19,10 @@ public class Event {
 	public String _body;
 	/** Date de l'événement */
 	// Date _date;
-	/** Liste de Perso impliqués */
-	public ArrayList<Perso> _perso;
+	/** Liste de Perso impliqués : Le boolean indique si l'événement a été pris en compte
+	 * pour le perso : ok=true, todo=false.
+	 */
+	HashMap<Perso, Boolean> _perso;
 
 	
 	
@@ -30,9 +34,16 @@ public class Event {
 	public Event(String _title, String _body) {
 		this._title = _title;
 		this._body = _body;
-		_perso = new ArrayList<Perso>();
+		_perso = new HashMap<Perso,Boolean>();
 	}
 
+	/** Add a Perso, by default with "status"=false. (todo)
+	 * 
+	 * @param pers Perso to add
+	 */
+	public void addPerso( Perso pers) {
+		_perso.put(pers, false);
+	}
 	/** 
 	 * Dump all Perso as a String.
 	 * @return String
@@ -41,8 +52,13 @@ public class Event {
 		StringBuffer str = new StringBuffer();
 		str.append( "Event : "+_title+"\n");
 		str.append( _body+"\n");
-		for (Perso p : _perso) {
-			str.append( p.SDump()+"; ");
+		for (Map.Entry<Perso, Boolean> e : _perso.entrySet()) {
+			if (e.getValue()==false) {
+				str.append( "-"+e.getKey().SDump()+";");
+			}
+			else {
+				str.append( "+"+e.getKey().SDump()+";");
+			}
 		}
 		str.append( "\n" );
 		return str.toString();

@@ -64,11 +64,19 @@ public class TestBasic {
 		
 		System.out.println("** Event avec ValeriB **");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
-		evt1._perso.add(perso1);
+		// First time 
+		evt1.addPerso(perso1);
+		System.out.println(evt1.SDump());
+		
+		System.out.println("** Event avec 2xValeriB **");
+		evt1.addPerso(perso1);
 		System.out.println(evt1.SDump());
 		
 		return true;
 	}
+	
+	// TODO Ds Event, un Perso peut être ok/todo (suivant). 
+	// Par défaut, à la création, c'est todo.
 	
 	// TODO Afficher Event in GUI
 	// Titre
