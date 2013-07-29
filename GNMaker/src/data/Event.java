@@ -1,6 +1,5 @@
 package data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +7,7 @@ import java.util.Map;
  * Un événement composé de :
  * <li>String: Un Titre</li>
  * <li>??? : Une Date</li>
- * <li>[Perso] : une liste de Perso</li>
+ * <li>HashMap(Perso,boolean) : une liste de PersoxBoolean (ok, todo) (</li>
  * 
  * @author snowgoon88@gmail.com
  */
@@ -43,6 +42,25 @@ public class Event {
 	 */
 	public void addPerso( Perso pers) {
 		_perso.put(pers, false);
+	}
+	/** 
+	 * Change 'status (todo/ok) of Perso. Add if not exists.
+	 * @param pers Perso to change
+	 * @param status false(todo) or true (ok).
+	 */
+	public void setStatusPerso( Perso pers, boolean status ) {
+		_perso.put(pers,status);
+	}
+	/**
+	 * Get the status of the Perso
+	 * @param pers
+	 * @return true (ok) or false (todo or no status)
+	 */
+	public Boolean getStatusPerso( Perso pers ) {
+		if (_perso.containsKey(pers)) {
+			return _perso.get(pers);
+		}
+		return false;
 	}
 	/** 
 	 * Dump all Perso as a String.

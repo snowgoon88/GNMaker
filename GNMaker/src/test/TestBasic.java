@@ -72,6 +72,14 @@ public class TestBasic {
 		evt1.addPerso(perso1);
 		System.out.println(evt1.SDump());
 		
+		System.out.println("** Valeri To OK **");
+		evt1.setStatusPerso(perso1, true);
+		if (evt1.getStatusPerso(perso1) != true) {
+			System.err.println("testCreationEvent : ValeriB status SHOULD be true");
+			return false;
+		}
+		System.out.println(evt1.SDump());
+		
 		return true;
 	}
 	
@@ -83,9 +91,10 @@ public class TestBasic {
 	// Corps
 	// Liste <Perso>
 	
-	// TODO Afficher Perso : Bouton Nom 
-	// TODO                  (+Popup)
-	// TODO                  + Toggle state.
+	// TODO Afficher Perso : Bouton Nom
+	// TODO                  click gauche => switch status
+	// TODO                  click droit => popup avec delete (+ confirm) ou change status
+	// TODO                  et info.
 	
 	/**
 	 * @param args
