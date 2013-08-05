@@ -9,7 +9,7 @@ package data;
 public class Perso {
 	
 	/** Nom du Perso */
-	String _name;
+	public String _name;
 	/** Nom du Joueur */
 	String _player;
 	/** Nom de l'orga */

@@ -40,7 +40,7 @@ public class TestBasic {
 		} else {
 			System.err.println("testtestCreationEvent >> " + res);
 		}
-
+		
 		// ---------------------
 		if (nbTest > nbPassed) {
 			System.err.println("FAILURE : only "+nbPassed+" success out of "+nbTest);
@@ -90,11 +90,6 @@ public class TestBasic {
 	// Titre
 	// Corps
 	// Liste <Perso>
-	
-	// TODO Afficher Perso : Bouton Nom
-	// TODO                  click gauche => switch status
-	// TODO                  click droit => popup avec delete (+ confirm) ou change status
-	// TODO                  et info.
 	
 	/**
 	 * @param args
