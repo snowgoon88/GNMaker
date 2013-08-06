@@ -49,14 +49,14 @@ public class TestGUI {
 		}
 	}
 	
-	// TODO Afficher Perso : Bouton Nom
-	// TODO                  click gauche => switch status
-	// TODO                  click droit => popup avec delete (+ confirm) ou change status
-	// TODO                  et info.
+	// Afficher Perso : Bouton Nom
+	//               click gauche => switch status
+	//               click droit => popup avec delete (+ confirm) ou change status
+	//               et info.
 	boolean testJEventPerso(String[] args) {
 		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
-		JPersoEvent comp = new JPersoEvent(evt1, perso1);
+		JPersoEvent comp = new JPersoEvent(perso1, evt1);
 
 		boolean res =  testComponent("Basic JEventPerso", comp._btn);
 		System.out.println("End of testJEventPerso");
