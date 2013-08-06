@@ -3,6 +3,7 @@
  */
 package test;
 
+import gui.JEvent;
 import gui.JPersoEvent;
 
 import java.awt.Component;
@@ -37,6 +38,15 @@ public class TestGUI {
 		} else {
 			System.err.println("testJEventPerso >> " + res);
 		}
+		// -------
+		nbTest++;
+		res = testJEvent(args);
+		if (res) {
+			System.out.println("testJEvent >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testJEvent >> " + res);
+		}
 		
 		// ---------------------
 		if (nbTest > nbPassed) {
@@ -60,6 +70,20 @@ public class TestGUI {
 
 		boolean res =  testComponent("Basic JEventPerso", comp._btn);
 		System.out.println("End of testJEventPerso");
+		return res;
+	}
+	// TODO Afficher Event in GUI
+	// TODO Titre
+	// TODO Corps
+	// TODO Liste <Perso>*
+	boolean testJEvent(String[] args) {
+		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		evt1.addPerso(perso1);
+		JEvent comp = new JEvent( evt1);
+		
+		boolean res =  testComponent("JEvent", comp);
+		System.out.println("End of testJEvent");
 		return res;
 	}
 

@@ -86,11 +86,6 @@ public class TestBasic {
 	// TODO Ds Event, un Perso peut être ok/todo (suivant). 
 	// Par défaut, à la création, c'est todo.
 	
-	// TODO Afficher Event in GUI
-	// Titre
-	// Corps
-	// Liste <Perso>
-	
 	/**
 	 * @param args
 	 */
