@@ -21,7 +21,7 @@ public class Event {
 	/** Liste de Perso impliqués : Le boolean indique si l'événement a été pris en compte
 	 * pour le perso : ok=true, todo=false.
 	 */
-	HashMap<Perso, Boolean> _perso;
+	public HashMap<Perso, Boolean> _perso;
 
 	
 	

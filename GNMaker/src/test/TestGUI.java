@@ -8,8 +8,10 @@ import gui.JPersoEvent;
 
 import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import data.Event;
@@ -37,6 +39,15 @@ public class TestGUI {
 			nbPassed++;
 		} else {
 			System.err.println("testJEventPerso >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testJPersoList(args);
+		if (res) {
+			System.out.println("testJPersoList >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testJPersoList >> " + res);
 		}
 		// -------
 		nbTest++;
@@ -72,10 +83,27 @@ public class TestGUI {
 		System.out.println("End of testJEventPerso");
 		return res;
 	}
-	// TODO Afficher Event in GUI
-	// TODO Titre
-	// TODO Corps
-	// TODO Liste <Perso>*
+	boolean testJPersoList(String[] args) {
+		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		evt1.addPerso(perso1);
+		
+		JPanel _persoList = new JPanel();
+		JPersoEvent pe;
+		for (Map.Entry<Perso, Boolean> e : evt1._perso.entrySet()) {
+			pe = new JPersoEvent(e.getKey(), evt1);
+			_persoList.add(pe._btn);
+		}
+		_persoList.setVisible(true);
+		
+		boolean res =  testComponent("TestJPersoList", _persoList);
+		System.out.println("End of testJPersoList");
+		return res;
+	}
+	// Afficher Event in GUI
+	// Titre
+	// Corps
+	// Liste <Perso>*
 	boolean testJEvent(String[] args) {
 		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
