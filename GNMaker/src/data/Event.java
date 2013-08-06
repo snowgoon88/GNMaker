@@ -21,7 +21,7 @@ public class Event {
 	/** Liste de Perso impliqués : Le boolean indique si l'événement a été pris en compte
 	 * pour le perso : ok=true, todo=false.
 	 */
-	public HashMap<Perso, Boolean> _perso;
+	public HashMap<Perso, PersoEvent> _perso;
 
 	
 	
@@ -33,7 +33,7 @@ public class Event {
 	public Event(String _title, String _body) {
 		this._title = _title;
 		this._body = _body;
-		_perso = new HashMap<Perso,Boolean>();
+		_perso = new HashMap<Perso,PersoEvent>();
 	}
 
 	/** Add a Perso, by default with "status"=false. (todo)
@@ -41,7 +41,7 @@ public class Event {
 	 * @param pers Perso to add
 	 */
 	public void addPerso( Perso pers) {
-		_perso.put(pers, false);
+		_perso.put(pers, new PersoEvent(false, "-"));
 	}
 	/** 
 	 * Change 'status (todo/ok) of Perso. Add if not exists.
@@ -49,7 +49,9 @@ public class Event {
 	 * @param status false(todo) or true (ok).
 	 */
 	public void setStatusPerso( Perso pers, boolean status ) {
-		_perso.put(pers,status);
+		PersoEvent data = _perso.get(pers);
+		data._status = status;
+		
 	}
 	/**
 	 * Get the status of the Perso
@@ -58,7 +60,7 @@ public class Event {
 	 */
 	public Boolean getStatusPerso( Perso pers ) {
 		if (_perso.containsKey(pers)) {
-			return _perso.get(pers);
+			return _perso.get(pers)._status;
 		}
 		return false;
 	}
@@ -70,8 +72,8 @@ public class Event {
 		StringBuffer str = new StringBuffer();
 		str.append( "Event : "+_title+"\n");
 		str.append( _body+"\n");
-		for (Map.Entry<Perso, Boolean> e : _perso.entrySet()) {
-			if (e.getValue()==false) {
+		for (Map.Entry<Perso, PersoEvent> e : _perso.entrySet()) {
+			if (e.getValue()._status==false) {
 				str.append( "-"+e.getKey().SDump()+";");
 			}
 			else {
@@ -80,5 +82,19 @@ public class Event {
 		}
 		str.append( "\n" );
 		return str.toString();
+	}
+	
+	public class PersoEvent {
+		public boolean _status;
+		public String _desc;
+		/**
+		 * @param _status
+		 * @param _desc
+		 */
+		public PersoEvent(boolean _status, String _desc) {
+			super();
+			this._status = _status;
+			this._desc = _desc;
+		}
 	}
 }

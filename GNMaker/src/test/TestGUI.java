@@ -90,7 +90,7 @@ public class TestGUI {
 		
 		JPanel _persoList = new JPanel();
 		JPersoEvent pe;
-		for (Map.Entry<Perso, Boolean> e : evt1._perso.entrySet()) {
+		for (Map.Entry<Perso, Event.PersoEvent> e : evt1._perso.entrySet()) {
 			pe = new JPersoEvent(e.getKey(), evt1);
 			_persoList.add(pe._btn);
 		}

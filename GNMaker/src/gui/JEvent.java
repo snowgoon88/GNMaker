@@ -65,7 +65,7 @@ public class JEvent extends JPanel {
 		_title = new JTextField( _evt._title );
 		_persoList = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JPersoEvent pe;
-		for (Map.Entry<Perso, Boolean> e : _evt._perso.entrySet()) {
+		for (Map.Entry<Perso, Event.PersoEvent> e : _evt._perso.entrySet()) {
 			pe = new JPersoEvent(e.getKey(), _evt);
 			_persoList.add(pe._btn);
 		}
@@ -97,9 +97,9 @@ public class JEvent extends JPanel {
 						// Fixed vertical size pour _title
 						.addComponent(_title, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 						          GroupLayout.PREFERRED_SIZE)
+						.addComponent(_body)
 						.addComponent(_persoList, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 						          GroupLayout.PREFERRED_SIZE)
-						.addComponent(_body)
 						)
 				);
 		update();
