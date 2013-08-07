@@ -7,10 +7,12 @@ import java.util.Map;
  * Un événement composé de :
  * <li>String: Un Titre</li>
  * <li>??? : Une Date</li>
+ * <li>String: Un Body</li>
  * <li>HashMap(Perso,boolean) : une liste de PersoxBoolean (ok, todo) (</li>
  * 
  * @author snowgoon88@gmail.com
  */
+// TODO Repenser PersoEvent et ArrayList<TRUC>
 public class Event {
 	/** Titre de l'événement */
 	public String _title;

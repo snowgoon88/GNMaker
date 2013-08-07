@@ -14,6 +14,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import Inspiration.Expandable;
+
 import data.Event;
 import data.Perso;
 
@@ -31,32 +33,41 @@ public class TestGUI {
 		int nbTest = 0;
 		int nbPassed = 0;
 		
+//		// -------
+//		nbTest++;
+//		res = testJEventPerso(args);
+//		if (res) {
+//			System.out.println("testJEventPerso >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testJEventPerso >> " + res);
+//		}
+//		// -------
+//		nbTest++;
+//		res = testJPersoList(args);
+//		if (res) {
+//			System.out.println("testJPersoList >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testJPersoList >> " + res);
+//		}
+//		// -------
+//		nbTest++;
+//		res = testJEvent(args);
+//		if (res) {
+//			System.out.println("testJEvent >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testJEvent >> " + res);
+//		}
 		// -------
 		nbTest++;
-		res = testJEventPerso(args);
+		res = testExpand(args);
 		if (res) {
-			System.out.println("testJEventPerso >> " + res);
+			System.out.println("testExpand >> " + res);
 			nbPassed++;
 		} else {
-			System.err.println("testJEventPerso >> " + res);
-		}
-		// -------
-		nbTest++;
-		res = testJPersoList(args);
-		if (res) {
-			System.out.println("testJPersoList >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testJPersoList >> " + res);
-		}
-		// -------
-		nbTest++;
-		res = testJEvent(args);
-		if (res) {
-			System.out.println("testJEvent >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testJEvent >> " + res);
+			System.err.println("testExpand >> " + res);
 		}
 		
 		// ---------------------
@@ -114,7 +125,17 @@ public class TestGUI {
 		System.out.println("End of testJEvent");
 		return res;
 	}
-
+	// TODO tester un GUI Sympa
+	boolean testExpand(String[] args) {
+		Expandable truc = new Expandable();
+		truc.buildMIG();
+		
+		boolean res =  testComponent("JEvent", truc._main);
+		System.out.println("End of testExpand");
+		return res;
+	}
+	
+	
 	/**
 	 * Utilise un JDialog modal (freeze until all event are processed) 
 	 * pour afficher et tester un Component
