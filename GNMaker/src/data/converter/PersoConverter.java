@@ -12,6 +12,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import data.Perso;
 
 /**
+ * Convert a Perso to my "custom" XML using xStream.
  * 
  * @author snowgoon88@gmail.com
  */

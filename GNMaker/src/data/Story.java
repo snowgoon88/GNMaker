@@ -23,9 +23,9 @@ public class Story {
 	/** Name of the Story */
 	String _name;
 	/** Story is a list of Event */
-	ArrayList<Event> _story;
+	public ArrayList<Event> _story;
 	/** Story is about a list of People */
-	ArrayList<Perso> _perso;
+	public ArrayList<Perso> _perso;
 	
 	
 	
@@ -35,6 +35,7 @@ public class Story {
 	public Story() {
 		_name = "A Story with no Name";
 		_story = new ArrayList<Event>();
+		_perso = new ArrayList<Perso>();
 		
 		
 	}
@@ -54,6 +55,19 @@ public class Story {
 		
 		String xml = _xstream.toXML(this);
 		return xml;
+	}
+	
+	/** 
+	 * Dump all Story as a String.
+	 * @return String
+	 */
+	public String SDump() {
+		StringBuffer str = new StringBuffer();
+		str.append( "Story : "+_name+"\n");
+		for (Perso p : _perso) {
+			str.append( p.SDump()+"\n");
+		}
+		return str.toString();
 	}
 	
 	/**

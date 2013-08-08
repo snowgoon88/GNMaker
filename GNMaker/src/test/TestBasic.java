@@ -15,6 +15,7 @@ import data.Event;
 import data.Perso;
 import data.Story;
 import data.converter.PersoConverter;
+import data.converter.StoryConverter;
 
 /**
  * 
@@ -67,6 +68,15 @@ public class TestBasic {
 			nbPassed++;
 		} else {
 			System.err.println("testPersoXML >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testStoryXML(args);
+		if (res) {
+			System.out.println("testStoryXML >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testStoryXML >> " + res);
 		}
 		
 		// ---------------------
@@ -156,6 +166,48 @@ public class TestBasic {
         return (perso1._name.equals(persoRead._name) && 
         		perso1._player.equals(persoRead._player) &&
         		perso1._zorga.equals(persoRead._zorga));
+	}
+	boolean testStoryXML(String[] args) {
+		Story story = new Story();
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
+		story._perso.add(perso1);
+		story._perso.add(perso2);
+		
+		System.out.println("** Story to XML **");
+		XStream xStream = new XStream(new DomDriver());
+		xStream.registerConverter(new StoryConverter());
+        xStream.registerConverter(new PersoConverter());
+        xStream.alias("story", Story.class);
+        System.out.println(xStream.toXML(story));
+        
+        File outfile = new File("tmp/story.xml");
+        try {
+			FileOutputStream writer = new FileOutputStream(outfile);
+			xStream.toXML(story, writer);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+		Story stRead = (Story) xStream.fromXML(new File("tmp/story.xml"));
+		System.out.println("** Story from XML **");
+        System.out.println(stRead.SDump());
+		
+
+		boolean res = true;
+		res = res && story.getName().equals(stRead.getName());
+		for (int i = 0; i < story._perso.size(); i++) {
+			Perso pOri = story._perso.get(i);
+			Perso pRead = stRead._perso.get(i);
+			res = res && (pOri._name.equals(pRead._name) && 
+	        		pOri._player.equals(pRead._player) &&
+	        		pOri._zorga.equals(pRead._zorga));
+		}
+        
+		return res;
 	}
 	
 	
