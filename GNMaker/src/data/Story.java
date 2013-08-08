@@ -12,7 +12,6 @@ import com.thoughtworks.xstream.XStream;
  * 
  * TODO creation
  * TODO adding event
- * TODO set name
  * TODO save to file (XML ?)
  * TODO read from file (XML ?)
  * 

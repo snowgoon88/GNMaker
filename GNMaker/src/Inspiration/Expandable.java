@@ -52,7 +52,6 @@ public class Expandable {
 		expander1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO expandAction();
 			}
 		});
 		JTextField title1 = new JTextField("Catastrophe de Médelin");
@@ -73,7 +72,6 @@ public class Expandable {
 		expander1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO expandAction();
 			}
 		});
 		JTextField title2 = new JTextField("C'est la poisse");
@@ -87,9 +85,7 @@ public class Expandable {
 		
 		
 		
-		// TODO add a GLUE
 		_component.add( Box.createVerticalGlue());
-		// TODO add a Scrollbar
 		_component.setVisible(true);
 		
 	}
@@ -131,7 +127,7 @@ public class Expandable {
 //		expander1.addActionListener(new ActionListener() {
 //			@Override
 //			public void actionPerformed(ActionEvent e) {
-//				// TODO expandAction();
+//				// 
 //			}
 //		});
 		JTextField title1 = new JTextField("Catastrophe de Médelin");
@@ -141,7 +137,7 @@ public class Expandable {
 //		expander1.addActionListener(new ActionListener() {
 //			@Override
 //			public void actionPerformed(ActionEvent e) {
-//				// TODO expandAction();
+//				// 
 //			}
 //		});
 		JTextField title2 = new JTextField("C'est la poisse");
@@ -196,7 +192,7 @@ public class Expandable {
 //		expander.addActionListener(new ActionListener() {
 //			@Override
 //			public void actionPerformed(ActionEvent e) {
-//				// TODO expandAction();
+//				// 
 //			}
 //		});
 //		JTextField title = new JTextField("ajout pour voir");

@@ -124,7 +124,6 @@ public class TestGUI {
 		System.out.println("End of testJEvent");
 		return res;
 	}
-	// TODO tester un GUI Sympa
 	boolean testExpand(String[] args) {
 		Expandable truc = new Expandable();
 		truc.buildMIG();
@@ -159,7 +158,6 @@ public class TestGUI {
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

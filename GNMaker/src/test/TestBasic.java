@@ -210,10 +210,6 @@ public class TestBasic {
 		return res;
 	}
 	
-	
-	// TODO Ds Event, un Perso peut être ok/todo (suivant). 
-	// Par défaut, à la création, c'est todo.
-	
 	/**
 	 * @param args
 	 */

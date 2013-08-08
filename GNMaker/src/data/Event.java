@@ -12,7 +12,6 @@ import java.util.Map;
  * 
  * @author snowgoon88@gmail.com
  */
-// TODO Repenser PersoEvent et ArrayList<TRUC>
 public class Event {
 	/** Titre de l'événement */
 	public String _title;
