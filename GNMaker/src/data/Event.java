@@ -8,7 +8,7 @@ import java.util.Map;
  * <li>String: Un Titre</li>
  * <li>??? : Une Date</li>
  * <li>String: Un Body</li>
- * <li>HashMap(Perso,boolean) : une liste de PersoxBoolean (ok, todo) (</li>
+ * <li>HashMap(Perso) : une liste de PersoxPointDeVuexBoolean (ok, todo) (</li>
  * 
  * @author snowgoon88@gmail.com
  */
@@ -23,9 +23,8 @@ public class Event {
 	/** Liste de Perso impliqués : Le boolean indique si l'événement a été pris en compte
 	 * pour le perso : ok=true, todo=false.
 	 */
-	public HashMap<Perso, PersoEvent> _perso;
+	public HashMap<Perso,PersoEvent> _perso;
 
-	
 	
 	/**
 	 * Creation sans Personnage
@@ -43,8 +42,9 @@ public class Event {
 	 * @param pers Perso to add
 	 */
 	public void addPerso( Perso pers) {
-		_perso.put(pers, new PersoEvent(false, "-"));
+		_perso.put( pers, new PersoEvent( pers, false, "-"));
 	}
+	
 	/** 
 	 * Change 'status (todo/ok) of Perso. Add if not exists.
 	 * @param pers Perso to change
@@ -87,14 +87,15 @@ public class Event {
 	}
 	
 	public class PersoEvent {
+		public Perso _perso;
 		public boolean _status;
 		public String _desc;
 		/**
 		 * @param _status
 		 * @param _desc
 		 */
-		public PersoEvent(boolean _status, String _desc) {
-			super();
+		public PersoEvent(Perso perso, boolean _status, String _desc) {
+			this._perso = perso;
 			this._status = _status;
 			this._desc = _desc;
 		}

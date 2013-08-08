@@ -5,6 +5,7 @@ package test;
 
 import gui.JEvent;
 import gui.JPersoEvent;
+import gui.JPersoEventList;
 
 import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
@@ -60,14 +61,23 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testJEvent >> " + res);
 //		}
+//		// -------
+//		nbTest++;
+//		res = testExpand(args);
+//		if (res) {
+//			System.out.println("testExpand >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testExpand >> " + res);
+//		}
 		// -------
 		nbTest++;
-		res = testExpand(args);
+		res = testJPersoEventList(args);
 		if (res) {
-			System.out.println("testExpand >> " + res);
+			System.out.println("testJPersoEventList >> " + res);
 			nbPassed++;
 		} else {
-			System.err.println("testExpand >> " + res);
+			System.err.println("testJPersoEventList >> " + res);
 		}
 		
 		// ---------------------
@@ -85,7 +95,7 @@ public class TestGUI {
 	//               click gauche => switch status
 	//               click droit => popup avec delete (+ confirm) ou change status
 	//               et info.
-	boolean testJEventPerso(String[] args) {
+	boolean testJPersoEvent(String[] args) {
 		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
 		JPersoEvent comp = new JPersoEvent(perso1, evt1);
@@ -109,6 +119,20 @@ public class TestGUI {
 		
 		boolean res =  testComponent("TestJPersoList", _persoList);
 		System.out.println("End of testJPersoList");
+		return res;
+	}
+	boolean testJPersoEventList(String[] args) {
+		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		evt1.addPerso(perso1);
+		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
+		evt1.addPerso(perso2);
+		
+		JPersoEventList persoList = new JPersoEventList( evt1 );
+		
+		boolean res = testComponent( "TestJPersoEventList", persoList._component);
+		System.out.println("End of TestJPersoEventList");
 		return res;
 	}
 	// Afficher Event in GUI

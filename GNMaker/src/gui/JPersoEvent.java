@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -30,6 +31,8 @@ public class JPersoEvent {
 	Event _evt;
 	Perso _pers;
 	MyJPopupMenu _popup;
+	
+	public AbstractAction _leftClickAction = null;
 	
 	/**
 	 * Création avec un PersoEvent
@@ -94,7 +97,11 @@ public class JPersoEvent {
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				System.out.println("JPersoEvent : Button 1");
 				// Switch status
-				switchStateAction();
+				//switchStateAction();
+				if (_leftClickAction != null ) {
+					// Create ActionEvent and activate
+					_leftClickAction.actionPerformed(new ActionEvent(e.getSource(), 0, "JPersoEvent"));
+				}
 			}
 			else if (e.getButton() == MouseEvent.BUTTON2) {
 				System.out.println("JPersoEvent : Button 2");
