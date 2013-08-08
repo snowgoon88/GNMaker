@@ -5,6 +5,7 @@ package test;
 
 import data.Event;
 import data.Perso;
+import data.Story;
 
 /**
  * 
@@ -39,6 +40,15 @@ public class TestBasic {
 			nbPassed++;
 		} else {
 			System.err.println("testtestCreationEvent >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testStoryCreation(args);
+		if (res) {
+			System.out.println("testStoryCreation >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testStoryCreation >> " + res);
 		}
 		
 		// ---------------------
@@ -79,6 +89,26 @@ public class TestBasic {
 			return false;
 		}
 		System.out.println(evt1.SDump());
+		
+		return true;
+	}
+	boolean testStoryCreation(String[] args) {
+		Story hist = new Story();
+		System.out.println("***** Basic Story *****");
+		System.out.println(hist.toXML());
+
+		System.out.println("***** One Event *****");
+		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		evt1.addPerso(perso1);
+		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
+		evt1.addPerso(perso2);
+		hist.add(evt1);
+		System.out.println(hist.toXML());
+
+		
+		
 		
 		return true;
 	}

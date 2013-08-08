@@ -8,5 +8,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/JavaUtils"/>
+	<classpathentry kind="lib" path="/usr/share/java/xstream.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
