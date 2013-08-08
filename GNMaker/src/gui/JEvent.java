@@ -4,104 +4,87 @@
 package gui;
 
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
 
-import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import utils.GraphicHelper;
+
+import net.miginfocom.swing.MigLayout;
+
 import data.Event;
-import data.Perso;
 
 /**
- * Display an Event qui peut être "expanded", utilise un GroupLayout.
- * <li>bouton pour expander</li>
- * <li>JTextField pour le titre</li>
- * <li>JPanel avec FlowLayout pour les JPersoEvent</li>
- * <li>JTextArea pour les body</li>
+ * Display an Event qui peut être "expanded". On s'appuie sur MigLayout.
+ * <li>bouton pour expander + JTextField pour le titre</li>
+ * <li>JPersoEventList pour les différents Perso  x Event</li>
  * 
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
 public class JEvent extends JPanel {
-
-	JButton _expander;
+	/** Un Event comme Model */
+	Event _evt;
+	
+	/** JPanel comme Component */
+	public JPanel _component;
+	
+	/** Class for helping in designing GUI */
+	ImageIcon _iconClosed = GraphicHelper.createImageIcon(this,"book-closed_32x32.png", "");
+	ImageIcon _iconOpen = GraphicHelper.createImageIcon(this,"book-open_32x32.png", "");
+	
+	JButton _expanderBtn;
 	JTextField _title;
 	JTextArea _body;
-	JPanel _persoList;
+	JPersoEventList _persoList;
 	
 	/** Est-ce que le JEven est expanded ? */
 	boolean _expandFlag;
-	/** Model Event */
-	Event _evt;
+
 	/**
 	 * Création avec un Event comme Model
 	 */
 	public JEvent( Event evt ) {
+		super(); // new JPanel
 		_evt = evt;
-		_expandFlag = false;
+		_expandFlag = true;
 		
 		buildGUI();
 	}
 
 	/** 
-	 * Crée les différents éléments SWING en utilisant un GroupLayout
+	 * Crée les différents éléments SWING en utilisant un MigLayout
 	 */
 	void buildGUI() {
+		MigLayout compLayout = new MigLayout(
+				"hidemode 3", // Layout Constraints
+				"[][grow,fill]", // Column constraints
+				""); // Row constraints);
+		this.setLayout(compLayout);
+		
+		
 		// Default expander
-		_expander = new JButton("m");
-		_expander.addActionListener(new ActionListener() {
+		_expanderBtn = new JButton();
+		_expanderBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				expandAction();
 			}
 		});
+		this.add(_expanderBtn);
 
 		_title = new JTextField( _evt._title );
-		_persoList = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JPersoEvent pe;
-		for (Map.Entry<Perso, Event.PersoEvent> e : _evt._perso.entrySet()) {
-			pe = new JPersoEvent(e.getKey(), _evt);
-			_persoList.add(pe._btn);
-		}
-		_persoList.revalidate();
+		this.add( _title, "wrap"); // go to next line after this
 		_body = new JTextArea(_evt._body);
+		this.add( _body, "skip, wrap");
+		_persoList = new JPersoEventList(_evt);
+		this.add( _persoList._component, "spanx 2");
 		
-		// Group Layout
-		GroupLayout layout = new GroupLayout(this);
-		setLayout(layout);
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
-		
-		// Horizontal
-		layout.setHorizontalGroup(
-				layout.createSequentialGroup()
-				.addComponent(_expander)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(_title)
-						.addComponent(_persoList)
-						.addComponent(_body)
-						)
-				);
-						
-		// Vertical
-		layout.setVerticalGroup(
-				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(_expander)
-				.addGroup(layout.createSequentialGroup()
-						// Fixed vertical size pour _title
-						.addComponent(_title, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-						          GroupLayout.PREFERRED_SIZE)
-						.addComponent(_body)
-						.addComponent(_persoList, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-						          GroupLayout.PREFERRED_SIZE)
-						)
-				);
 		update();
 	}
 	/**
@@ -109,16 +92,16 @@ public class JEvent extends JPanel {
 	 */
 	void update() {
 		if (_expandFlag == true) {
-			_expander.setText("P");
-			_persoList.setVisible(true);
-			_persoList.revalidate();
+			_expanderBtn.setIcon(_iconOpen);
+			_persoList._component.setVisible(true);
+			_persoList._component.revalidate();
 			_body.setVisible(true);
 			_body.revalidate();
 		}
 		else {
-			_expander.setText("m");
-			_persoList.setVisible(false);
-			_persoList.revalidate();
+			_expanderBtn.setIcon(_iconClosed);
+			_persoList._component.setVisible(false);
+			_persoList._component.revalidate();
 			_body.setVisible(false);
 			_body.revalidate();
 		}

@@ -52,15 +52,15 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testJPersoList >> " + res);
 //		}
-//		// -------
-//		nbTest++;
-//		res = testJEvent(args);
-//		if (res) {
-//			System.out.println("testJEvent >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testJEvent >> " + res);
-//		}
+		// -------
+		nbTest++;
+		res = testJEvent(args);
+		if (res) {
+			System.out.println("testJEvent >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testJEvent >> " + res);
+		}
 //		// -------
 //		nbTest++;
 //		res = testExpand(args);
@@ -143,6 +143,9 @@ public class TestGUI {
 		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
 		evt1.addPerso(perso1);
+		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
+		evt1.addPerso(perso2);
 		JEvent comp = new JEvent( evt1);
 		
 		boolean res =  testComponent("JEvent", comp);

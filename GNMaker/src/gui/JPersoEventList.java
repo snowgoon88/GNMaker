@@ -70,7 +70,7 @@ public class JPersoEventList {
 		_nameLabel = new ArrayList<JLabel>();
 		_descArea = new ArrayList<JTextArea>();
 		
-		// Main Panel avec un BoxLayout
+		// Main Panel avec un MigLayout
 		_component = new JPanel();
 		MigLayout compLayout = new MigLayout(
 				"flowy", // Layout Constraints
