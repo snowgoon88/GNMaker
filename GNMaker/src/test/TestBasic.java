@@ -3,9 +3,18 @@
  */
 package test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 import data.Event;
 import data.Perso;
 import data.Story;
+import data.converter.PersoConverter;
 
 /**
  * 
@@ -49,6 +58,15 @@ public class TestBasic {
 			nbPassed++;
 		} else {
 			System.err.println("testStoryCreation >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testPersoXML(args);
+		if (res) {
+			System.out.println("testPersoXML >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testPersoXML >> " + res);
 		}
 		
 		// ---------------------
@@ -107,11 +125,39 @@ public class TestBasic {
 		hist.add(evt1);
 		System.out.println(hist.toXML());
 
-		
-		
-		
 		return true;
 	}
+	// Read and Write Perso to XML
+	boolean testPersoXML( String[] args) {
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		
+		XStream xStream = new XStream(new DomDriver());
+        xStream.registerConverter(new PersoConverter());
+        xStream.alias("perso", Perso.class);
+        System.out.println("** Perso to XML **");
+        System.out.println(xStream.toXML(perso1));
+        
+        File outfile = new File("tmp/perso.xml");
+        try {
+			FileOutputStream writer = new FileOutputStream(outfile);
+			xStream.toXML(perso1, writer);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        
+        Perso persoRead = (Perso) xStream.fromXML(new File("tmp/perso.xml"));
+        System.out.println("** Perso from XML **");
+        System.out.println(persoRead.SDump());
+        
+        return (perso1._name.equals(persoRead._name) && 
+        		perso1._player.equals(persoRead._player) &&
+        		perso1._zorga.equals(persoRead._zorga));
+	}
+	
 	
 	// TODO Ds Event, un Perso peut être ok/todo (suivant). 
 	// Par défaut, à la création, c'est todo.

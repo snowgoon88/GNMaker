@@ -11,9 +11,9 @@ public class Perso {
 	/** Nom du Perso */
 	public String _name;
 	/** Nom du Joueur */
-	String _player;
+	public String _player;
 	/** Nom de l'orga */
-	String _zorga;
+	public String _zorga;
 	
 
 	
