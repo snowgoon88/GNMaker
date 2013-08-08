@@ -7,5 +7,6 @@
 			<attribute name="javadoc_location" value="jar:file:/home/dutech/Projets/GIT/GNMaker/GNMaker/lib/miglayout-4.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/JavaUtils"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
