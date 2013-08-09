@@ -5,15 +5,10 @@ package data;
 
 import java.util.ArrayList;
 
-import com.thoughtworks.xstream.XStream;
-
 /**
- * A Story is Basically a list of Event.
- * 
- * TODO creation
- * TODO adding event
- * TODO save to file (XML ?)
- * TODO read from file (XML ?)
+ * A Story is made of:
+ * <li>List of Perso</li>
+ * <li>List of Event</li>
  * 
  * @author snowgoon88@gmail.com.
  */
@@ -35,25 +30,16 @@ public class Story {
 		_name = "A Story with no Name";
 		_story = new ArrayList<Event>();
 		_perso = new ArrayList<Perso>();
-		
-		
 	}
 
+	/**
+	 * Ajout d'un Event à cette Story.
+	 * @param evt
+	 * @return result of ArrayList.add (should be true).
+	 */
 	public boolean add(Event evt) {
 		boolean res=_story.add(evt);
 		return res;
-	}
-	
-	public String toXML() {
-		// XML parser and reader
-		XStream _xstream = new XStream();
-		// Des alias pour alléger le xml
-		_xstream.alias("story", Story.class);
-		_xstream.alias("event", Event.class);
-		_xstream.alias("perso", Perso.class);
-		
-		String xml = _xstream.toXML(this);
-		return xml;
 	}
 	
 	/** 

@@ -53,15 +53,6 @@ public class TestBasic {
 		}
 		// -------
 		nbTest++;
-		res = testStoryCreation(args);
-		if (res) {
-			System.out.println("testStoryCreation >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testStoryCreation >> " + res);
-		}
-		// -------
-		nbTest++;
 		res = testPersoXML(args);
 		if (res) {
 			System.out.println("testPersoXML >> " + res);
@@ -120,23 +111,6 @@ public class TestBasic {
 		
 		return true;
 	}
-	boolean testStoryCreation(String[] args) {
-		Story hist = new Story();
-		System.out.println("***** Basic Story *****");
-		System.out.println(hist.toXML());
-
-		System.out.println("***** One Event *****");
-		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
-		evt1.addPerso(perso1);
-		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
-		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
-		evt1.addPerso(perso2);
-		hist.add(evt1);
-		System.out.println(hist.toXML());
-
-		return true;
-	}
 	// Read and Write Perso to XML
 	boolean testPersoXML( String[] args) {
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
@@ -176,6 +150,7 @@ public class TestBasic {
 		story._perso.add(perso2);
 		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
+		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
 		story.add(evt1);
 		
 		System.out.println("** Story to XML **");
