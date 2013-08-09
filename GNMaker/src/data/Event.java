@@ -43,6 +43,9 @@ public class Event {
 	public void addPerso( Perso pers) {
 		_perso.put( pers, new PersoEvent( pers, false, "-"));
 	}
+	public void addPerso( Perso pers, boolean status, String desc) {
+		_perso.put( pers, new PersoEvent( pers, status, desc));
+	}
 	
 	/** 
 	 * Change 'status (todo/ok) of Perso. Add if not exists.

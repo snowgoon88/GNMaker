@@ -167,12 +167,16 @@ public class TestBasic {
         		perso1._player.equals(persoRead._player) &&
         		perso1._zorga.equals(persoRead._zorga));
 	}
+	// Save and Load, then compare.
 	boolean testStoryXML(String[] args) {
 		Story story = new Story();
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
 		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
 		story._perso.add(perso1);
 		story._perso.add(perso2);
+		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		evt1.addPerso(perso1);
+		story.add(evt1);
 		
 		System.out.println("** Story to XML **");
 		XStream xStream = new XStream(new DomDriver());
@@ -199,6 +203,8 @@ public class TestBasic {
 
 		boolean res = true;
 		res = res && story.getName().equals(stRead.getName());
+		// Perso
+		res = res && (story._perso.size() == stRead._perso.size());
 		for (int i = 0; i < story._perso.size(); i++) {
 			Perso pOri = story._perso.get(i);
 			Perso pRead = stRead._perso.get(i);
@@ -206,7 +212,25 @@ public class TestBasic {
 	        		pOri._player.equals(pRead._player) &&
 	        		pOri._zorga.equals(pRead._zorga));
 		}
-        
+		// Event
+		res = res && (story._story.size() == stRead._story.size());
+		for (int i = 0; i < story._story.size(); i++) {
+			Event eOri = story._story.get(i);
+			Event eRead = stRead._story.get(i);
+			res = res && (eOri._title.equals(eRead._title) &&
+					eOri._body.equals(eRead._body));
+			// PersoEvent
+			res = res && (eOri._perso.size() == eRead._perso.size());
+			for (Perso p : eOri._perso.keySet()) {
+				Event.PersoEvent peOri = eOri._perso.get(p);
+				// Trouver le pers correspondant dans stRead
+				Perso pRead = stRead._perso.get(story._perso.indexOf(p));
+				Event.PersoEvent peRead = eRead._perso.get(pRead);
+				res = res && (peOri._perso._name.equals(peRead._perso._name) &&
+						peOri._status == peRead._status &&
+						peOri._desc.equals(peRead._desc));
+			}
+		}
 		return res;
 	}
 	

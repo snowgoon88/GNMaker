@@ -66,6 +66,9 @@ public class Story {
 		for (Perso p : _perso) {
 			str.append( p.SDump()+"\n");
 		}
+		for (Event e : _story) {
+			str.append( e.SDump()+"\n");
+		}
 		return str.toString();
 	}
 	
