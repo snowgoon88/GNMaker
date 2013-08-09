@@ -120,7 +120,7 @@ public class StoryConverter implements Converter {
 				reader.moveDown();
 				String body = reader.getValue();
 				reader.moveUp();
-				Event evt = new Event( title, body );
+				Event evt = new Event( story, title, body );
 				// PersoEvent
 				while (reader.hasMoreChildren()) {
 					reader.moveDown();

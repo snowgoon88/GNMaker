@@ -88,7 +88,8 @@ public class TestBasic {
 	}
 	boolean testCreationEvent(String[] args) {
 		System.out.println("** Event sans Perso **");
-		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Event evt1 = new Event(null,
+				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		System.out.println(evt1.SDump());
 		
 		System.out.println("** Event avec ValeriB **");
@@ -148,10 +149,17 @@ public class TestBasic {
 		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
 		story._perso.add(perso1);
 		story._perso.add(perso2);
-		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Event evt1 = new Event(story,
+				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
 		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
+		evt1.addPerso(perso2);
 		story.add(evt1);
+		Event evt2 = new Event(story,
+				"Visite impromtue", "B. Erinska revoit sa \"fantômette\" (O. Petrequin).");
+		evt2.addPerso(perso2);
+		evt2._perso.get(perso2)._desc = "Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.";
+		story.add(evt2);
 		
 		System.out.println("** Story to XML **");
 		XStream xStream = new XStream(new DomDriver());

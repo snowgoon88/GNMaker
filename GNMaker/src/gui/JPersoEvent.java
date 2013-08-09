@@ -11,9 +11,12 @@ import java.awt.event.MouseEvent;
 
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
+import utils.GraphicHelper;
 
 
 import data.Event;
@@ -26,11 +29,13 @@ import data.Perso;
  * 
  * @author snowgoon88@gmail.com
  */
-public class JPersoEvent {
-	public JButton _btn;
+@SuppressWarnings("serial")
+public class JPersoEvent extends JButton {
 	Event _evt;
 	Perso _pers;
 	MyJPopupMenu _popup;
+	
+	ImageIcon _iconRemove = GraphicHelper.createImageIcon(this,"user-group-delete.png", "");
 	
 	public AbstractAction _leftClickAction = null;
 	
@@ -40,6 +45,7 @@ public class JPersoEvent {
 	 * @param pers
 	 */
 	public JPersoEvent(Perso pers, Event evt) {
+		super(pers._name);
 		_evt = evt;
 		_pers = pers;
 		
@@ -54,8 +60,7 @@ public class JPersoEvent {
 		_popup = new MyJPopupMenu();
 		
 		// Button
-		_btn = new JButton(_pers._name);
-		_btn.addMouseListener( new MyMouseListener());
+		this.addMouseListener( new MyMouseListener());
 		
 		update();
 	}
@@ -67,10 +72,10 @@ public class JPersoEvent {
 	void update() {
 		_popup.update();
 		if (_evt.getStatusPerso(_pers) == true) {
-			_btn.setBackground( Color.GREEN );
+			this.setBackground( Color.GREEN );
 		}
 		else {
-			_btn.setBackground( Color.RED );
+			this.setBackground( Color.RED );
 		}
 	}
 	/** 
@@ -115,7 +120,6 @@ public class JPersoEvent {
 	/**
 	 * Un Popup avec action et info.
 	 */
-	@SuppressWarnings("serial")
 	class MyJPopupMenu extends JPopupMenu {
 		JMenuItem _statusItem; // display info
 		JMenuItem _switchItem; // switch status action
@@ -132,6 +136,7 @@ public class JPersoEvent {
 			add(_switchItem);
 			// Delete 
 			item = new JMenuItem("Enlève Perso");
+			item = new JMenuItem(new RemovePersoAction(_pers));
 			add(item);
 			// Separator
 			add( new Separator());
@@ -150,4 +155,23 @@ public class JPersoEvent {
 		}
 	}
 	
+	/**
+	 * Enlève un Perso à un Event.
+	 */
+	public class RemovePersoAction extends AbstractAction {
+ 		Perso _perso;
+ 	    
+		public RemovePersoAction(Perso perso) {
+			super("Enlève Perso", _iconRemove);
+			putValue(SHORT_DESCRIPTION, "Enlève un Perso à un Evénement.");
+			putValue(MNEMONIC_KEY, null);
+			
+			_perso = perso;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_evt.removePerso(_perso);
+		}
+	}
 }

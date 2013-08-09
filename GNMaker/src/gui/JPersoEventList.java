@@ -7,6 +7,8 @@ package gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -26,20 +28,25 @@ import data.Event.PersoEvent;
  * Un JPanel pour lister les différents PersoEvent. Viewer de (MVC).
  * 
  * Display
- * TODO Add a new PersoEvent
- * TODO Remove a given PersoEvent
+ * Add a new PersoEvent
+ * Remove a given PersoEvent
  * Expand a PersoEvent (LeftClick on JPersoEvent)
  * Expand All
  * TODO Dump all PersoEvent
  * 
  * @author snowgoon88@gmail.com
  */
-public class JPersoEventList {
+public class JPersoEventList implements Observer {
 	/** Un Event comme Model */
 	Event _evt;
 	
 	/** JPanel comme Component */
 	public JPanel _component;
+	
+	/** Panel for JPersoEvent */
+	JPanel _persoPanel;
+	/** Panel for PersoEvent description */
+	JPanel _descPanel;
 	
 	/** ExpandAll Button */
 	JButton _expandAllBtn;
@@ -63,6 +70,8 @@ public class JPersoEventList {
 	public JPersoEventList(Event _evt) {
 		this._evt = _evt;
 		buildGUI();
+		
+		_evt.addObserver(this);
 	}
 	
 	void buildGUI() {
@@ -79,12 +88,12 @@ public class JPersoEventList {
 		_component.setLayout(compLayout);
 		
 		// Liste des JPerso
-		JPanel persoPanel = new JPanel();
+		_persoPanel = new JPanel();
 		MigLayout persoLayout = new MigLayout(
 				"", // Layout Constraints
 				"2*indent", // Column constraints
 				""); // Row constraints);
-		persoPanel.setLayout(persoLayout);
+		_persoPanel.setLayout(persoLayout);
 		_expandAllBtn = new JButton();
 		_expandAllBtn.addActionListener(new ActionListener() {
 			@Override
@@ -92,26 +101,26 @@ public class JPersoEventList {
 				setAllDescVisible(!_allDescVisible);
 			}
 		});
-		persoPanel.add(_expandAllBtn);
+		_persoPanel.add(_expandAllBtn);
 		
 		// Description/Body pour chaque perso.
-		JPanel descPanel = new JPanel();
+		_descPanel = new JPanel();
 		MigLayout descLayout = new MigLayout(
 				"hidemode 3", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
-		descPanel.setLayout(descLayout);
+		_descPanel.setLayout(descLayout);
 		
 		for (PersoEvent p : _evt._perso.values()) {
 			JPersoEvent persoBtn = new JPersoEvent(p._perso, _evt);
-			persoPanel.add( persoBtn._btn );
+			_persoPanel.add( persoBtn );
 			JLabel nameLabel = new JLabel(p._perso.SDump());
 			_nameLabel.add(nameLabel);
-			descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
+			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
 			JTextArea descArea = new JTextArea(p._desc);
 			_descArea.add(descArea);
-			descPanel.add(descArea, "wrap, growx, growy"); // prend place, prochain sur autre ligne
+			_descPanel.add(descArea, "wrap"); // prend place, prochain sur autre ligne
 			
 			// Attache la bonne action 
 			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, "Détaille "+p._perso._name, null,
@@ -119,8 +128,58 @@ public class JPersoEventList {
 		}
 		setAllDescVisible(true);
 		
-		_component.add(persoPanel);
-		_component.add(descPanel);
+		_component.add(_persoPanel);
+		_component.add(_descPanel);
+	}
+	
+	@Override
+	// Implement Observer
+	public void update(Observable o, Object arg) {
+		System.out.println("### JPersoList.Observable : arg is a "+arg.getClass().getName());
+		// Ajout => arg est un Perso
+		if (arg instanceof Event.PersoEvent) {
+			PersoEvent pe = (PersoEvent) arg;
+			
+			JPersoEvent persoBtn = new JPersoEvent(pe._perso, _evt);
+			_persoPanel.add( persoBtn );
+			
+			JLabel nameLabel = new JLabel(pe._perso.SDump());
+			_nameLabel.add(nameLabel);
+			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
+			
+			JTextArea descArea = new JTextArea(pe._desc);
+			_descArea.add(descArea);
+			_descPanel.add(descArea, "wrap, growx, growy"); // prend place, prochain sur autre ligne
+			
+			// Attache la bonne action 
+			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, 
+					"Détaille "+pe._perso._name, null,
+					nameLabel, descArea);
+			_component.revalidate();
+		}
+		else if (arg instanceof String) {
+			String command = (String) arg;
+			if (command.equals("removed")) {
+				// Peut-être pas propre car je fais l'hypothèse que les
+				// JPersoEvent et les élements de _nameLabel et _descArea
+				// sont stockés dans le même ordre.
+				for (int i = 1; i < _persoPanel.getComponentCount(); i++) {
+					JPersoEvent jpe = (JPersoEvent) _persoPanel.getComponent(i);
+					if (_evt._perso.containsKey(jpe._pers) == false ) {
+						_persoPanel.remove(jpe);
+						_nameLabel.remove(i-1);
+						_descArea.remove(i-1);
+
+						// Enlever 2 fois du _descPanel
+						_descPanel.remove( 2*(i-1));
+						_descPanel.remove( 2*(i-1));
+						
+						_component.revalidate();
+						return;
+					}
+				}
+			}
+		}
 	}
 	
 

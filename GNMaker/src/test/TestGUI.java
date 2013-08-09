@@ -6,17 +6,26 @@ package test;
 import gui.JEvent;
 import gui.JPersoEvent;
 import gui.JPersoEventList;
+import gui.JStory;
 
 import java.awt.Component;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JDialog;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import Inspiration.Expandable;
 
 import data.Event;
 import data.Perso;
+import data.Story;
+import data.converter.PersoConverter;
+import data.converter.StoryConverter;
 
 /**
  * @author dutech
@@ -41,15 +50,15 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testJEventPerso >> " + res);
 //		}
-		// -------
-		nbTest++;
-		res = testJEvent(args);
-		if (res) {
-			System.out.println("testJEvent >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testJEvent >> " + res);
-		}
+//		// -------
+//		nbTest++;
+//		res = testJEvent(args);
+//		if (res) {
+//			System.out.println("testJEvent >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testJEvent >> " + res);
+//		}
 //		// -------
 //		nbTest++;
 //		res = testExpand(args);
@@ -59,14 +68,23 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testExpand >> " + res);
 //		}
+//		// -------
+//		nbTest++;
+//		res = testJPersoEventList(args);
+//		if (res) {
+//			System.out.println("testJPersoEventList >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testJPersoEventList >> " + res);
+//		}
 		// -------
 		nbTest++;
-		res = testJPersoEventList(args);
+		res = testJStory(args);
 		if (res) {
-			System.out.println("testJPersoEventList >> " + res);
+			System.out.println("testJStory >> " + res);
 			nbPassed++;
 		} else {
-			System.err.println("testJPersoEventList >> " + res);
+			System.err.println("testJStory >> " + res);
 		}
 		
 		// ---------------------
@@ -85,16 +103,18 @@ public class TestGUI {
 	//               click droit => popup avec delete (+ confirm) ou change status
 	//               et info.
 	boolean testJPersoEvent(String[] args) {
-		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Event evt1 = new Event(null,
+				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
 		JPersoEvent comp = new JPersoEvent(perso1, evt1);
 
-		boolean res =  testComponent("Basic JEventPerso", comp._btn);
+		boolean res =  testComponent("Basic JEventPerso", comp);
 		System.out.println("End of testJEventPerso");
 		return res;
 	}
 	boolean testJPersoEventList(String[] args) {
-		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Event evt1 = new Event(null,
+				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
 		evt1.addPerso(perso1);
 		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
@@ -112,7 +132,8 @@ public class TestGUI {
 	// Corps
 	// Liste <Perso>*
 	boolean testJEvent(String[] args) {
-		Event evt1 = new Event("Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		Event evt1 = new Event(null,
+				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
 		evt1.addPerso(perso1);
 		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
@@ -130,6 +151,25 @@ public class TestGUI {
 		
 		boolean res =  testComponent("JEvent", truc._main);
 		System.out.println("End of testExpand");
+		return res;
+	}
+	// Read Story from tmp/story_test.xml
+	// Display Story
+	boolean testJStory( String[] args) {
+		XStream xStream = new XStream(new DomDriver());
+		xStream.registerConverter(new StoryConverter());
+        xStream.registerConverter(new PersoConverter());
+        xStream.alias("story", Story.class);
+        
+		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
+		System.out.println("** Story from XML **");
+        System.out.println(story.SDump());
+        
+        JStory comp = new JStory(story);
+        JScrollPane main = new JScrollPane(comp);
+		
+		boolean res =  testComponent("JStory", main);
+		System.out.println("End of testJStory");
 		return res;
 	}
 	

@@ -4,11 +4,16 @@
 package gui;
 
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -18,6 +23,8 @@ import utils.GraphicHelper;
 import net.miginfocom.swing.MigLayout;
 
 import data.Event;
+import data.Perso;
+import data.Story;
 
 /**
  * Display an Event qui peut être "expanded". On s'appuie sur MigLayout.
@@ -27,7 +34,7 @@ import data.Event;
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class JEvent extends JPanel {
+public class JEvent extends JPanel implements Observer {
 	/** Un Event comme Model */
 	Event _evt;
 	
@@ -37,6 +44,7 @@ public class JEvent extends JPanel {
 	/** Class for helping in designing GUI */
 	ImageIcon _iconClosed = GraphicHelper.createImageIcon(this,"book-closed_32x32.png", "");
 	ImageIcon _iconOpen = GraphicHelper.createImageIcon(this,"book-open_32x32.png", "");
+	ImageIcon _iconAdd = GraphicHelper.createImageIcon(this,"user-group-new.png", "");
 	
 	JButton _expanderBtn;
 	JTextField _title;
@@ -55,6 +63,9 @@ public class JEvent extends JPanel {
 		_expandFlag = true;
 		
 		buildGUI();
+		
+		// add observers
+		_evt.addObserver(this);
 	}
 
 	/** 
@@ -63,7 +74,7 @@ public class JEvent extends JPanel {
 	void buildGUI() {
 		MigLayout compLayout = new MigLayout(
 				"hidemode 3", // Layout Constraints
-				"[][grow,fill]", // Column constraints
+				"[][][grow,fill]", // Column constraints
 				""); // Row constraints);
 		this.setLayout(compLayout);
 		
@@ -77,13 +88,17 @@ public class JEvent extends JPanel {
 			}
 		});
 		this.add(_expanderBtn);
-
+		// Add Perso
+		JButton addBtn = new JButton(new AddPersoAction(_evt._story, this));
+		addBtn.setText("");
+		this.add(addBtn);
+		
 		_title = new JTextField( _evt._title );
 		this.add( _title, "wrap"); // go to next line after this
 		_body = new JTextArea(_evt._body);
-		this.add( _body, "skip, wrap");
+		this.add( _body, "skip, spanx 2, wrap");
 		_persoList = new JPersoEventList(_evt);
-		this.add( _persoList._component, "spanx 2");
+		this.add( _persoList._component, "spanx 3");
 		
 		update();
 	}
@@ -106,6 +121,13 @@ public class JEvent extends JPanel {
 			_body.revalidate();
 		}
 	}
+	
+	@Override
+	// Implement Observer
+	public void update(Observable o, Object arg) {
+		System.out.println("### JEvent.Observable : arg is a "+arg.getClass().getName());
+		update(); // What is Visible ?
+	}
 	/**
 	 * Action pour expander.
 	 */
@@ -113,6 +135,42 @@ public class JEvent extends JPanel {
 		_expandFlag = !_expandFlag;
 		update();
 	}
-	
 
+	/**
+	 * Ajoute un Perso à un Event.
+	 */
+	public class AddPersoAction extends AbstractAction {
+ 		Story _story;
+ 		Component _comp;
+ 	    
+		public AddPersoAction(Story story, Component component) {
+			super("Ajout Perso", _iconAdd);
+			putValue(SHORT_DESCRIPTION, "Ajoute un Perso à un Evénement.");
+			putValue(MNEMONIC_KEY, null);
+			
+			_story = story;
+			_comp = component;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Perso choice = (Perso) JOptionPane.showInputDialog(_comp, 
+					"Choisissez un Personnage à ajouter",
+					"Ajout Perso", JOptionPane.PLAIN_MESSAGE, null,
+					_story._perso.toArray(), null);
+			System.out.println("Choice is a "+choice.getClass().getName());
+			System.out.println("Choice : "+choice.toString());
+			
+			// Ajoute seulemen si un nouveau
+			if (_evt._perso.containsKey(choice) == false) {
+				_evt.addPerso(choice);
+			}
+			else {
+				JOptionPane.showMessageDialog(_comp,
+					    choice.toString()+" est déjà impliqué.",
+					    "Attention !",
+					    JOptionPane.WARNING_MESSAGE);
+			}
+		}
+	}
 }

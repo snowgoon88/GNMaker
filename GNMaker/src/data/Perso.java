@@ -40,4 +40,12 @@ public class Perso {
 		str.append( " ("+_player+" - "+_zorga+")");
 		return str.toString();
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer str = new StringBuffer();
+		str.append( _name);
+		str.append( " ("+_player+" - "+_zorga+")");
+		return str.toString();
+	}
 }

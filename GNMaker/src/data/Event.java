@@ -2,6 +2,7 @@ package data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
 /**
  * Un événement composé de :
@@ -10,9 +11,12 @@ import java.util.Map;
  * <li>String: Un Body</li>
  * <li>HashMap(Perso) : une liste de PersoxPointDeVuexBoolean (ok, todo) (</li>
  * 
+ * 
  * @author snowgoon88@gmail.com
  */
-public class Event {
+public class Event extends Observable {
+	/** Appartient à une Story */
+	public Story _story;
 	/** Titre de l'événement */
 	public String _title;
 	/** Corps de l'événement */
@@ -30,23 +34,45 @@ public class Event {
 	 * @param _title Titre de l'événement
 	 * @param _body Descripion de l'événement
 	 */
-	public Event(String _title, String _body) {
+	public Event(Story story, String _title, String _body) {
+		_story = story;
 		this._title = _title;
 		this._body = _body;
 		_perso = new HashMap<Perso,PersoEvent>();
 	}
 
-	/** Add a Perso, by default with "status"=false. (todo)
+	/** 
+	 * Add a Perso, by default with "status"=false.
 	 * 
 	 * @param pers Perso to add
+	 * @toObserver : new PersoEvent.
 	 */
 	public void addPerso( Perso pers) {
-		_perso.put( pers, new PersoEvent( pers, false, "-"));
+		addPerso( pers, false, "-");
 	}
 	public void addPerso( Perso pers, boolean status, String desc) {
-		_perso.put( pers, new PersoEvent( pers, status, desc));
+		PersoEvent pe = new PersoEvent( pers, status, desc);
+		_perso.put( pers, pe);
+		
+		// Notify Observers
+		setChanged();
+		notifyObservers(pe);
 	}
-	
+	/**
+	 * Remove a Perso.
+	 * 
+	 * @param pers to remove
+	 * @toObserver : "removed"
+	 */
+	public void removePerso( Perso pers ) {
+		if (_perso.containsKey(pers)) {
+			_perso.remove(pers);
+			
+			// Notify Observers
+			setChanged();
+			notifyObservers("removed");
+		}
+	}
 	/** 
 	 * Change 'status (todo/ok) of Perso. Add if not exists.
 	 * @param pers Perso to change
@@ -56,6 +82,9 @@ public class Event {
 		PersoEvent data = _perso.get(pers);
 		data._status = status;
 		
+		// Notify Observers
+		setChanged();
+		notifyObservers();
 	}
 	/**
 	 * Get the status of the Perso
@@ -88,6 +117,11 @@ public class Event {
 		return str.toString();
 	}
 	
+	/**
+	 * Les données liant Perso à Event.
+	 * <li> _status : à jour ou pas</li>
+	 * <li> _desc : la description de l'évt du pt de vue du Perso.</li>
+	 */
 	public class PersoEvent {
 		public Perso _perso;
 		public boolean _status;
