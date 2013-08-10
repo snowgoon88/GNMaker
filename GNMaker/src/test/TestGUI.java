@@ -7,12 +7,15 @@ import gui.JEvent;
 import gui.JPersoEvent;
 import gui.JPersoEventList;
 import gui.JStory;
+import gui.StoryC;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
@@ -85,6 +88,15 @@ public class TestGUI {
 			nbPassed++;
 		} else {
 			System.err.println("testJStory >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testApplication(args);
+		if (res) {
+			System.out.println("testApplication >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testApplication >> " + res);
 		}
 		
 		// ---------------------
@@ -172,7 +184,31 @@ public class TestGUI {
 		System.out.println("End of testJStory");
 		return res;
 	}
-	
+	boolean testApplication( String[] args ) {
+		// Story
+		XStream xStream = new XStream(new DomDriver());
+		xStream.registerConverter(new StoryConverter());
+        xStream.registerConverter(new PersoConverter());
+        xStream.alias("story", Story.class);
+        
+		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
+		System.out.println("** Story from XML **");
+        System.out.println(story.SDump());
+        
+        
+		// Main Panel
+		JPanel mainP = new JPanel( new BorderLayout());
+		JStory comp = new JStory(story);
+		story.addObserver(comp);
+        JScrollPane storyScroll = new JScrollPane(comp);
+        mainP.add( storyScroll, BorderLayout.CENTER);
+        StoryC storyControler = new StoryC(story);
+        mainP.add( storyControler._component, BorderLayout.NORTH);
+        
+        boolean res =  testComponent("GNMaker", mainP);
+		System.out.println("End of testApplication");
+		return res;
+	}
 	
 	/**
 	 * Utilise un JDialog modal (freeze until all event are processed) 

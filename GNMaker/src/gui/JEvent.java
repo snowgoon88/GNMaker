@@ -36,7 +36,7 @@ import data.Story;
 @SuppressWarnings("serial")
 public class JEvent extends JPanel implements Observer {
 	/** Un Event comme Model */
-	Event _evt;
+	public Event _evt;
 	
 	/** JPanel comme Component */
 	public JPanel _component;
@@ -74,7 +74,7 @@ public class JEvent extends JPanel implements Observer {
 	void buildGUI() {
 		MigLayout compLayout = new MigLayout(
 				"hidemode 3", // Layout Constraints
-				"[][][grow,fill]", // Column constraints
+				"[][][][grow,fill]", // Column constraints
 				""); // Row constraints);
 		this.setLayout(compLayout);
 		
@@ -92,13 +92,16 @@ public class JEvent extends JPanel implements Observer {
 		JButton addBtn = new JButton(new AddPersoAction(_evt._story, this));
 		addBtn.setText("");
 		this.add(addBtn);
+		// Remove
+		JButton removeBtn = new JButton(new RemoveEventAction(_evt));
+		this.add(removeBtn);
 		
 		_title = new JTextField( _evt._title );
 		this.add( _title, "wrap"); // go to next line after this
 		_body = new JTextArea(_evt._body);
-		this.add( _body, "skip, spanx 2, wrap");
+		this.add( _body, "skip, spanx 3, wrap");
 		_persoList = new JPersoEventList(_evt);
-		this.add( _persoList._component, "spanx 3");
+		this.add( _persoList._component, "spanx 4");
 		
 		update();
 	}
@@ -176,6 +179,24 @@ public class JEvent extends JPanel implements Observer {
 					    "Attention !",
 					    JOptionPane.WARNING_MESSAGE);
 			}
+		}
+	}
+	/**
+	 * Crée un nouvel Event qu'on ajoute à une Story.
+	 */
+	public class RemoveEventAction extends AbstractAction {
+		Event _evt;
+		public RemoveEventAction(Event evt) {
+			super("D", null);
+			putValue(SHORT_DESCRIPTION, "Détruit cet Evénement de la Story");
+			putValue(MNEMONIC_KEY, null);
+			
+			_evt = evt;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_evt._story.remove(_evt);
 		}
 	}
 }

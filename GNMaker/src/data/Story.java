@@ -4,19 +4,20 @@
 package data;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 /**
  * A Story is made of:
  * <li>List of Perso</li>
  * <li>List of Event</li>
  * 
- * TODO Add Event
- * TODO Remove Event
+ * Add Event
+ * Remove Event
  * TODO Dump All
  * 
  * @author snowgoon88@gmail.com.
  */
-public class Story {
+public class Story extends Observable {
 	
 	/** Name of the Story */
 	String _name;
@@ -40,9 +41,27 @@ public class Story {
 	 * Ajout d'un Event à cette Story.
 	 * @param evt
 	 * @return result of ArrayList.add (should be true).
+	 * @toObserver : new Event
 	 */
 	public boolean add(Event evt) {
 		boolean res=_story.add(evt);
+		
+		setChanged();
+		notifyObservers(evt);
+		return res;
+	}
+	/**
+	 * Enlever un Event à cette Story.
+	 * @param evt
+	 * @return true if really removed
+	 * @toObserver : String "removed".
+	 */
+	public boolean remove(Event evt) {
+		boolean res=_story.remove(evt);
+		if (res) {
+			setChanged();
+			notifyObservers("removed");
+		}
 		return res;
 	}
 	
@@ -72,6 +91,9 @@ public class Story {
 	 * @param _name the _name to set
 	 */
 	public void setName(String name) {
+		
+		setChanged();
+		notifyObservers();
 		this._name = name;
 	}
 }
