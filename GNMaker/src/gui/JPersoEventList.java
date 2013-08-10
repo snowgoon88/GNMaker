@@ -135,7 +135,12 @@ public class JPersoEventList implements Observer {
 	@Override
 	// Implement Observer
 	public void update(Observable o, Object arg) {
-		System.out.println("### JPersoList.Observable : arg is a "+arg.getClass().getName());
+		if (arg != null ) {
+			System.out.println("### JEvent.Observable : arg is a "+arg.getClass().getName());
+		}
+		else {
+			System.out.println("### JEvent.Observable : arg is null");
+		}
 		// Ajout => arg est un Perso
 		if (arg instanceof Event.PersoEvent) {
 			PersoEvent pe = (PersoEvent) arg;

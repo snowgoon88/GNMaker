@@ -77,6 +77,7 @@ public class JPersoEvent extends JButton {
 		else {
 			this.setBackground( Color.RED );
 		}
+		this.revalidate();
 	}
 	/** 
 	 * Action pour changer l'état (status) du PersoEvent.
@@ -135,7 +136,6 @@ public class JPersoEvent extends JButton {
 			});
 			add(_switchItem);
 			// Delete 
-			item = new JMenuItem("Enlève Perso");
 			item = new JMenuItem(new RemovePersoAction(_pers));
 			add(item);
 			// Separator

@@ -10,6 +10,10 @@ import java.util.ArrayList;
  * <li>List of Perso</li>
  * <li>List of Event</li>
  * 
+ * TODO Add Event
+ * TODO Remove Event
+ * TODO Dump All
+ * 
  * @author snowgoon88@gmail.com.
  */
 public class Story {

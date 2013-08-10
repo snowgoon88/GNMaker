@@ -125,7 +125,12 @@ public class JEvent extends JPanel implements Observer {
 	@Override
 	// Implement Observer
 	public void update(Observable o, Object arg) {
-		System.out.println("### JEvent.Observable : arg is a "+arg.getClass().getName());
+		if (arg != null ) {
+			System.out.println("### JEvent.Observable : arg is a "+arg.getClass().getName());
+		}
+		else {
+			System.out.println("### JEvent.Observable : arg is null");
+		}
 		update(); // What is Visible ?
 	}
 	/**
