@@ -5,12 +5,17 @@ package test;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 
 import net.miginfocom.swing.MigLayout;
@@ -24,6 +29,7 @@ import net.miginfocom.swing.MigLayout;
  * 5) dans un MigLayout avec "grow, fill", // Column constraints => growX
  * 6) dans un MigLayout avec "grow, fill", // Column constraints
 				             "grow, fill"); // Row constraints); => grow both
+ * 7) mais dans un scrollable, ça ne rétrécit plus.				             
  * 
  * @author snowgoon88@gmail.com
  */
@@ -31,6 +37,7 @@ public class TestTextArea {
 	JDialog _testDialog;
 	
 	JPanel _main;
+	JScrollPane _scrollMain;
 	JTextArea _area1;
 	JTextArea _area2;
 	
@@ -38,11 +45,11 @@ public class TestTextArea {
 		buildGUI();
 	}
 	public void run() {
-		testComponent("TextArea", _main);
+		testComponent("TextArea", _scrollMain);
 	}
 	
 	void buildGUI() {
-		_main = new JPanel();
+		//_main = new JPanel();
 		BorderLayout bLayout = new BorderLayout();
 //		_main.setLayout(bLayout);
 		
@@ -52,23 +59,34 @@ public class TestTextArea {
 				"debug", // Layout Constraints
 				"[][grow,fill][]", // Column constraints
 				""); // Row constraints);
-		_main.setLayout(migLayout);
+		//_main.setLayout(migLayout);
+		_main = new MyPanel(migLayout);
 		
-		_area1 = new JTextArea("Pour voir");
+		_area1 = new JTextArea("Pour voir ce que ça donne sur des grandes lignes.");
+		_area1.setWrapStyleWord(true);
+		_area1.setLineWrap(true);
+		JPanel area1Panel = new MyPanel(new MigLayout("wrap", "[grow,fill]", "[]"));
+		area1Panel.add(_area1);
 		JLabel avantLab1 = new JLabel("Avant");
 		JLabel apresLab1 = new JLabel("Apres");
 		
 		_main.add(avantLab1, "");
-		_main.add(_area1,    "");
+		//_main.add(area1Panel,    "wmin 100");
+		_main.add(_area1,    "wmin 100");
 		_main.add(apresLab1, "wrap");
 		
 		_area2 = new JTextArea("Pour voir");
+		JPanel area2Panel = new MyPanel(new MigLayout("wrap", "[grow,fill]", "[]"));
+		area2Panel.add(_area2);
 		JLabel avantLab2 = new JLabel("Avant");
 		JLabel apresLab2 = new JLabel("Apres");
 		
 		_main.add(avantLab2, "");
-		_main.add(_area2,    "");
+		//_main.add(area2Panel,    "wmin 100");
+		_main.add(_area2,    "wmin 100");
 		_main.add(apresLab2, "");
+		
+		_scrollMain = new JScrollPane(_main);
 	}
 	
 	
@@ -111,4 +129,40 @@ public class TestTextArea {
 
 	}
 
+	// Pour embedder les JTextArea dans des scrollPane :o)
+	// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
+	@SuppressWarnings("serial")
+	static class MyPanel extends JPanel implements Scrollable
+	{
+		MyPanel(LayoutManager layout)
+		{
+			super(layout);
+		}
+
+		public Dimension getPreferredScrollableViewportSize()
+		{
+			return getPreferredSize();
+		}
+
+		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
+		{
+			return 0;
+		}
+
+		public boolean getScrollableTracksViewportHeight()
+		{
+			return false;
+		}
+
+		public boolean getScrollableTracksViewportWidth()
+		{
+			return true;
+		}
+
+		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
+		{
+			return 0;
+		}
+	}
+	
 }

@@ -3,7 +3,11 @@
  */
 package Inspiration;
 
+
 import java.awt.Checkbox;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.Scrollable;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -224,5 +229,38 @@ public class Expandable {
 		_body.revalidate();
 	}
 	
-	
+	// Pour embedder les JTextArea dans des scrollPane :o)
+		// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
+		static class MyPanel extends JPanel implements Scrollable
+		{
+		  MyPanel(LayoutManager layout)
+		  {
+		     super(layout);
+		  }
+
+		  public Dimension getPreferredScrollableViewportSize()
+		  {
+		     return getPreferredSize();
+		  }
+
+		  public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
+		  {
+		     return 0;
+		  }
+
+		  public boolean getScrollableTracksViewportHeight()
+		  {
+		     return false;
+		  }
+
+		  public boolean getScrollableTracksViewportWidth()
+		  {
+		     return true;
+		  }
+
+		  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
+		  {
+		     return 0;
+		  }
+		}
 }

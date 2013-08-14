@@ -4,6 +4,9 @@
 package gui;
 
 
+import java.awt.Dimension;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -16,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.Scrollable;
 
 import utils.GraphicHelper;
 
@@ -82,7 +86,7 @@ public class JPersoEventList implements Observer {
 		// Main Panel avec un MigLayout
 		_component = new JPanel();
 		MigLayout compLayout = new MigLayout(
-				"flowy", // Layout Constraints
+				"debug,flowy", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
 		_component.setLayout(compLayout);
@@ -104,12 +108,13 @@ public class JPersoEventList implements Observer {
 		_persoPanel.add(_expandAllBtn);
 		
 		// Description/Body pour chaque perso.
-		_descPanel = new JPanel();
+		//_descPanel = new JPanel();
 		MigLayout descLayout = new MigLayout(
 				"hidemode 3", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
-		_descPanel.setLayout(descLayout);
+		//_descPanel.setLayout(descLayout);
+		_descPanel = new MyPanel(descLayout);
 		
 		for (PersoEvent p : _evt._perso.values()) {
 			JPersoEvent persoBtn = new JPersoEvent(p._perso, _evt);
@@ -119,8 +124,10 @@ public class JPersoEventList implements Observer {
 			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
 			JTextArea descArea = new JTextArea(p._desc);
+			descArea.setLineWrap(true);
+			descArea.setWrapStyleWord(true);
 			_descArea.add(descArea);
-			_descPanel.add(descArea, "wrap"); // prend place, prochain sur autre ligne
+			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
 			
 			// Attache la bonne action 
 			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, "Détaille "+p._perso._name, null,
@@ -153,8 +160,10 @@ public class JPersoEventList implements Observer {
 			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
 			JTextArea descArea = new JTextArea(pe._desc);
+			descArea.setLineWrap(true);
+			descArea.setWrapStyleWord(true);
 			_descArea.add(descArea);
-			_descPanel.add(descArea, "wrap, growx, growy"); // prend place, prochain sur autre ligne
+			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
 			
 			// Attache la bonne action 
 			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, 
@@ -232,5 +241,31 @@ public class JPersoEventList implements Observer {
 			_expandAllBtn.setIcon(_iconClosed);
 		}
 		_component.revalidate();
+	}
+	// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
+	@SuppressWarnings("serial")
+	/**
+	 * L'idée est que le Panel ne soit pas Scrollable Horizontalement.
+	 */
+	static class MyPanel extends JPanel implements Scrollable
+	{
+		MyPanel(LayoutManager layout) {
+			super(layout);
+		}
+		public Dimension getPreferredScrollableViewportSize() {
+			return getPreferredSize();
+		}
+		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+			return 0;
+		}
+		public boolean getScrollableTracksViewportHeight() {
+			return false;
+		}
+		public boolean getScrollableTracksViewportWidth() {
+			return true;
+		}
+		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+			return 0;
+		}
 	}
 }

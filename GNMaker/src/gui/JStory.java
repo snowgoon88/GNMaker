@@ -4,10 +4,13 @@
 package gui;
 
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JPanel;
+import javax.swing.Scrollable;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -18,15 +21,15 @@ import data.Story;
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class JStory extends JPanel implements Observer {
+public class JStory extends JPanel implements Scrollable, Observer {
 	/** Un Story comme Model */
 	Story _story;
-
+	
 	/**
 	 * Création avec une Story comme Model.
 	 */
 	public JStory(Story story) {
-		super(); // new Panel
+		//super(); // new Panel
 		_story = story;
 
 		buildGUI();
@@ -81,5 +84,25 @@ public class JStory extends JPanel implements Observer {
 				}
 			}
 		}
+	}
+	// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
+	/**
+	 * L'idée est que le Panel ne soit pas Scrollable Horizontalement.
+	 */
+
+	public Dimension getPreferredScrollableViewportSize() {
+		return getPreferredSize();
+	}
+	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+		return 0;
+	}
+	public boolean getScrollableTracksViewportHeight() {
+		return false;
+	}
+	public boolean getScrollableTracksViewportWidth() {
+		return true;
+	}
+	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+		return 0;
 	}
 }

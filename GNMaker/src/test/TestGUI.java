@@ -53,15 +53,15 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testJEventPerso >> " + res);
 //		}
-//		// -------
-//		nbTest++;
-//		res = testJEvent(args);
-//		if (res) {
-//			System.out.println("testJEvent >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testJEvent >> " + res);
-//		}
+		// -------
+		nbTest++;
+		res = testJEvent(args);
+		if (res) {
+			System.out.println("testJEvent >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testJEvent >> " + res);
+		}
 //		// -------
 //		nbTest++;
 //		res = testExpand(args);
@@ -71,15 +71,15 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testExpand >> " + res);
 //		}
-//		// -------
-//		nbTest++;
-//		res = testJPersoEventList(args);
-//		if (res) {
-//			System.out.println("testJPersoEventList >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testJPersoEventList >> " + res);
-//		}
+		// -------
+		nbTest++;
+		res = testJPersoEventList(args);
+		if (res) {
+			System.out.println("testJPersoEventList >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testJPersoEventList >> " + res);
+		}
 		// -------
 		nbTest++;
 		res = testJStory(args);
@@ -178,9 +178,10 @@ public class TestGUI {
         System.out.println(story.SDump());
         
         JStory comp = new JStory(story);
-        JScrollPane main = new JScrollPane(comp);
+//        JScrollPane main = new JScrollPane(comp);
+//        main.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		boolean res =  testComponent("JStory", main);
+		boolean res =  testComponent("JStory", comp);
 		System.out.println("End of testJStory");
 		return res;
 	}
