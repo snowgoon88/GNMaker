@@ -13,7 +13,7 @@ import java.util.Observable;
  * 
  * Add Event
  * Remove Event
- * TODO Dump All
+ * Dump All
  * 
  * @author snowgoon88@gmail.com.
  */
@@ -26,6 +26,9 @@ public class Story extends Observable {
 	/** Story is about a list of People */
 	public ArrayList<Perso> _perso;
 	
+	/** Story has been modified ? */
+	boolean _fgModified;
+	
 	
 	
 	/**
@@ -35,6 +38,7 @@ public class Story extends Observable {
 		_name = "A Story with no Name";
 		_story = new ArrayList<Event>();
 		_perso = new ArrayList<Perso>();
+		_fgModified = false;
 	}
 
 	/**
@@ -45,6 +49,7 @@ public class Story extends Observable {
 	 */
 	public boolean add(Event evt) {
 		boolean res=_story.add(evt);
+		_fgModified = true;
 		
 		setChanged();
 		notifyObservers(evt);
@@ -59,6 +64,7 @@ public class Story extends Observable {
 	public boolean remove(Event evt) {
 		boolean res=_story.remove(evt);
 		if (res) {
+			_fgModified = true;
 			setChanged();
 			notifyObservers("removed");
 		}
@@ -95,5 +101,33 @@ public class Story extends Observable {
 		setChanged();
 		notifyObservers();
 		this._name = name;
+	}
+	
+	/**
+	 * Est-ce que cette Story (ou ses Elements) on été modifiés (besoin de save).
+	 * @return recursive true or false.
+	 */
+	public boolean isModified() {
+		boolean res = _fgModified;
+		for (Perso perso : _perso) {
+			res = res || perso.isModified();
+		}
+		for (Event evt : _story) {
+			res = res || evt.isModified();
+		}
+		return res;
+	}
+	/**
+	 * Indique si cette Story a été modifiée.
+	 * @param flag
+	 */
+	public void setModified( boolean flag ) {
+		_fgModified = flag;
+		for (Perso perso : _perso) {
+			perso.setModified(flag);
+		}
+		for (Event evt : _story) {
+			evt.setModified(flag);
+		}
 	}
 }

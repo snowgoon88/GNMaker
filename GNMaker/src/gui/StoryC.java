@@ -31,6 +31,8 @@ public class StoryC {
 		
 		JButton newEvtBtn = new JButton( new NewEventAction() );
 		_component.add(newEvtBtn);
+		JButton dumpAllBtn = new JButton( new DumpAllAction() );
+		_component.add(dumpAllBtn);
 	}
 	
 	/**
@@ -49,6 +51,21 @@ public class StoryC {
 		public void actionPerformed(ActionEvent e) {
 			Event evt = new Event(_story, "Nouvel Evénement", "-A définir-");
 			_story.add(evt);
+		}
+	}
+	@SuppressWarnings("serial")
+	public class DumpAllAction extends AbstractAction {
+
+		public DumpAllAction() {
+			super("Dump All", null);
+			putValue(SHORT_DESCRIPTION, "Dump the whole story.");
+			putValue(MNEMONIC_KEY, null);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("***** DumpALLAction *************");
+			System.out.println(_story.SDump());
 		}
 	}
 }

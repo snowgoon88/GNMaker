@@ -20,6 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.Scrollable;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import utils.GraphicHelper;
 
@@ -36,7 +38,6 @@ import data.Event.PersoEvent;
  * Remove a given PersoEvent
  * Expand a PersoEvent (LeftClick on JPersoEvent)
  * Expand All
- * TODO Dump all PersoEvent
  * 
  * @author snowgoon88@gmail.com
  */
@@ -123,15 +124,16 @@ public class JPersoEventList implements Observer {
 			_nameLabel.add(nameLabel);
 			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
-			JTextArea descArea = new JTextArea(p._desc);
+			JTextArea descArea = new JTextArea(p.getDesc());
 			descArea.setLineWrap(true);
 			descArea.setWrapStyleWord(true);
+			descArea.getDocument().addDocumentListener(new MyTextAreaListener(descArea, p));
 			_descArea.add(descArea);
 			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
 			
 			// Attache la bonne action 
-			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, "Détaille "+p._perso._name, null,
-					nameLabel, descArea);
+			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, "Détaille "+p._perso.getName(),
+					null, nameLabel, descArea);
 		}
 		setAllDescVisible(true);
 		
@@ -159,15 +161,16 @@ public class JPersoEventList implements Observer {
 			_nameLabel.add(nameLabel);
 			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
-			JTextArea descArea = new JTextArea(pe._desc);
+			JTextArea descArea = new JTextArea(pe.getDesc());
 			descArea.setLineWrap(true);
 			descArea.setWrapStyleWord(true);
+			descArea.getDocument().addDocumentListener(new MyTextAreaListener(descArea, pe));
 			_descArea.add(descArea);
 			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
 			
 			// Attache la bonne action 
 			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, 
-					"Détaille "+pe._perso._name, null,
+					"Détaille "+pe._perso.getName(), null,
 					nameLabel, descArea);
 			_component.revalidate();
 		}
@@ -266,6 +269,35 @@ public class JPersoEventList implements Observer {
 		}
 		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
 			return 0;
+		}
+	}
+	
+	/**
+	 * Listen for changes and update PersoEvent.
+	 */
+	class MyTextAreaListener implements DocumentListener {
+		JTextArea _area;
+		PersoEvent _pe;
+		
+		public MyTextAreaListener(JTextArea area, PersoEvent pe) {
+			_area = area;
+			_pe = pe;
+		}
+		
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+//			System.out.println("DOCUMENT REMOVE _title : "+e.toString());
+			_pe.setDesc(_area.getText());
+		}
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+//			System.out.println("DOCUMENT INSERT _title : "+e.toString());
+			_pe.setDesc(_area.getText());
+		}
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+//			System.out.println("DOCUMENT CHANGED _title : "+e.toString());
+			// When properties change
 		}
 	}
 }

@@ -138,9 +138,9 @@ public class TestBasic {
         System.out.println("** Perso from XML **");
         System.out.println(persoRead.SDump());
         
-        return (perso1._name.equals(persoRead._name) && 
-        		perso1._player.equals(persoRead._player) &&
-        		perso1._zorga.equals(persoRead._zorga));
+        return (perso1.getName().equals(persoRead.getName()) && 
+        		perso1.getPlayer().equals(persoRead.getPlayer()) &&
+        		perso1.getZorga().equals(persoRead.getZorga()));
 	}
 	// Save and Load, then compare.
 	boolean testStoryXML(String[] args) {
@@ -152,13 +152,13 @@ public class TestBasic {
 		Event evt1 = new Event(story,
 				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
-		evt1._perso.get(perso1)._desc = "Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.";
+		evt1._perso.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
 		evt1.addPerso(perso2);
 		story.add(evt1);
 		Event evt2 = new Event(story,
 				"Visite impromtue", "B. Erinska revoit sa \"fantômette\" (O. Petrequin).");
 		evt2.addPerso(perso2);
-		evt2._perso.get(perso2)._desc = "Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.";
+		evt2._perso.get(perso2).setDesc("Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.");
 		story.add(evt2);
 		
 		System.out.println("** Story to XML **");
@@ -191,17 +191,17 @@ public class TestBasic {
 		for (int i = 0; i < story._perso.size(); i++) {
 			Perso pOri = story._perso.get(i);
 			Perso pRead = stRead._perso.get(i);
-			res = res && (pOri._name.equals(pRead._name) && 
-	        		pOri._player.equals(pRead._player) &&
-	        		pOri._zorga.equals(pRead._zorga));
+			res = res && (pOri.getName().equals(pRead.getName()) && 
+	        		pOri.getPlayer().equals(pRead.getPlayer()) &&
+	        		pOri.getZorga().equals(pRead.getZorga()));
 		}
 		// Event
 		res = res && (story._story.size() == stRead._story.size());
 		for (int i = 0; i < story._story.size(); i++) {
 			Event eOri = story._story.get(i);
 			Event eRead = stRead._story.get(i);
-			res = res && (eOri._title.equals(eRead._title) &&
-					eOri._body.equals(eRead._body));
+			res = res && (eOri.getTitle().equals(eRead.getTitle()) &&
+					eOri.getBody().equals(eRead.getBody()));
 			// PersoEvent
 			res = res && (eOri._perso.size() == eRead._perso.size());
 			for (Perso p : eOri._perso.keySet()) {
@@ -209,9 +209,9 @@ public class TestBasic {
 				// Trouver le pers correspondant dans stRead
 				Perso pRead = stRead._perso.get(story._perso.indexOf(p));
 				Event.PersoEvent peRead = eRead._perso.get(pRead);
-				res = res && (peOri._perso._name.equals(peRead._perso._name) &&
+				res = res && (peOri._perso.getName().equals(peRead._perso.getName()) &&
 						peOri._status == peRead._status &&
-						peOri._desc.equals(peRead._desc));
+						peOri.getDesc().equals(peRead.getDesc()));
 			}
 		}
 		return res;

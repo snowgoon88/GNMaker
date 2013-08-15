@@ -18,15 +18,18 @@ public class Event extends Observable {
 	/** Appartient à une Story */
 	public Story _story;
 	/** Titre de l'événement */
-	public String _title;
+	String _title;
 	/** Corps de l'événement */
-	public String _body;
+	String _body;
 	/** Date de l'événement */
 	// Date _date;
 	/** Liste de Perso impliqués : Le boolean indique si l'événement a été pris en compte
 	 * pour le perso : ok=true, todo=false.
 	 */
 	public HashMap<Perso,PersoEvent> _perso;
+	
+	/** Event has been modified ? */
+	boolean _fgModified;
 
 	
 	/**
@@ -39,6 +42,7 @@ public class Event extends Observable {
 		this._title = _title;
 		this._body = _body;
 		_perso = new HashMap<Perso,PersoEvent>();
+		_fgModified = false;
 	}
 
 	/** 
@@ -49,10 +53,12 @@ public class Event extends Observable {
 	 */
 	public void addPerso( Perso pers) {
 		addPerso( pers, false, "-");
+		_fgModified = true;
 	}
 	public void addPerso( Perso pers, boolean status, String desc) {
 		PersoEvent pe = new PersoEvent( pers, status, desc);
 		_perso.put( pers, pe);
+		_fgModified = true;
 		
 		// Notify Observers
 		setChanged();
@@ -68,6 +74,7 @@ public class Event extends Observable {
 		if (_perso.containsKey(pers)) {
 			_perso.remove(pers);
 			
+			_fgModified = true;
 			// Notify Observers
 			setChanged();
 			notifyObservers("removed");
@@ -82,6 +89,7 @@ public class Event extends Observable {
 		PersoEvent data = _perso.get(pers);
 		data._status = status;
 		
+		_fgModified = true;
 		// Notify Observers
 		setChanged();
 		notifyObservers();
@@ -97,6 +105,36 @@ public class Event extends Observable {
 		}
 		return false;
 	}
+	
+	
+	/**
+	 * @return the _title
+	 */
+	public String getTitle() {
+		return _title;
+	}
+	/**
+	 * @param title the _title to set
+	 */
+	public void setTitle(String title) {
+		this._title = title;
+		_fgModified = true;
+	}
+
+	/**
+	 * @return the _body
+	 */
+	public String getBody() {
+		return _body;
+	}
+	/**
+	 * @param body the _body to set
+	 */
+	public void setBody(String body) {
+		this._body = body;
+		_fgModified = true;
+	}
+
 	/** 
 	 * Dump all Perso as a String.
 	 * @return String
@@ -104,17 +142,34 @@ public class Event extends Observable {
 	public String SDump() {
 		StringBuffer str = new StringBuffer();
 		str.append( "Event : "+_title+"\n");
-		str.append( _body+"\n");
+		str.append( _body);
 		for (Map.Entry<Perso, PersoEvent> e : _perso.entrySet()) {
 			if (e.getValue()._status==false) {
-				str.append( "-"+e.getKey().SDump()+";");
+				str.append( "\n-"+e.getKey().SDump()+" => ");
 			}
 			else {
-				str.append( "+"+e.getKey().SDump()+";");
+				str.append( "\n+"+e.getKey().SDump()+" => ");
 			}
+			str.append(e.getValue()._desc);
 		}
 		str.append( "\n" );
 		return str.toString();
+	}
+	
+	/**
+	 * Est-ce que cet Event a été modifié?
+	 * @return recursive true or false.
+	 */
+	public boolean isModified() {
+		boolean res = _fgModified;
+		return res;
+	}
+	/**
+	 * Indique si cet Event a été modifiée.
+	 * @param flag
+	 */
+	public void setModified( boolean flag ) {
+		_fgModified = flag;
 	}
 	
 	/**
@@ -125,7 +180,7 @@ public class Event extends Observable {
 	public class PersoEvent {
 		public Perso _perso;
 		public boolean _status;
-		public String _desc;
+		String _desc;
 		/**
 		 * @param _status
 		 * @param _desc
@@ -134,6 +189,19 @@ public class Event extends Observable {
 			this._perso = perso;
 			this._status = _status;
 			this._desc = _desc;
+		}
+		/**
+		 * @return the _desc
+		 */
+		public String getDesc() {
+			return _desc;
+		}
+		/**
+		 * @param desc the _desc to set
+		 */
+		public void setDesc(String desc) {
+			this._desc = desc;
+			_fgModified = true;
 		}
 	}
 }

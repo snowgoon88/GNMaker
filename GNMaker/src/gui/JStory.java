@@ -74,7 +74,7 @@ public class JStory extends JPanel implements Scrollable, Observer {
 				for (int i = 0; i < this.getComponentCount(); i++) {
 					JEvent comp = (JEvent) this.getComponent(i);
 					if (_story._story.contains(comp._evt) == false ) {
-						System.out.println("REMOVE "+i+" "+comp._evt._title);
+						System.out.println("REMOVE "+i+" "+comp._evt.getTitle());
 						this.remove(i);
 						
 						this.revalidate();

@@ -33,17 +33,17 @@ public class PersoConverter implements Converter {
 		
 		// _name
 		writer.startNode("name");
-		writer.setValue(perso._name);
+		writer.setValue(perso.getName());
 		writer.endNode();
 		
 		// _player
 		writer.startNode("player");
-		writer.setValue(perso._player);
+		writer.setValue(perso.getPlayer());
 		writer.endNode();
 		
 		// _zorga
 		writer.startNode("zorga");
-		writer.setValue(perso._zorga);
+		writer.setValue(perso.getZorga());
 		writer.endNode();
 	}
 
@@ -55,17 +55,17 @@ public class PersoConverter implements Converter {
         
 		// _name
 		reader.moveDown();
-        perso._name = reader.getValue();
+        perso.setName(reader.getValue());
         reader.moveUp();
         
         // _player
         reader.moveDown();
-        perso._player = reader.getValue();
+        perso.setPlayer(reader.getValue());
         reader.moveUp();
         
         // _zorga
         reader.moveDown();
-        perso._zorga = reader.getValue();
+        perso.setZorga(reader.getValue());
         reader.moveUp();
         
         return perso;

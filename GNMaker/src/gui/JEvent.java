@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import utils.GraphicHelper;
 
@@ -102,12 +104,53 @@ public class JEvent extends JPanel implements Observer {
 		this.add(removeBtn,
 				"cell 0 0, grow 0");
 		
-		_title = new JTextField( _evt._title );
+		_title = new JTextField( _evt.getTitle() );
+		// Action Listener and Document Listener : when ENTER pressed.
+//		_title.addActionListener( new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				System.out.println("ACTION _title : "+e.getActionCommand());
+//			}
+//		});
+		_title.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+//				System.out.println("DOCUMENT REMOVE _title : "+e.toString());
+				_evt.setTitle(_title.getText());
+			}
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+//				System.out.println("DOCUMENT INSERT _title : "+e.toString());
+				_evt.setTitle(_title.getText());
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+//				System.out.println("DOCUMENT CHANGED _title : "+e.toString());
+				// When properties change
+			}
+		});
 		this.add( _title,
 				"cell 0 0, grow 100"); // go to next line after this
-		_body = new JTextArea(_evt._body);
+		_body = new JTextArea(_evt.getBody());
 		_body.setLineWrap(true);
 		_body.setWrapStyleWord(true);
+		_body.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+//				System.out.println("DOCUMENT REMOVE _body : "+e.toString());
+				_evt.setBody(_body.getText());
+			}
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+//				System.out.println("DOCUMENT INSERT _body : "+e.toString());
+				_evt.setBody(_body.getText());
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+//				System.out.println("DOCUMENT CHANGED _body : "+e.toString());
+				// When properties change
+			}
+		});
 		this.add( _body,
 				"cell 0 1, gapx 2*indent, wmin 10");
 		_persoList = new JPersoEventList(_evt);

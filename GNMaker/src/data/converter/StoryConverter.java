@@ -60,11 +60,11 @@ public class StoryConverter implements Converter {
 			writer.startNode("event");
 			// Write title
 			writer.startNode("title");
-			writer.setValue(evt._title);
+			writer.setValue(evt.getTitle());
 			writer.endNode();
 			// Write body
 			writer.startNode("body");
-			writer.setValue(evt._body);
+			writer.setValue(evt.getBody());
 			writer.endNode();
 			// PersoEvent
 			for (Event.PersoEvent pe : evt._perso.values()) {
@@ -78,7 +78,7 @@ public class StoryConverter implements Converter {
 				writer.setValue(Boolean.toString(pe._status));
 				writer.endNode();
 				writer.startNode("desc");
-				writer.setValue(pe._desc);
+				writer.setValue(pe.getDesc());
 				writer.endNode();
 				writer.endNode();
 			}

@@ -45,7 +45,7 @@ public class JPersoEvent extends JButton {
 	 * @param pers
 	 */
 	public JPersoEvent(Perso pers, Event evt) {
-		super(pers._name);
+		super(pers.getName());
 		_evt = evt;
 		_pers = pers;
 		
