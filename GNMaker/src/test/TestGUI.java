@@ -192,7 +192,8 @@ public class TestGUI {
         xStream.registerConverter(new PersoConverter());
         xStream.alias("story", Story.class);
         
-		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
+        File storyFile = new File("tmp/story_test.xml");
+		Story story = (Story) xStream.fromXML( storyFile );
 		System.out.println("** Story from XML **");
         System.out.println(story.SDump());
         
@@ -203,7 +204,7 @@ public class TestGUI {
 		story.addObserver(comp);
         JScrollPane storyScroll = new JScrollPane(comp);
         mainP.add( storyScroll, BorderLayout.CENTER);
-        StoryC storyControler = new StoryC(story);
+        StoryC storyControler = new StoryC(story, storyFile);
         mainP.add( storyControler._component, BorderLayout.NORTH);
         
         boolean res =  testComponent("GNMaker", mainP);
