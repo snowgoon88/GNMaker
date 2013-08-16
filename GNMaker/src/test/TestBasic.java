@@ -14,6 +14,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import data.Event;
 import data.Perso;
 import data.Story;
+import data.Zorgas;
 import data.converter.PersoConverter;
 import data.converter.StoryConverter;
 
@@ -68,6 +69,15 @@ public class TestBasic {
 			nbPassed++;
 		} else {
 			System.err.println("testStoryXML >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testZorga(args);
+		if (res) {
+			System.out.println("testZorga >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testZorga >> " + res);
 		}
 		
 		// ---------------------
@@ -214,6 +224,83 @@ public class TestBasic {
 						peOri.getDesc().equals(peRead.getDesc()));
 			}
 		}
+		return res;
+	}
+	// Teste la liste d'Orga.
+	boolean testZorga(String[] args ) {
+		boolean res = true;
+		// Création
+		Zorgas zorg = new Zorgas();
+		res = res && (zorg.size() == 0);
+		if (res==false) {
+			System.err.println("testZorga : size<>0 at creation");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		
+		// Ajoute Fab
+		res = res && zorg.add("Fab");
+		if (res==false) {
+			System.err.println("testZorga : Cannot add Fab");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		res = res && (zorg.size() == 1);
+		if (res==false) {
+			System.err.println("testZorga : size<>1 after one addition");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		// Ré-Ajoute Fab
+		res = res && !zorg.add("Fab");
+		if (res==false) {
+			System.err.println("testZorga : Added Fab twice");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		res = res && (zorg.size() == 1);
+		if (res==false) {
+			System.err.println("testZorga : size<>1 after one readdition");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		
+		// Ajoute alain
+		res = res && zorg.add("alain");
+		if (res==false) {
+			System.err.println("testZorga : Cannot add alain");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		res = res && (zorg.size() == 2);
+		if (res==false) {
+			System.err.println("testZorga : size<>2 after two addition");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		// Should be first
+		res = res && (zorg.get(0).equals("Alain"));
+		if (res==false) {
+			System.err.println("testZorga : Alain not added first or not as Alain");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		// Ré-Ajoute ALAIN
+		res = res && !zorg.add("ALAIN");
+		if (res==false) {
+			System.err.println("testZorga : Added Alain twice");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		res = res && (zorg.size() == 2);
+		if (res==false) {
+			System.err.println("testZorga : size<>2 after two readdition");
+			System.err.println(zorg.SDump());
+			return res;
+		}
+		
+		System.out.println("****** Zorgas ******\n"+zorg.SDump());
+		
 		return res;
 	}
 	
