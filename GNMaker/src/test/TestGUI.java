@@ -8,6 +8,7 @@ import gui.JPersoEvent;
 import gui.JPersoEventList;
 import gui.JStory;
 import gui.StoryC;
+import gui.ZorgasV;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -17,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import com.thoughtworks.xstream.XStream;
@@ -215,6 +217,9 @@ public class TestGUI {
         System.out.println(story.SDump());
         
         
+        // Tabbed Panel
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+        
 		// Main Panel
 		JPanel mainP = new JPanel( new BorderLayout());
 		JStory comp = new JStory(story);
@@ -223,8 +228,12 @@ public class TestGUI {
         mainP.add( storyScroll, BorderLayout.CENTER);
         StoryC storyControler = new StoryC(story, storyFile);
         mainP.add( storyControler._component, BorderLayout.NORTH);
+        tabbedPane.addTab("Intrigue", mainP);
         
-        boolean res =  testComponent("GNMaker", mainP);
+        ZorgasV zorgaP = new ZorgasV(story._zorgas);
+        tabbedPane.addTab("Zorga", zorgaP);
+        
+        boolean res =  testComponent("GNMaker", tabbedPane);
 		System.out.println("End of testApplication");
 		return res;
 	}

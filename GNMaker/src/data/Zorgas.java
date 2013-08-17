@@ -63,6 +63,20 @@ public class Zorgas extends Observable {
 		return _nextId-1;
 	}
 	/**
+	 * Détruit un Orga associé à cet Id.
+	 * 
+	 * @param zorgaId
+	 * @return Valeur détruite ou null si pas de valeur associée.
+	 */
+	public String remove(int zorgaId) {
+		String old = _zorgas.remove(zorgaId);
+		if (old != null ) {
+			setChanged();
+			notifyObservers(zorgaId+"_del");
+		}
+		return old;
+	}
+	/**
 	 * Vide la liste et prévient les Observers pour chaque Orga détruit.
 	 * @see java.util.List#clear()
 	 */
@@ -72,6 +86,7 @@ public class Zorgas extends Observable {
 			notifyObservers(key+"_del");
 		}
 		_zorgas.clear();
+		_nextId = 0;
 	}
 
 	/** 
@@ -86,6 +101,9 @@ public class Zorgas extends Observable {
 	 * @return Valeur précédente ou null (si pas de valeur précédente).
 	 */
 	public String set(int index, String orga) {
+		if (_nextId <= index) {
+			_nextId = index+1;
+		}
 		setChanged();
 		notifyObservers(index+"_set");
 		return _zorgas.put(index, orga);
