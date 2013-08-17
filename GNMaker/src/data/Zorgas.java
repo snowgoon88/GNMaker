@@ -16,6 +16,7 @@ import java.util.Set;
  * <li>zorga_set_i</li>
  * <li>zorga_deleted</li>
  * <li>zorga_clear</li>
+ * 
  * @author snowgoon88@gmail.com
  */
 public class Zorgas extends Observable {
@@ -62,7 +63,7 @@ public class Zorgas extends Observable {
 		return _nextId-1;
 	}
 	/**
-	 * Vide la liste et prévient les Observers.
+	 * Vide la liste et prévient les Observers pour chaque Orga détruit.
 	 * @see java.util.List#clear()
 	 */
 	public void clear() {
@@ -97,6 +98,10 @@ public class Zorgas extends Observable {
 //		return _zorgas.indexOf(o);
 //	}
 
+	/**
+	 * Renvoie un Set avec l'ensemble des données de _zorgas.
+	 * @return
+	 */
 	public Set<Entry<Integer, String>> entrySet() {
 		return _zorgas.entrySet();
 	}
