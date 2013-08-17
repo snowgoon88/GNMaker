@@ -17,6 +17,7 @@ import data.Story;
 import data.Zorgas;
 import data.converter.PersoConverter;
 import data.converter.StoryConverter;
+import data.converter.ZorgasConverter;
 
 /**
  * 
@@ -92,18 +93,24 @@ public class TestBasic {
 	}
 	
 	boolean testCreationPerso(String[] args) {
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		Zorgas zorgas = new Zorgas();
+		int idAlain = zorgas.add("Alain");
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
 		System.out.println(perso1.SDump());
 		return true;
 	}
 	boolean testCreationEvent(String[] args) {
+		Zorgas zorgas = new Zorgas();
+		int idAlain = zorgas.add("Alain");
+		
 		System.out.println("** Event sans Perso **");
 		Event evt1 = new Event(null,
 				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		System.out.println(evt1.SDump());
 		
 		System.out.println("** Event avec ValeriB **");
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
 		// First time 
 		evt1.addPerso(perso1);
 		System.out.println(evt1.SDump());
@@ -124,7 +131,10 @@ public class TestBasic {
 	}
 	// Read and Write Perso to XML
 	boolean testPersoXML( String[] args) {
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		Zorgas zorgas = new Zorgas();
+		int idAlain = zorgas.add("Alain");
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
 		
 		XStream xStream = new XStream(new DomDriver());
         xStream.registerConverter(new PersoConverter());
@@ -145,6 +155,7 @@ public class TestBasic {
         
         
         Perso persoRead = (Perso) xStream.fromXML(new File("tmp/perso.xml"));
+        persoRead.setZorgaList(zorgas);
         System.out.println("** Perso from XML **");
         System.out.println(persoRead.SDump());
         
@@ -155,8 +166,12 @@ public class TestBasic {
 	// Save and Load, then compare.
 	boolean testStoryXML(String[] args) {
 		Story story = new Story();
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
-		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
+		Zorgas zorgas = new Zorgas();
+		int idAlain = zorgas.add("Alain");
+		story._zorgas = zorgas;
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
 		story._perso.add(perso1);
 		story._perso.add(perso2);
 		Event evt1 = new Event(story,
@@ -175,6 +190,7 @@ public class TestBasic {
 		XStream xStream = new XStream(new DomDriver());
 		xStream.registerConverter(new StoryConverter());
         xStream.registerConverter(new PersoConverter());
+        xStream.registerConverter(new ZorgasConverter());
         xStream.alias("story", Story.class);
         System.out.println(xStream.toXML(story));
         
@@ -231,74 +247,55 @@ public class TestBasic {
 		boolean res = true;
 		// Création
 		Zorgas zorg = new Zorgas();
-		res = res && (zorg.size() == 0);
-		if (res==false) {
-			System.err.println("testZorga : size<>0 at creation");
-			System.err.println(zorg.SDump());
-			return res;
-		}
 		
 		// Ajoute Fab
-		res = res && zorg.add("Fab");
+		int idFab = zorg.add("Fab");
+		res = res && ( idFab >= 0);
 		if (res==false) {
 			System.err.println("testZorga : Cannot add Fab");
 			System.err.println(zorg.SDump());
 			return res;
 		}
-		res = res && (zorg.size() == 1);
-		if (res==false) {
-			System.err.println("testZorga : size<>1 after one addition");
-			System.err.println(zorg.SDump());
-			return res;
-		}
+
 		// Ré-Ajoute Fab
-		res = res && !zorg.add("Fab");
+		res = res && (zorg.add("Fab") == -1);
 		if (res==false) {
 			System.err.println("testZorga : Added Fab twice");
 			System.err.println(zorg.SDump());
 			return res;
 		}
-		res = res && (zorg.size() == 1);
-		if (res==false) {
-			System.err.println("testZorga : size<>1 after one readdition");
-			System.err.println(zorg.SDump());
-			return res;
-		}
 		
 		// Ajoute alain
-		res = res && zorg.add("alain");
+		int idAlain = zorg.add("alain");
+		res = res && ( idAlain >= 0);
 		if (res==false) {
 			System.err.println("testZorga : Cannot add alain");
 			System.err.println(zorg.SDump());
 			return res;
 		}
-		res = res && (zorg.size() == 2);
+		
+		// Corrige Alain
+		String resAlain = zorg.set(idAlain, "Alain");
+		res = res && (resAlain.equals("alain"));
 		if (res==false) {
-			System.err.println("testZorga : size<>2 after two addition");
+			System.err.println("testZorga : alain not corrected");
 			System.err.println(zorg.SDump());
 			return res;
 		}
-		// Should be first
-		res = res && (zorg.get(0).equals("Alain"));
+		// Should be corrected
+		res = res && (zorg.get(idAlain).equals("Alain"));
 		if (res==false) {
-			System.err.println("testZorga : Alain not added first or not as Alain");
+			System.err.println("testZorga : alain not corrected into Alain");
 			System.err.println(zorg.SDump());
 			return res;
 		}
-		// Ré-Ajoute ALAIN
-		res = res && !zorg.add("ALAIN");
+		// Ré-Ajoute Alain
+		res = res && (zorg.add("Alain") == -1);
 		if (res==false) {
 			System.err.println("testZorga : Added Alain twice");
 			System.err.println(zorg.SDump());
 			return res;
-		}
-		res = res && (zorg.size() == 2);
-		if (res==false) {
-			System.err.println("testZorga : size<>2 after two readdition");
-			System.err.println(zorg.SDump());
-			return res;
-		}
-		
+		}		
 		System.out.println("****** Zorgas ******\n"+zorg.SDump());
 		
 		return res;

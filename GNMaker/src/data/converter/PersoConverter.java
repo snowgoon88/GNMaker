@@ -43,7 +43,7 @@ public class PersoConverter implements Converter {
 		
 		// _zorga
 		writer.startNode("zorga");
-		writer.setValue(perso.getZorga());
+		writer.setValue(Integer.toString(perso.getZorgaId()));
 		writer.endNode();
 	}
 
@@ -51,24 +51,23 @@ public class PersoConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 		
-		Perso perso = new Perso("","","");
         
 		// _name
 		reader.moveDown();
-        perso.setName(reader.getValue());
+        String name = reader.getValue();
         reader.moveUp();
         
         // _player
         reader.moveDown();
-        perso.setPlayer(reader.getValue());
+        String player = reader.getValue();
         reader.moveUp();
         
         // _zorga
         reader.moveDown();
-        perso.setZorga(reader.getValue());
+        int zorgaId = Integer.parseInt(reader.getValue());
         reader.moveUp();
         
-        return perso;
+        return new Perso(name, player, zorgaId);
 	}
 
 }

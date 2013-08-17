@@ -12,6 +12,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import data.Event;
 import data.Perso;
 import data.Story;
+import data.Zorgas;
 
 /**
  * Convert a Story to my "custom" XML using xStream.
@@ -42,6 +43,11 @@ public class StoryConverter implements Converter {
 		// Write name
 		writer.startNode("name");
 		writer.setValue(story.getName());
+		writer.endNode();
+		
+		// Write the Zorgas
+		writer.startNode("zorga_list");
+		context.convertAnother(story._zorgas);
 		writer.endNode();
 		
 		// Write the ArrayList<People>
@@ -101,6 +107,11 @@ public class StoryConverter implements Converter {
 		story.setName(reader.getValue());
 		reader.moveUp();
 		
+		// ListZorga
+		reader.moveDown();
+		story._zorgas = (Zorgas)context.convertAnother(story, Zorgas.class);
+		reader.moveUp();
+		
 		// Perso
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
@@ -108,6 +119,7 @@ public class StoryConverter implements Converter {
 				@SuppressWarnings("unused")
 				int id = Integer.parseInt(reader.getAttribute("id"));
 				Perso pers = (Perso)context.convertAnother(story, Perso.class);
+				pers.setZorgaList(story._zorgas);
 				story._perso.add( pers );
 			}
 			else {
@@ -144,8 +156,6 @@ public class StoryConverter implements Converter {
 			}
 			reader.moveUp();
 		}
-		
-		// Evt
 		
 		
 		return story;

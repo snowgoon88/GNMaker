@@ -8,6 +8,7 @@ import java.util.Observable;
 
 /**
  * A Story is made of:
+ * <li>List of Zorga</li>
  * <li>List of Perso</li>
  * <li>List of Event</li>
  * 
@@ -25,6 +26,8 @@ public class Story extends Observable {
 	public ArrayList<Event> _story;
 	/** Story is about a list of People */
 	public ArrayList<Perso> _perso;
+	/** Story is made by a List of Zorga */
+	public Zorgas _zorgas;
 	
 	/** Story has been modified ? */
 	boolean _fgModified;
@@ -38,6 +41,7 @@ public class Story extends Observable {
 		_name = "A Story with no Name";
 		_story = new ArrayList<Event>();
 		_perso = new ArrayList<Perso>();
+		_zorgas = new Zorgas();
 		_fgModified = false;
 	}
 
@@ -78,6 +82,7 @@ public class Story extends Observable {
 	public String SDump() {
 		StringBuffer str = new StringBuffer();
 		str.append( "Story : "+_name+"\n");
+		str.append( "Zorgas : "+_zorgas.SDump()+"\n");
 		for (Perso p : _perso) {
 			str.append( p.SDump()+"\n");
 		}
@@ -109,6 +114,7 @@ public class Story extends Observable {
 	 */
 	public boolean isModified() {
 		boolean res = _fgModified;
+		res = res || _zorgas.isModified();
 		for (Perso perso : _perso) {
 			res = res || perso.isModified();
 		}
@@ -123,6 +129,7 @@ public class Story extends Observable {
 	 */
 	public void setModified( boolean flag ) {
 		_fgModified = flag;
+		_zorgas.setModified(flag);
 		for (Perso perso : _perso) {
 			perso.setModified(flag);
 		}

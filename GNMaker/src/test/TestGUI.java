@@ -27,8 +27,10 @@ import Inspiration.Expandable;
 import data.Event;
 import data.Perso;
 import data.Story;
+import data.Zorgas;
 import data.converter.PersoConverter;
 import data.converter.StoryConverter;
+import data.converter.ZorgasConverter;
 
 /**
  * @author dutech
@@ -115,9 +117,14 @@ public class TestGUI {
 	//               click droit => popup avec delete (+ confirm) ou change status
 	//               et info.
 	boolean testJPersoEvent(String[] args) {
+		Zorgas zorgas = new Zorgas();
+		int idAlain = zorgas.add("Alain");
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+		
 		Event evt1 = new Event(null,
 				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
+		
 		JPersoEvent comp = new JPersoEvent(perso1, evt1);
 
 		boolean res =  testComponent("Basic JEventPerso", comp);
@@ -125,12 +132,16 @@ public class TestGUI {
 		return res;
 	}
 	boolean testJPersoEventList(String[] args) {
+		Zorgas zorgas = new Zorgas();
+		int idAlain = zorgas.add("Alain");
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+		
 		Event evt1 = new Event(null,
 				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
 		evt1.addPerso(perso1);
 		evt1._perso.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
-		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
 		evt1.addPerso(perso2);
 		
 		JPersoEventList persoList = new JPersoEventList( evt1 );
@@ -144,12 +155,16 @@ public class TestGUI {
 	// Corps
 	// Liste <Perso>*
 	boolean testJEvent(String[] args) {
+		Zorgas zorgas = new Zorgas();
+		int idAlain = zorgas.add("Alain");
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+		
 		Event evt1 = new Event(null,
 				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", "Alain");
 		evt1.addPerso(perso1);
 		evt1._perso.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
-		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", "Alain");
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
 		evt1.addPerso(perso2);
 		JEvent comp = new JEvent( evt1);
 		
@@ -171,6 +186,7 @@ public class TestGUI {
 		XStream xStream = new XStream(new DomDriver());
 		xStream.registerConverter(new StoryConverter());
         xStream.registerConverter(new PersoConverter());
+        xStream.registerConverter(new ZorgasConverter());
         xStream.alias("story", Story.class);
         
 		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
@@ -190,6 +206,7 @@ public class TestGUI {
 		XStream xStream = new XStream(new DomDriver());
 		xStream.registerConverter(new StoryConverter());
         xStream.registerConverter(new PersoConverter());
+        xStream.registerConverter(new ZorgasConverter());
         xStream.alias("story", Story.class);
         
         File storyFile = new File("tmp/story_test.xml");
