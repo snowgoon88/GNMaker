@@ -123,7 +123,9 @@ public class Perso implements Observer {
 	 * @param zorga the _zorga to set
 	 */
 	void updateZorga() {
+		//System.out.println("Perso.updateZorga() : _zorgaId="+_zorgaId);
 		if (_zorgaId >= 0) {
+			//System.out.println("Perso.updateZorga() : "+_zorgaList.get(_zorgaId));
 			_zorga = _zorgaList.get(_zorgaId);
 		}
 		else {
@@ -154,27 +156,28 @@ public class Perso implements Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg != null) {
-			if (arg instanceof String) {
-				StringTokenizer sTok = new StringTokenizer((String)arg, "_");
-				int id = Integer.parseInt(sTok.nextToken());
-				// Intéressant si c'est _zorgaId
-				if (id == _zorgaId) {
-					String command = sTok.nextToken();
-					switch (command) {
-					case "set":
-						updateZorga();
-						break;
-					case "del":
-						_zorgaId = -1;
-						updateZorga();
-						break;
-					default:
-						break;
-					}
-				}
+//		System.out.println("Perso.update() : o is a "+o.getClass().getName());
+//		System.out.println("Perso.update() : arg="+arg);
+		// Observe seulement un Zorgas => arg is String
+		StringTokenizer sTok = new StringTokenizer((String)arg, "_");
+		int id = Integer.parseInt(sTok.nextToken());
+		// Intéressant si c'est _zorgaId
+		if (id == _zorgaId) {
+			String command = sTok.nextToken();
+			switch (command) {
+			case "set":
+				//System.out.println("Perso.update() : SET with id="+id);
+				updateZorga();
+				break;
+			case "del":
+				//System.out.println("Perso.update() : DEL with id="+id);
+				_zorgaId = -1;
+				updateZorga();
+				break;
+			default:
+				//System.out.println("Perso.update() : "+command+" with id="+id);
+				break;
 			}
-
 		}
 	}
 }

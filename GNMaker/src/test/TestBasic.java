@@ -80,6 +80,15 @@ public class TestBasic {
 		} else {
 			System.err.println("testZorga >> " + res);
 		}
+		// -------
+		nbTest++;
+		res = testZorga2Perso(args);
+		if (res) {
+			System.out.println("testZorga2Perso >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testZorga2Perso >> " + res);
+		}
 		
 		// ---------------------
 		if (nbTest > nbPassed) {
@@ -300,7 +309,23 @@ public class TestBasic {
 		
 		return res;
 	}
-	
+	boolean testZorga2Perso(String[] args) {
+		System.out.println("****** Zorga2Perso ******");
+		Zorgas zorgas = new Zorgas();
+		int idAlain = zorgas.add("Alain");
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+		
+		zorgas.set( idAlain, "AlainChef");
+		boolean res = perso1.getZorga().equals("AlainChef");
+		if (res==false) {
+			System.err.println("testZorga2Perso : Alain not modified");
+			System.err.println(perso1.SDump());
+			System.err.println(zorgas.SDump());
+			return res;
+		}
+		return true;
+	}
 	/**
 	 * @param args
 	 */

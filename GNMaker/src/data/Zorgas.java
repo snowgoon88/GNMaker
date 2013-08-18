@@ -49,6 +49,7 @@ public class Zorgas extends Observable {
 	 * Vérifie que l'Orga n'est pas déjà dans la liste.
 	 * 
 	 * @return id du nouvel orga ou -1
+	 * @toObserver : id_add
 	 */
 	public int add(String orga) {
 		// Existe déjà ?
@@ -67,6 +68,7 @@ public class Zorgas extends Observable {
 	 * 
 	 * @param zorgaId
 	 * @return Valeur détruite ou null si pas de valeur associée.
+	 * @toObserver : id_del
 	 */
 	public String remove(int zorgaId) {
 		String old = _zorgas.remove(zorgaId);
@@ -79,14 +81,17 @@ public class Zorgas extends Observable {
 	/**
 	 * Vide la liste et prévient les Observers pour chaque Orga détruit.
 	 * @see java.util.List#clear()
+	 * @toObserver : id_del
 	 */
 	public void clear() {
-		for (Integer key : _zorgas.keySet()) {
+		Set<Integer> keys = _zorgas.keySet();
+		_zorgas.clear();
+		_nextId = 0;
+		
+		for (Integer key : keys) {
 			setChanged();
 			notifyObservers(key+"_del");
 		}
-		_zorgas.clear();
-		_nextId = 0;
 	}
 
 	/** 
@@ -99,14 +104,16 @@ public class Zorgas extends Observable {
 	 * AJoute ou modifie la valeur associée à l'index.
 	 * 
 	 * @return Valeur précédente ou null (si pas de valeur précédente).
+	 * @toObserver : id_set
 	 */
 	public String set(int index, String orga) {
+		String res = _zorgas.put(index, orga);
 		if (_nextId <= index) {
 			_nextId = index+1;
 		}
 		setChanged();
 		notifyObservers(index+"_set");
-		return _zorgas.put(index, orga);
+		return res;
 	}
 
 //	/**
