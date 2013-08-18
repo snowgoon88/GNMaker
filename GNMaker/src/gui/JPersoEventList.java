@@ -29,6 +29,7 @@ import net.miginfocom.swing.MigLayout;
 
 import data.Event;
 import data.Event.PersoEvent;
+import data.Perso;
 
 /**
  * Un JPanel pour lister les différents PersoEvent. Viewer de (MVC).
@@ -120,7 +121,7 @@ public class JPersoEventList implements Observer {
 		for (PersoEvent p : _evt._perso.values()) {
 			JPersoEvent persoBtn = new JPersoEvent(p._perso, _evt);
 			_persoPanel.add( persoBtn );
-			JLabel nameLabel = new JLabel(p._perso.SDump());
+			PersoLabel nameLabel = new PersoLabel(p._perso.SDump(), p._perso);
 			_nameLabel.add(nameLabel);
 			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
@@ -157,7 +158,7 @@ public class JPersoEventList implements Observer {
 			JPersoEvent persoBtn = new JPersoEvent(pe._perso, _evt);
 			_persoPanel.add( persoBtn );
 			
-			JLabel nameLabel = new JLabel(pe._perso.SDump());
+			PersoLabel nameLabel = new PersoLabel(pe._perso.SDump(), pe._perso);
 			_nameLabel.add(nameLabel);
 			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
@@ -245,6 +246,33 @@ public class JPersoEventList implements Observer {
 		}
 		_component.revalidate();
 	}
+	
+	@SuppressWarnings("serial")
+	class PersoLabel extends JLabel implements Observer {
+		Perso _pers;
+		/**
+		 * Label avec un Texte
+		 * @param text
+		 */
+		public PersoLabel(String text, Perso pers) {
+			super(text);
+			_pers = pers;
+			_pers.addObserver(this);
+		}
+
+		/**
+		 * Listen to Perso
+		 */
+		@Override
+		public void update(Observable o, Object arg) {
+			String command = (String) arg;
+			if (command.equals("set")) {
+				this.setText(this._pers.SDump());
+			}
+		}
+		
+	}
+	
 	// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
 	@SuppressWarnings("serial")
 	/**

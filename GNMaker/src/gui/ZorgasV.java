@@ -82,6 +82,7 @@ public class ZorgasV extends JPanel implements Observer {
 	
 	@Override
 	public void update(Observable o, Object arg) {
+		// Observe Zorgas
 		if (arg != null) {
 			if (arg instanceof String) {
 				StringTokenizer sTok = new StringTokenizer((String)arg, "_");
@@ -96,6 +97,8 @@ public class ZorgasV extends JPanel implements Observer {
 					// Action Listener : when ENTER pressed.
 					zorgaText.addActionListener( new SetActionListener(id, zorgaText));
 					_zorgaPanel.add( zorgaText, "wrap");
+					this.revalidate();
+					this.repaint();
 				}
 				// "del" ou "clean" => reconstruit tout.
 				else if (command.equals("del") || command.equals("clear")) {
@@ -112,6 +115,8 @@ public class ZorgasV extends JPanel implements Observer {
 						zorgaText.addActionListener( new SetActionListener(entry.getKey(), zorgaText));
 						_zorgaPanel.add( zorgaText, "wrap");
 					}
+					this.revalidate();
+					this.repaint();
 				}
 			}
 		}
@@ -121,33 +126,34 @@ public class ZorgasV extends JPanel implements Observer {
 	 * Détruit un Zorga Particulier.
 	 */
 	class DelAction extends AbstractAction {
-		int _zorgaId;
+		int _delId;
 		
-		public DelAction(int zoraId) {
+		public DelAction(int zorgaId) {
 			super("DEL", null);
 			putValue(SHORT_DESCRIPTION, "Détruit ce Zorga.");
 			putValue(MNEMONIC_KEY, null);
+			_delId = zorgaId;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_zorgas.remove(_zorgaId);
+			_zorgas.remove(_delId);
 		}
 	}
 	/**
 	 * Modifie un Zorga (après appuis ENTER).
 	 */
 	class SetActionListener implements ActionListener {
-		int _zorgaId;
+		int _setId;
 		JTextField _textField;
 		
 		public SetActionListener(int zorgaId, JTextField textField) {
-			this._zorgaId = zorgaId;
+			this._setId = zorgaId;
 			this._textField = textField;
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_zorgas.set( _zorgaId, _textField.getText());
+			_zorgas.set( _setId, _textField.getText());
 		}
 	}
 	

@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Observable;
+import java.util.Observer;
 
 
 import javax.swing.AbstractAction;
@@ -30,7 +32,7 @@ import data.Perso;
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class JPersoEvent extends JButton {
+public class JPersoEvent extends JButton implements Observer {
 	Event _evt;
 	Perso _pers;
 	MyJPopupMenu _popup;
@@ -50,6 +52,8 @@ public class JPersoEvent extends JButton {
 		_pers = pers;
 		
 		buildGUI();
+		
+		_pers.addObserver(this);
 	}
 	
 	/**
@@ -173,5 +177,13 @@ public class JPersoEvent extends JButton {
 		public void actionPerformed(ActionEvent e) {
 			_evt.removePerso(_perso);
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// Observe un Perso
+		// arg = "set"
+		this.setName(_pers.getName());
+		_popup.update();
 	}
 }

@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
  * 
  * @author nowgoon88@gmail.com
  */
-public class Perso implements Observer {
+public class Perso extends Observable implements Observer {
 	
 	/** Nom du Perso */
 	String _name;
@@ -88,9 +88,12 @@ public class Perso implements Observer {
 	}
 	/**
 	 * @param name the _name to set
+	 * @toObserver : "set"
 	 */
 	public void setName(String name) {
 		this._name = name;
+		setChanged();
+		notifyObservers("set");
 		_fgModified = true;
 	}
 	/**
@@ -101,9 +104,12 @@ public class Perso implements Observer {
 	}
 	/**
 	 * @param player the _player to set
+	 * @toObserver : "set"
 	 */
 	public void setPlayer(String player) {
 		this._player = player;
+		setChanged();
+		notifyObservers("set");
 		_fgModified = true;
 	}
 	public int getZorgaId() {
@@ -112,6 +118,8 @@ public class Perso implements Observer {
 	public void setZorgaList( Zorgas zorgaList ) {
 		this._zorgaList = zorgaList;
 		updateZorga();
+		// Listen to Zorgas
+		_zorgaList.addObserver(this);
 	}
 	/**
 	 * @return the _zorga
@@ -121,6 +129,7 @@ public class Perso implements Observer {
 	}
 	/**
 	 * @param zorga the _zorga to set
+	 * @toObserver : "set"
 	 */
 	void updateZorga() {
 		//System.out.println("Perso.updateZorga() : _zorgaId="+_zorgaId);
@@ -131,6 +140,8 @@ public class Perso implements Observer {
 		else {
 			_zorga = "---";
 		}
+		setChanged();
+		notifyObservers("set");
 		_fgModified = true;
 	}
 
