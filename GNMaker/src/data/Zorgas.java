@@ -5,6 +5,7 @@ package data;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Set;
 
@@ -12,10 +13,9 @@ import java.util.Set;
  * Maintient une Hash de String, avec un id = key.
  * 
  * Notify Observers:
- * <li>zorga_add_i</li>
- * <li>zorga_set_i</li>
- * <li>zorga_deleted</li>
- * <li>zorga_clear</li>
+ * <li>id_add</li>
+ * <li>id_set</li>
+ * <li>id_del</li>
  * 
  * @author snowgoon88@gmail.com
  */
@@ -116,13 +116,27 @@ public class Zorgas extends Observable {
 		return res;
 	}
 
-//	/**
-//	 * @see java.util.List#indexOf(java.lang.Object)
-//	 */
-//	public int indexOf(String o) {
-//		return _zorgas.indexOf(o);
-//	}
+	/**
+	 * @see java.util.List#indexOf(java.lang.Object)
+	 */
+	public int indexOf(String zorg) {
+		for (Entry<Integer, String> entry : _zorgas.entrySet()) {
+			if (entry.getValue().equals(zorg)) {
+				return entry.getKey();
+			}
+		}
+		return -1;
+	}
 
+	/**
+	 * Renvoie un Array qui contient tous les zorgas.
+	 * @return Object[]
+	 */
+	public Object[] toArray() {
+		Collection<String> res = _zorgas.values();
+		return res.toArray();
+	}
+	
 	/**
 	 * Renvoie un Set avec l'ensemble des données de _zorgas.
 	 * @return

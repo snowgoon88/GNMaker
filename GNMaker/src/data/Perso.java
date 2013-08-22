@@ -115,6 +115,10 @@ public class Perso extends Observable implements Observer {
 	public int getZorgaId() {
 		return _zorgaId;
 	}
+	public void setZorga(String zorgName ) {
+		_zorgaId = _zorgaList.indexOf(zorgName);
+		updateZorga();
+	}
 	public void setZorgaList( Zorgas zorgaList ) {
 		this._zorgaList = zorgaList;
 		updateZorga();

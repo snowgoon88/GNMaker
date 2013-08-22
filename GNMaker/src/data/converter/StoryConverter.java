@@ -3,6 +3,8 @@
  */
 package data.converter;
 
+import java.util.Map.Entry;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -11,6 +13,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import data.Event;
 import data.Perso;
+import data.PersoList;
 import data.Story;
 import data.Zorgas;
 
@@ -50,13 +53,15 @@ public class StoryConverter implements Converter {
 		context.convertAnother(story._zorgas);
 		writer.endNode();
 		
-		// Write the ArrayList<People>
-		for (int i = 0; i < story._perso.size(); i++) {
+		// Write the PersoList
+		writer.startNode("perso_list");
+		for (Entry<Integer, Perso> entry : story._perso.entrySet()) {
 			writer.startNode("perso");
-			writer.addAttribute("id", Integer.toString(i));
-			context.convertAnother(story._perso.get(i));
+			writer.addAttribute("id", Integer.toString(entry.getKey()));
+			context.convertAnother(entry.getValue());
 			writer.endNode();
 		}
+		writer.endNode();
 		
 		// Write the ArrayList<Event>
 		// On ne délègue pas à un éventuel EventConverter car il faut faire le lien
@@ -112,15 +117,28 @@ public class StoryConverter implements Converter {
 		story._zorgas = (Zorgas)context.convertAnother(story, Zorgas.class);
 		reader.moveUp();
 		
-		// Perso
+		// PersoList
+		story._perso = new PersoList(story._zorgas);
+		reader.moveDown();
+		while (reader.hasMoreChildren()) {
+			reader.moveDown();
+			int id = Integer.parseInt(reader.getAttribute("id"));
+			Perso pers = (Perso)context.convertAnother(story, Perso.class);
+			pers.setZorgaList(story._zorgas);
+			story._perso.put(id, pers);
+			reader.moveUp();
+		}
+		reader.moveUp();
+		
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
 			if ("perso".equals(reader.getNodeName())) {
-				@SuppressWarnings("unused")
-				int id = Integer.parseInt(reader.getAttribute("id"));
-				Perso pers = (Perso)context.convertAnother(story, Perso.class);
-				pers.setZorgaList(story._zorgas);
-				story._perso.add( pers );
+//				@SuppressWarnings("unused")
+//				int id = Integer.parseInt(reader.getAttribute("id"));
+//				Perso pers = (Perso)context.convertAnother(story, Perso.class);
+//				pers.setZorgaList(story._zorgas);
+//				story._perso.add( pers );
+				System.err.println("reader=>perso : should not be here");
 			}
 			else {
 				// event

@@ -7,6 +7,7 @@ import gui.JEvent;
 import gui.JPersoEvent;
 import gui.JPersoEventList;
 import gui.JStory;
+import gui.PersoListV;
 import gui.StoryC;
 import gui.ZorgasV;
 
@@ -229,6 +230,9 @@ public class TestGUI {
         StoryC storyControler = new StoryC(story, storyFile);
         mainP.add( storyControler._component, BorderLayout.NORTH);
         tabbedPane.addTab("Intrigue", mainP);
+        
+        PersoListV persoP = new PersoListV(story._perso);
+        tabbedPane.addTab("Perso", persoP);
         
         ZorgasV zorgaP = new ZorgasV(story._zorgas);
         tabbedPane.addTab("Zorga", zorgaP);

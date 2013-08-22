@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map.Entry;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -222,10 +223,10 @@ public class TestBasic {
 		boolean res = true;
 		res = res && story.getName().equals(stRead.getName());
 		// Perso
-		res = res && (story._perso.size() == stRead._perso.size());
-		for (int i = 0; i < story._perso.size(); i++) {
-			Perso pOri = story._perso.get(i);
-			Perso pRead = stRead._perso.get(i);
+		//res = res && (story._perso.size() == stRead._perso.size());
+		for (Entry<Integer, Perso> entry : story._perso.entrySet()) {
+			Perso pOri = entry.getValue();
+			Perso pRead = stRead._perso.get(entry.getKey());
 			res = res && (pOri.getName().equals(pRead.getName()) && 
 	        		pOri.getPlayer().equals(pRead.getPlayer()) &&
 	        		pOri.getZorga().equals(pRead.getZorga()));

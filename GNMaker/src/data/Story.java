@@ -25,7 +25,7 @@ public class Story extends Observable {
 	/** Story is a list of Event */
 	public ArrayList<Event> _story;
 	/** Story is about a list of People */
-	public ArrayList<Perso> _perso;
+	public PersoList _perso;
 	/** Story is made by a List of Zorga */
 	public Zorgas _zorgas;
 	
@@ -40,8 +40,8 @@ public class Story extends Observable {
 	public Story() {
 		_name = "A Story with no Name";
 		_story = new ArrayList<Event>();
-		_perso = new ArrayList<Perso>();
 		_zorgas = new Zorgas();
+		_perso = new PersoList(_zorgas);
 		_fgModified = false;
 	}
 
@@ -83,9 +83,7 @@ public class Story extends Observable {
 		StringBuffer str = new StringBuffer();
 		str.append( "Story : "+_name+"\n");
 		str.append( "Zorgas : "+_zorgas.SDump()+"\n");
-		for (Perso p : _perso) {
-			str.append( p.SDump()+"\n");
-		}
+		str.append( "Persos : "+ _perso.SDump()+ "\n");
 		for (Event e : _story) {
 			str.append( e.SDump()+"\n");
 		}
@@ -115,9 +113,7 @@ public class Story extends Observable {
 	public boolean isModified() {
 		boolean res = _fgModified;
 		res = res || _zorgas.isModified();
-		for (Perso perso : _perso) {
-			res = res || perso.isModified();
-		}
+		res = res || _perso.isModified();
 		for (Event evt : _story) {
 			res = res || evt.isModified();
 		}
@@ -130,9 +126,7 @@ public class Story extends Observable {
 	public void setModified( boolean flag ) {
 		_fgModified = flag;
 		_zorgas.setModified(flag);
-		for (Perso perso : _perso) {
-			perso.setModified(flag);
-		}
+		_perso.setModified(flag);
 		for (Event evt : _story) {
 			evt.setModified(flag);
 		}
