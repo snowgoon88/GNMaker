@@ -84,14 +84,11 @@ public class Zorgas extends Observable {
 	 * @toObserver : id_del
 	 */
 	public void clear() {
-		Set<Integer> keys = _zorgas.keySet();
+		//Set<Integer> keys = _zorgas.keySet();
 		_zorgas.clear();
 		_nextId = 0;
-		
-		for (Integer key : keys) {
-			setChanged();
-			notifyObservers(key+"_del");
-		}
+		setChanged();
+		notifyObservers("0_del");
 	}
 
 	/** 

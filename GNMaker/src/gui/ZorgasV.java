@@ -3,6 +3,7 @@
  */
 package gui;
 
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
@@ -26,7 +27,7 @@ import data.Zorgas;
 
 /**
  * Affiche tous les Zorgas comme une liste de DEL+JTextField pour les éditer.
- * TODO : bouton ADD, CLEAR, DUMP en haut ?
+ * bouton ADD, CLEAR, DUMP en haut ?
  * 
  * @author snowgoon88@gmail.com
  */
@@ -58,6 +59,8 @@ public class ZorgasV extends JPanel implements Observer {
 		btnPanel.add( addBtn );
 		JButton dumpBtn = new JButton( new DumpAllAction());
 		btnPanel.add( dumpBtn );
+		JButton clearBtn = new JButton( new ClearAction());
+		btnPanel.add( clearBtn );
 		
 		MigLayout zorgasLayout = new MigLayout(
 				"debug, hidemode 3", // Layout Constraints
@@ -101,7 +104,7 @@ public class ZorgasV extends JPanel implements Observer {
 					this.repaint();
 				}
 				// "del" ou "clean" => reconstruit tout.
-				else if (command.equals("del") || command.equals("clear")) {
+				else if (command.equals("del") || command.equals("clear")){
 					_zorgaPanel.removeAll();
 					JButton delBtn;
 					JTextField zorgaText;
@@ -189,6 +192,22 @@ public class ZorgasV extends JPanel implements Observer {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("***** DumpALLAction *************");
 			System.out.println(_zorgas.SDump());
+		}
+	}
+	/**
+	 * Enlève tous les Zorgas.
+	 */
+	public class ClearAction extends AbstractAction {
+		
+		public ClearAction() {
+			super("Vide", null);
+			putValue(SHORT_DESCRIPTION, "Enlève tous les Zorgas.");
+			putValue(MNEMONIC_KEY, null);
+		}	
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_zorgas.clear();
 		}
 	}
 	
