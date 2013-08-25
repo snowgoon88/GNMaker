@@ -31,7 +31,7 @@ import data.PersoList;
  * Liste de DEL+Name+Player+Zorga (as JComboBox)
  * Chaque ligne observe un Perso
  * JComboBox observe Zorgas
- * TODO : ADD, CLEAR, DUMP
+ * ADD, CLEAR, DUMP
  * 
  * @author snowgoon88@gmail.com
  */
@@ -51,6 +51,7 @@ public class PersoListV extends JPanel implements Observer {
 	public PersoListV(PersoList perso) {
 		super();
 		this._perso = perso;
+		_perso.addObserver(this);
 		
 		buildGUI();
 	}
@@ -65,6 +66,8 @@ public class PersoListV extends JPanel implements Observer {
 		btnPanel.add( addBtn );
 		JButton dumpBtn = new JButton( new DumpAllAction());
 		btnPanel.add( dumpBtn );
+		JButton clearBtn = new JButton( new ClearAction());
+		btnPanel.add( clearBtn );
 		
 		MigLayout persoLayout = new MigLayout(
 				"debug, hidemode 3,flowy", // Layout Constraints
@@ -98,8 +101,9 @@ public class PersoListV extends JPanel implements Observer {
 			this.revalidate();
 			this.repaint();
 		}
-		// "del" ou "clean" => reconstruit tout.
+		// "del" ou "clear" => reconstruit tout.
 		else if (command.equals("del") || command.equals("clear")) {
+			System.out.println("PersoListV.update() : "+command);
 			_listPanel.removeAll();
 			for (Entry<Integer, Perso> entry : _perso.entrySet()) {
 				PersoPanel pPanel = new PersoPanel(entry.getKey(), entry.getValue());
@@ -272,6 +276,22 @@ public class PersoListV extends JPanel implements Observer {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("***** DumpALLAction *************");
 			System.out.println(_perso.SDump());
+		}
+	}
+	/**
+	 * Enlève tous les Perso.
+	 */
+	public class ClearAction extends AbstractAction {
+		
+		public ClearAction() {
+			super("Vide", null);
+			putValue(SHORT_DESCRIPTION, "Enlève tous les Persos.");
+			putValue(MNEMONIC_KEY, null);
+		}	
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_perso.clear();
 		}
 	}
 	

@@ -15,6 +15,7 @@ import java.util.Map.Entry;
  * Notify Observers:
  * <li>id_add</li>
  * <li>id_del</li>
+ * <li>0_clear</li>
  * 
  * @author snowgoon88@gmail.com
  */
@@ -96,14 +97,16 @@ public class PersoList extends Observable {
 	 * @toObserver : id_del
 	 */
 	public void clear() {
-		Set<Integer> keys = _persoList.keySet();
-		_persoList.clear();
-		_nextId = 0;
+		// TODO Vérifier, une fois qu'on a Story qui Observe _persoList, que
+		// TODO c'est bien utile de différencier les Remove.
 		
-		for (Integer key : keys) {
+		Object[] keys = _persoList.keySet().toArray();
+		for (int i=0; i < keys.length; i++) {
+			_persoList.remove((int) keys[i]);
 			setChanged();
-			notifyObservers(key+"_del");
+			notifyObservers((int) keys[i]+"_del");
 		}
+		_nextId = 0;
 	}
 	
 	/** 
