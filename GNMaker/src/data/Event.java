@@ -11,7 +11,7 @@ import java.util.Observable;
  * <li>String: Un Body</li>
  * <li>HashMap(Perso) : une liste de PersoxPointDeVuexBoolean (ok, todo) (</li>
  * 
- * 
+ * Should listen to Perso
  * @author snowgoon88@gmail.com
  */
 public class Event extends Observable {

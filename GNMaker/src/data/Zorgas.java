@@ -3,11 +3,16 @@
  */
 package data;
 
+
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Collection;
 import java.util.Observable;
 import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * Maintient une Hash de String, avec un id = key.
@@ -27,6 +32,9 @@ public class Zorgas extends Observable {
 	int _nextId = 0;
 	/** Zorgas has been modified ? */
 	boolean _fgModified;
+	
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(Zorgas.class.getName());
 	
 	/**
 	 * Création d'une liste d'Orga vide.
@@ -71,11 +79,11 @@ public class Zorgas extends Observable {
 	 * @toObserver : id_del
 	 */
 	public String remove(int zorgaId) {
+		// Il est important de prévenir AVANT de détruire (pour les mise à jour potentielles)
+		logger.debug(zorgaId+"_del");
+		setChanged();
+		notifyObservers(zorgaId+"_del");
 		String old = _zorgas.remove(zorgaId);
-		if (old != null ) {
-			setChanged();
-			notifyObservers(zorgaId+"_del");
-		}
 		return old;
 	}
 	/**
@@ -84,11 +92,18 @@ public class Zorgas extends Observable {
 	 * @toObserver : id_del
 	 */
 	public void clear() {
-		//Set<Integer> keys = _zorgas.keySet();
+		Set<Integer> keys = _zorgas.keySet();
+		
+		//Vérifier qu'on en tien compte
+		
 		_zorgas.clear();
 		_nextId = 0;
-		setChanged();
-		notifyObservers("0_del");
+		
+		for (Integer index : keys) {
+			logger.debug(index+"_del");
+			setChanged();
+			notifyObservers(index+"_del");	
+		}
 	}
 
 	/** 

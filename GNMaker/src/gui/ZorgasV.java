@@ -21,6 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.miginfocom.swing.MigLayout;
 
 import data.Zorgas;
@@ -38,6 +41,9 @@ public class ZorgasV extends JPanel implements Observer {
 	
 	/** Panel pour les Zorgas */
 	MyPanel _zorgaPanel;
+	
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(ZorgasV.class.getName());
 	
 	/**
 	 * @param _zorgas
@@ -85,6 +91,8 @@ public class ZorgasV extends JPanel implements Observer {
 	
 	@Override
 	public void update(Observable o, Object arg) {
+		// Log
+		logger.debug("o is a "+o.getClass().getName()+ " arg="+arg);
 		// Observe Zorgas
 		if (arg != null) {
 			if (arg instanceof String) {
@@ -103,20 +111,22 @@ public class ZorgasV extends JPanel implements Observer {
 					this.revalidate();
 					this.repaint();
 				}
-				// "del" ou "clean" => reconstruit tout.
-				else if (command.equals("del") || command.equals("clear")){
+				// "del" reconstruit tout sauf id
+				else if (command.equals("del")){
 					_zorgaPanel.removeAll();
 					JButton delBtn;
 					JTextField zorgaText;
 					// Add [DEL][JTextField]
 					for (Entry<Integer, String> entry : _zorgas.entrySet()) {
-						delBtn = new JButton( new DelAction(entry.getKey()));
-						_zorgaPanel.add( delBtn, "");
-						
-						zorgaText = new JTextField( entry.getValue() );
-						// Action Listener : when ENTER pressed.
-						zorgaText.addActionListener( new SetActionListener(entry.getKey(), zorgaText));
-						_zorgaPanel.add( zorgaText, "wrap");
+						if (entry.getKey() != id) {
+							delBtn = new JButton( new DelAction(entry.getKey()));
+							_zorgaPanel.add( delBtn, "");
+
+							zorgaText = new JTextField( entry.getValue() );
+							// Action Listener : when ENTER pressed.
+							zorgaText.addActionListener( new SetActionListener(entry.getKey(), zorgaText));
+							_zorgaPanel.add( zorgaText, "wrap");
+						}
 					}
 					this.revalidate();
 					this.repaint();

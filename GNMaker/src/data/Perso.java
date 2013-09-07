@@ -7,11 +7,17 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Un Perso c'est:
  * <li>un nom : _name</li>
  * <li>un joueur : _player </li>
  * <li>un zorga : Zorgas+id => Observer de Zorgas</li>
+ * 
+ * Notify Observers:
+ * <li>set</li>
  * 
  * @author nowgoon88@gmail.com
  */
@@ -30,6 +36,8 @@ public class Perso extends Observable implements Observer {
 	/** Perso has been modified ? */
 	boolean _fgModified;
 
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(Perso.class.getName());
 	
 	/**
 	 * Creation
@@ -43,6 +51,7 @@ public class Perso extends Observable implements Observer {
 		this._player = player;
 		this._zorgaList = zorgaList;
 		this._zorgaId = id;
+		logger.trace(getName()+" _zorgaId="+_zorgaId);
 		updateZorga();
 		
 		// Listen to Zorgas
@@ -58,6 +67,7 @@ public class Perso extends Observable implements Observer {
 		this._name = name;
 		this._player = player;
 		this._zorgaId = zorgaId;
+		logger.trace(getName()+" _zorgaId="+_zorgaId);
 	}
 	
 
@@ -117,6 +127,7 @@ public class Perso extends Observable implements Observer {
 	}
 	public void setZorga(String zorgName ) {
 		_zorgaId = _zorgaList.indexOf(zorgName);
+		logger.trace(getName()+" _zorgaId="+_zorgaId);
 		updateZorga();
 	}
 	public void setZorgaList( Zorgas zorgaList ) {
@@ -170,9 +181,10 @@ public class Perso extends Observable implements Observer {
 	 * Observe Zorgas.
 	 */
 	@Override
-	public void update(Observable o, Object arg) {
-//		System.out.println("Perso.update() : o is a "+o.getClass().getName());
-//		System.out.println("Perso.update() : arg="+arg);
+	public void update(Observable o, Object arg) {	
+		// Log
+		logger.debug(getName()+" _zorgaId="+_zorgaId+" o is a "+o.getClass().getName()+ " arg="+arg);
+		
 		// Observe seulement un Zorgas => arg is String
 		StringTokenizer sTok = new StringTokenizer((String)arg, "_");
 		int id = Integer.parseInt(sTok.nextToken());
@@ -181,16 +193,16 @@ public class Perso extends Observable implements Observer {
 			String command = sTok.nextToken();
 			switch (command) {
 			case "set":
-				//System.out.println("Perso.update() : SET with id="+id);
+				logger.debug("SET with id="+id);
 				updateZorga();
 				break;
 			case "del":
-				//System.out.println("Perso.update() : DEL with id="+id);
+				logger.debug("DEL with id="+id);
 				_zorgaId = -1;
 				updateZorga();
 				break;
 			default:
-				//System.out.println("Perso.update() : "+command+" with id="+id);
+				logger.debug(command+" with id="+id);
 				break;
 			}
 		}

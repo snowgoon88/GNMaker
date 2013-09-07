@@ -22,6 +22,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.miginfocom.swing.MigLayout;
 
 import data.Perso;
@@ -38,7 +41,7 @@ import data.PersoList;
 @SuppressWarnings("serial")
 public class PersoListV extends JPanel implements Observer {
 	/** PersoList comme Modèle */
-	PersoList _perso;
+	PersoList _persoList;
 	
 	/** GUI element à mettre à jour */
 	JPanel _listPanel;
@@ -46,12 +49,12 @@ public class PersoListV extends JPanel implements Observer {
 	
 	/**
 	 * Creation avec un PersoList comme Modèle.
-	 * @param _perso
+	 * @param _persoList
 	 */
-	public PersoListV(PersoList perso) {
+	public PersoListV(PersoList persos) {
 		super();
-		this._perso = perso;
-		_perso.addObserver(this);
+		this._persoList = persos;
+		_persoList.addObserver(this);
 		
 		buildGUI();
 	}
@@ -76,7 +79,7 @@ public class PersoListV extends JPanel implements Observer {
 		_listPanel = new MyPanel(persoLayout);
 		this.add(_listPanel, BorderLayout.CENTER);
 		
-		for (Entry<Integer, Perso> entry : _perso.entrySet()) {
+		for (Entry<Integer, Perso> entry : _persoList.entrySet()) {
 			PersoPanel pPanel = new PersoPanel(entry.getKey(), entry.getValue());
 			_listPanel.add(pPanel);
 		}
@@ -96,7 +99,7 @@ public class PersoListV extends JPanel implements Observer {
 		
 		// "add" -> une nouvelle ligne dans _listPanel.
 		if (command.equals("add")) {
-			PersoPanel pPanel = new PersoPanel(id, _perso.get(id));
+			PersoPanel pPanel = new PersoPanel(id, _persoList.get(id));
 			_listPanel.add(pPanel);
 			this.revalidate();
 			this.repaint();
@@ -105,7 +108,7 @@ public class PersoListV extends JPanel implements Observer {
 		else if (command.equals("del") || command.equals("clear")) {
 			System.out.println("PersoListV.update() : "+command);
 			_listPanel.removeAll();
-			for (Entry<Integer, Perso> entry : _perso.entrySet()) {
+			for (Entry<Integer, Perso> entry : _persoList.entrySet()) {
 				PersoPanel pPanel = new PersoPanel(entry.getKey(), entry.getValue());
 				_listPanel.add(pPanel);
 			}
@@ -116,7 +119,7 @@ public class PersoListV extends JPanel implements Observer {
 	
 	class PersoPanel extends JPanel implements Observer {
 		/** Perso comme Model */
-		Perso _pers;
+		Perso _perso;
 		/** Id du Perso pour effacer */
 		int _persId;
 		
@@ -127,9 +130,9 @@ public class PersoListV extends JPanel implements Observer {
 		public PersoPanel(int persId, Perso pers) {
 			super();
 			_persId = persId;
-			_pers = pers;
+			_perso = pers;
 			buildGUI();
-			_pers.addObserver(this);
+			_perso.addObserver(this);
 		}
 		void buildGUI() {
 			MigLayout persLayout = new MigLayout(
@@ -140,14 +143,14 @@ public class PersoListV extends JPanel implements Observer {
 			
 			JButton delBtn = new JButton( new DelAction());
 			this.add( delBtn );
-			_nameField = new JTextField(_pers.getName());
+			_nameField = new JTextField(_perso.getName());
 			_nameField.addActionListener(new SetNameActionListener(_nameField));
 			this.add(_nameField);
-			_playerField = new JTextField(_pers.getPlayer());
+			_playerField = new JTextField(_perso.getPlayer());
 			_playerField.addActionListener(new SetPlayerActionListener(_playerField));
 			this.add(_playerField);
 			
-			ZorgaCombo zorgaCombo = new ZorgaCombo(_perso._zorgas.toArray());
+			ZorgaCombo zorgaCombo = new ZorgaCombo(_persoList._zorgas.toArray());
 			//zorgaCombo.getSelectedItem();
 			this.add(zorgaCombo);
 		}
@@ -159,41 +162,67 @@ public class PersoListV extends JPanel implements Observer {
 			// arg is a String
 			String command = (String) arg;
 			if (command.equals("set")) {
-				_nameField = new JTextField(_pers.getName());
-				_playerField = new JTextField(_pers.getPlayer());
+				_nameField = new JTextField(_perso.getName());
+				_playerField = new JTextField(_perso.getPlayer());
 			}
 			
 		}
 		/**
 		 * Une JComboBox qui observe Zorgas.
+		 * TODO Mais qui doit aussi observer Perso (si change de Zorga)
 		 */
 		class ZorgaCombo extends JComboBox<Object> implements Observer {
 			/**
 			 * @param _zorgas
 			 */
+			/* In order to Log */
+			private Logger logger = LogManager.getLogger(ZorgaCombo.class.getName());
+			
 			public ZorgaCombo(Object[] items) {
-				super(items);
+				super();
+				logger.trace("for "+_perso.getName());
+				this.addItem("---");
+				for (int i = 0; i < items.length; i++) {
+					this.addItem(items[i]);
+				}
+				this.setSelectedItem(_perso.getZorga());
+				
 				addActionListener( new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
+						logger.trace("for "+_perso.getName()+" "+e.paramString());
 						@SuppressWarnings({ "unchecked" })
 						Object zorgaName = ((JComboBox<Object>) e.getSource()).getSelectedItem();
-						_pers.setZorga((String) zorgaName);
+						_perso.setZorga((String) zorgaName);
 					}
 				});
-				_perso._zorgas.addObserver(this);
+				_persoList._zorgas.addObserver(this);
 			}
 			@Override
 			public void update(Observable o, Object arg) {
 				// Observe un Zorgas
-				this.removeAllItems();
-				for (Object zorg : _perso._zorgas.toArray()) {
-					System.out.println("add item : "+zorg.toString());
-					this.addItem( (String) zorg);
+				logger.debug("for "+_perso.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
+				if (arg != null) {
+					if (arg instanceof String) {
+						StringTokenizer sTok = new StringTokenizer((String)arg, "_");
+						int id = Integer.parseInt(sTok.nextToken());
+						String command = sTok.nextToken();
+						// "add" -> un nouvel item dans ComboBox.
+						if (command.equals("add")) {
+							this.addItem( _persoList._zorgas.get(id));
+						}
+						// "del" => modifie sélection si besoin, et détruit l'objet.
+						else if (command.equals("del")) {
+							if (_perso.getZorgaId() == id) {
+								this.setSelectedItem("---");
+							}
+							this.removeItem(_persoList._zorgas.get(id));
+						}
+						this.revalidate();
+						this.repaint();
+					}
 				}
-				this.revalidate();
-				this.repaint();
 			}
 		}
 		
@@ -210,7 +239,7 @@ public class PersoListV extends JPanel implements Observer {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_perso.remove(_persId);
+				_persoList.remove(_persId);
 			}
 		}
 		/**
@@ -224,7 +253,7 @@ public class PersoListV extends JPanel implements Observer {
 			}
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_pers.setName(_textField.getText());
+				_perso.setName(_textField.getText());
 			}
 		}
 		/**
@@ -238,7 +267,7 @@ public class PersoListV extends JPanel implements Observer {
 			}
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_pers.setPlayer(_textField.getText());
+				_perso.setPlayer(_textField.getText());
 			}
 		}
 	}
@@ -256,8 +285,8 @@ public class PersoListV extends JPanel implements Observer {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Perso pers = new Perso("---", "---", _perso._zorgas, -1);
-			_perso.add(pers);
+			Perso pers = new Perso("---", "---", _persoList._zorgas, -1);
+			_persoList.add(pers);
 		}
 	}
 	
@@ -275,7 +304,7 @@ public class PersoListV extends JPanel implements Observer {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("***** DumpALLAction *************");
-			System.out.println(_perso.SDump());
+			System.out.println(_persoList.SDump());
 		}
 	}
 	/**
@@ -291,7 +320,7 @@ public class PersoListV extends JPanel implements Observer {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_perso.clear();
+			_persoList.clear();
 		}
 	}
 	

@@ -100,6 +100,8 @@ public class PersoList extends Observable {
 		// TODO Vérifier, une fois qu'on a Story qui Observe _persoList, que
 		// TODO c'est bien utile de différencier les Remove.
 		
+		//Pas sur que ca marche bien, cf Zorgas
+		
 		Object[] keys = _persoList.keySet().toArray();
 		for (int i=0; i < keys.length; i++) {
 			_persoList.remove((int) keys[i]);
