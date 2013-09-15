@@ -13,6 +13,12 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Maintient une HashMap<Integer,T> de T.
+ * Contient tjs un couple (-1,ElementNull)
+ * 
+ * Notify Observers:
+ * <li>id_add</li>
+ * <li>id_dell</li>
+ * 
  * 
  * @author snowgoon88@gmail.com
  */
@@ -31,8 +37,9 @@ public class ListOf<T extends IElement> extends Observable {
 	/**
 	 * Création d'une liste vide.
 	 */
-	public ListOf() {
+	public ListOf(T elemNull) {
 		_list = new HashMap<Integer, T>();
+		_list.put(-1,  elemNull);
 		_nextId = 0;
 		_fgModified = false;
 	}
@@ -72,6 +79,9 @@ public class ListOf<T extends IElement> extends Observable {
 		setChanged();
 		notifyObservers(id+"_del");
 		T old = _list.remove(id);
+		if (old != null) {
+			old.elementRemoved();
+		}
 		return old;
 	}
 	/**
@@ -82,6 +92,7 @@ public class ListOf<T extends IElement> extends Observable {
 	 */
 	public T put(int id, T elem) {
 		T res = _list.put(id, elem);
+		elem.setId(id);
 		if (id <= _nextId) {
 			_nextId = id+1;
 		}

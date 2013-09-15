@@ -17,13 +17,16 @@ import org.apache.logging.log4j.Logger;
  * 
  * Notify Observers:
  * <li>set</li>
+ * <li>del</li>
  * 
  * @author nowgoon88@gmail.com
  */
 public class Perso extends Observable implements Observer, IElement {
 	
+	static public Perso persoNull = new Perso("---", "---", Zorga.zorgaNull);
+	
 	/** Id du Perso */
-	int _id;
+	int _id = -1;
 	/** Nom du Perso */
 	String _name;
 	/** Nom du Joueur */
@@ -107,8 +110,12 @@ public class Perso extends Observable implements Observer, IElement {
 	public Zorga getZorga() {
 		return _zorga;
 	}
-
-
+	public void setZorga(Zorga zorga) {
+		_zorga = zorga;
+		setChanged();
+		notifyObservers("set");
+		_fgModified = true;
+	}
 	/**
 	 * Est-ce que ce Perso a été modifié?
 	 * @return recursive true or false.
@@ -134,7 +141,10 @@ public class Perso extends Observable implements Observer, IElement {
 		logger.debug(getName()+" "+_zorga.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
 	
 		// Observe un Zorga
-		// rien à faire.
+		if (arg.equals("del")) {
+			// Zorga devient zorgaNull
+			setZorga(Zorga.zorgaNull);
+		}
 	}
 	
 	@Override
@@ -145,5 +155,13 @@ public class Perso extends Observable implements Observer, IElement {
 	@Override
 	public void setId(int id) {
 		_id = id;
+	}
+
+	@Override
+	public void elementRemoved() {
+		logger.debug(getName()+" del");
+		setChanged();
+		notifyObservers("del");
+		
 	}
 }

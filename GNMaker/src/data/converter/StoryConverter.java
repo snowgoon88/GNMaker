@@ -53,20 +53,24 @@ public class StoryConverter implements Converter {
 		// Write the Zorgas
 		writer.startNode("zorga_list");
 		for (Entry<Integer, Zorga> entry : story._zorgaList.entrySet()) {
-			writer.startNode("zorga");
-			writer.addAttribute("id", Integer.toString(entry.getKey()));
-			context.convertAnother(entry.getValue());
-			writer.endNode();
+			if (entry.getKey() >= 0) {
+				writer.startNode("zorga");
+				writer.addAttribute("id", Integer.toString(entry.getKey()));
+				context.convertAnother(entry.getValue());
+				writer.endNode();
+			}
 		}
 		writer.endNode();
 		
 		// Write the PersoList
 		writer.startNode("perso_list");
 		for (Entry<Integer, Perso> entry : story._persoList.entrySet()) {
-			writer.startNode("perso");
-			writer.addAttribute("id", Integer.toString(entry.getKey()));
-			context.convertAnother(entry.getValue());
-			writer.endNode();
+			if (entry.getKey() >= 0) {
+				writer.startNode("perso");
+				writer.addAttribute("id", Integer.toString(entry.getKey()));
+				context.convertAnother(entry.getValue());
+				writer.endNode();
+			}
 		}
 		writer.endNode();
 		

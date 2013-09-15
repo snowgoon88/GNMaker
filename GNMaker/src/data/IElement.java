@@ -14,6 +14,9 @@ public interface IElement {
 	/** Set id of Element */
 	public void setId(int id);
 	
+	/** Called when the element is removed of a ListOf */
+	public void elementRemoved();
+	
 	/** Dump Element */
 	public String sDump();
 }

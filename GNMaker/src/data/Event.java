@@ -12,6 +12,8 @@ import java.util.Observable;
  * <li>HashMap(Perso) : une liste de PersoxPointDeVuexBoolean (ok, todo) (</li>
  * 
  * Should listen to Perso
+ * MUST listen to LisOf<Perso> to remove deleted Perso.
+ * 
  * @author snowgoon88@gmail.com
  */
 public class Event extends Observable {

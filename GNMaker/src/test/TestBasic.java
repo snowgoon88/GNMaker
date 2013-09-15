@@ -73,6 +73,15 @@ public class TestBasic {
 		} else {
 			System.err.println("testStoryXML >> " + res);
 		}
+		// -------
+		nbTest++;
+		res = testStoryWithDelete(args);
+		if (res) {
+			System.out.println("testStoryWithDelete >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testStoryWithDelete >> " + res);
+		}
 		
 		// ---------------------
 		if (nbTest > nbPassed) {
@@ -86,7 +95,7 @@ public class TestBasic {
 	}
 	boolean testZorga(String[] args) {
 		boolean res = true;
-		ListOf<Zorga> zorgas = new ListOf<Zorga>();
+		ListOf<Zorga> zorgas = new ListOf<Zorga>(Zorga.zorgaNull);
 		
 		// Ajoute Fab
 		Zorga zorgaFab = new Zorga("Fab");
@@ -149,11 +158,11 @@ public class TestBasic {
 	
 	boolean testPerso(String[] args) {
 		boolean res = true;
-		ListOf<Zorga> zorgas = new ListOf<Zorga>();
+		ListOf<Zorga> zorgas = new ListOf<Zorga>(Zorga.zorgaNull);
 		Zorga zorgAlain = new Zorga("Alain");
 		zorgas.add( new Zorga("Alain"));
 		
-		ListOf<Perso> persos = new ListOf<Perso>();
+		ListOf<Perso> persos = new ListOf<Perso>(Perso.persoNull);
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
 		persos.add(perso1);
 		System.out.println(persos.sDump());
@@ -181,7 +190,7 @@ public class TestBasic {
 		return res;
 	}
 	boolean testCreationEvent(String[] args) {
-		ListOf<Zorga> zorgas = new ListOf<Zorga>();
+		ListOf<Zorga> zorgas = new ListOf<Zorga>(Zorga.zorgaNull);
 		Zorga zorgAlain = new Zorga("Alain");
 		zorgas.add( new Zorga("Alain"));
 		
@@ -249,7 +258,7 @@ public class TestBasic {
 	boolean testStoryXML(String[] args) {
 		Story story = new Story();
 		Zorga zorgAlain = new Zorga("Alain");
-		story._zorgaList.add( new Zorga("Alain"));
+		story._zorgaList.add(zorgAlain);
 		
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
 		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgAlain);
@@ -266,6 +275,8 @@ public class TestBasic {
 		evt2.addPerso(perso2);
 		evt2._perso.get(perso2).setDesc("Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.");
 		story.add(evt2);
+		System.out.println("** Created **");
+		System.out.println(story.sDump());
 		
 		System.out.println("** Story to XML **");
 		XStream xStream = new XStream(new DomDriver());
@@ -350,6 +361,41 @@ public class TestBasic {
 					return res;
 				}
 			}
+		}
+		return res;
+	}
+	boolean testStoryWithDelete(String[] args ) {
+		Story story = new Story();
+		Zorga zorgAlain = new Zorga("Alain");
+		Zorga zorgFab = new Zorga("Fab");
+		story._zorgaList.add(zorgAlain);
+		story._zorgaList.add(zorgFab);
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgFab);
+		story._persoList.add(perso1);
+		story._persoList.add(perso2);
+		
+		// if I delete zorgFab, alors doit affecter perso2 mais pas perso1
+		story._zorgaList.remove(zorgFab.getId());
+		
+		boolean res = true;
+		// ne doit plus référencer zorgaFab
+		res = res && (perso2.getZorga().getId() != zorgFab.getId());
+		if (res == false) {
+			System.err.println("Pb with zorga deleted in Perso2, still zorgaFab");
+			System.err.println("perso2 ="+perso2.sDump());
+			System.err.println("zorgaFab="+zorgFab.sDump()+" id="+zorgFab.getId());
+			System.err.println("ListOfZorga = "+story._zorgaList.sDump());
+			return res;
+		}
+		// doit référencer zorgaNull
+		res = res && (perso2.getZorga().equals(Zorga.zorgaNull));
+		if (res == false) {
+			System.err.println("Pb with zorga deleted in Perso2, not zorgaNull");
+			System.err.println("perso2 ="+perso2.sDump());
+			System.err.println("ListOfZorga = "+story._zorgaList.sDump());
+			return res;
 		}
 		return res;
 	}

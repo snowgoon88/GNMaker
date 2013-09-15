@@ -13,15 +13,18 @@ import org.apache.logging.log4j.Logger;
  * 
  * Notify Observers:
  * <li>set</li>
+ * <li>del</li>
  * 
  * @author snowgoon88@gmail.com
  */
 public class Zorga extends Observable implements IElement {
 	
+	static public Zorga zorgaNull = new Zorga("---"); 
+	
 	/** Nom */
 	String _name;
 	/** Id */
-	int _id;
+	int _id = -1;
 	/** has been modified ? */
 	boolean _fgModified;
 	
@@ -71,5 +74,14 @@ public class Zorga extends Observable implements IElement {
 	public void setId(int id) {
 		_id = id;
 	}
+
+	@Override
+	public void elementRemoved() {
+		logger.debug(getName()+" del");
+		setChanged();
+		notifyObservers("del");
+		
+	}
+	
 
 }

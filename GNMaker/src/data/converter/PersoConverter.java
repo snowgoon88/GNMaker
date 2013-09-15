@@ -31,7 +31,9 @@ public class PersoConverter implements Converter {
 			MarshallingContext context) {
 		
 		Perso perso = (Perso) obj;
-		
+//		System.out.println("PersoConverter.marshal() perso="+perso.sDump());
+//		System.out.println("PersoConverter.marshal() zorgaId="+perso.getZorga().getId());
+//		
 		// _name
 		writer.startNode("name");
 		writer.setValue(perso.getName());
@@ -69,7 +71,7 @@ public class PersoConverter implements Converter {
         reader.moveDown();
         int zorgaId = Integer.parseInt(reader.getValue());
         reader.moveUp();
-        
+//        System.out.println("PersoConverter.unmarshal() "+name+" idZorga="+zorgaId);
         return new Perso(name, player, story._zorgaList.get(zorgaId));
 	}
 
