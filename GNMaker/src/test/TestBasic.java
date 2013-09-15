@@ -13,12 +13,13 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import data.Event;
+import data.ListOf;
 import data.Perso;
 import data.Story;
-import data.Zorgas;
+import data.Zorga;
 import data.converter.PersoConverter;
 import data.converter.StoryConverter;
-import data.converter.ZorgasConverter;
+import data.converter.ZorgaConverter;
 
 /**
  * 
@@ -38,42 +39,6 @@ public class TestBasic {
 
 		// -------
 		nbTest++;
-		res = testCreationPerso(args);
-		if (res) {
-			System.out.println("testCreationPerso >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testCreationPerso >> " + res);
-		}
-		// -------
-		nbTest++;
-		res = testCreationEvent(args);
-		if (res) {
-			System.out.println("testtestCreationEvent >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testtestCreationEvent >> " + res);
-		}
-		// -------
-		nbTest++;
-		res = testPersoXML(args);
-		if (res) {
-			System.out.println("testPersoXML >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testPersoXML >> " + res);
-		}
-		// -------
-		nbTest++;
-		res = testStoryXML(args);
-		if (res) {
-			System.out.println("testStoryXML >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testStoryXML >> " + res);
-		}
-		// -------
-		nbTest++;
 		res = testZorga(args);
 		if (res) {
 			System.out.println("testZorga >> " + res);
@@ -83,12 +48,30 @@ public class TestBasic {
 		}
 		// -------
 		nbTest++;
-		res = testZorga2Perso(args);
+		res = testPerso(args);
 		if (res) {
-			System.out.println("testZorga2Perso >> " + res);
+			System.out.println("testPerso >> " + res);
 			nbPassed++;
 		} else {
-			System.err.println("testZorga2Perso >> " + res);
+			System.err.println("testPerso >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testCreationEvent(args);
+		if (res) {
+			System.out.println("testCreationEvent >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testCreationEvent >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testStoryXML(args);
+		if (res) {
+			System.out.println("testStoryXML >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testStoryXML >> " + res);
 		}
 		
 		// ---------------------
@@ -101,18 +84,106 @@ public class TestBasic {
 			System.exit(0);
 		}
 	}
-	
-	boolean testCreationPerso(String[] args) {
-		Zorgas zorgas = new Zorgas();
-		int idAlain = zorgas.add("Alain");
+	boolean testZorga(String[] args) {
+		boolean res = true;
+		ListOf<Zorga> zorgas = new ListOf<Zorga>();
 		
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-		System.out.println(perso1.SDump());
-		return true;
+		// Ajoute Fab
+		Zorga zorgaFab = new Zorga("Fab");
+		int idFab = zorgas.add( zorgaFab);
+		res = res && ( idFab >= 0);
+		if (res==false) {
+			System.err.println("testZorga : Cannot add Fab");
+			System.err.println(zorgas.sDump());
+			return res;
+		}
+		int index = zorgas.indexOf(zorgaFab);
+		res = res && (index == idFab);
+		if (res==false) {
+			System.err.println("testZorga : id of Fab="+idFab+" diff from indexOf="+index);
+			System.err.println(zorgas.sDump());
+			return res;
+		}
+		
+		// Ajoute Fab
+		res = res && (zorgas.add(new Zorga("Alain")) >= 0);
+		if (res==false) {
+			System.err.println("testZorga : Cannot add Alain");
+			System.err.println(zorgas.sDump());
+			return res;
+		}
+		index = zorgas.indexOf(zorgaFab);
+		res = res && (index == idFab);
+		if (res==false) {
+			System.err.println("testZorga : id of Fab="+idFab+" diff from indexOf="+index);
+			System.err.println(zorgas.sDump());
+			return res;
+		}
+		
+		// Remove Fab
+		res = res && (zorgas.remove(idFab).equals(zorgaFab));
+		if (res==false) {
+			System.err.println("testZorga : Fab cannot be removed");
+			System.err.println(zorgas.sDump());
+			return res;
+		}
+		index = zorgas.indexOf(zorgaFab);
+		res = res && (index == -1);
+		if (res==false) {
+			System.err.println("testZorga : Fab still here, with index="+index+", idFab="+idFab);
+			System.err.println(zorgas.sDump());
+			return res;
+		}
+		res = res && (zorgas.remove(idFab) == null);
+		if (res==false) {
+			System.err.println("testZorga : Fab seems to be removed twice");
+			System.err.println(zorgas.sDump());
+			return res;
+		}
+		
+		//on peut modifier un Zorga, directement.
+		
+		return res;
+	}
+	
+	
+	boolean testPerso(String[] args) {
+		boolean res = true;
+		ListOf<Zorga> zorgas = new ListOf<Zorga>();
+		Zorga zorgAlain = new Zorga("Alain");
+		zorgas.add( new Zorga("Alain"));
+		
+		ListOf<Perso> persos = new ListOf<Perso>();
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
+		persos.add(perso1);
+		System.out.println(persos.sDump());
+		
+		int idPerso1 = perso1.getId();
+		Perso persoGet = persos.get(idPerso1);
+		res = res && (perso1 == persoGet);
+		if (res==false) {
+			System.err.println("testPerso : id de perso1="+perso1.getId()+" permet de récupérer");
+			System.err.println(persoGet.sDump());
+			System.err.println(zorgas.sDump());
+			System.err.println(persos.sDump());
+			return res;
+		}
+		
+		res = res && (zorgAlain == persoGet.getZorga());
+		if (res==false) {
+			System.err.println("zorga de persoGet="+persoGet.getZorga().sDump());
+			System.err.println("est différent de "+zorgAlain.sDump());
+			System.err.println(zorgas.sDump());
+			System.err.println(persos.sDump());
+			return res;
+		}
+		
+		return res;
 	}
 	boolean testCreationEvent(String[] args) {
-		Zorgas zorgas = new Zorgas();
-		int idAlain = zorgas.add("Alain");
+		ListOf<Zorga> zorgas = new ListOf<Zorga>();
+		Zorga zorgAlain = new Zorga("Alain");
+		zorgas.add( new Zorga("Alain"));
 		
 		System.out.println("** Event sans Perso **");
 		Event evt1 = new Event(null,
@@ -120,7 +191,7 @@ public class TestBasic {
 		System.out.println(evt1.SDump());
 		
 		System.out.println("** Event avec ValeriB **");
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
 		// First time 
 		evt1.addPerso(perso1);
 		System.out.println(evt1.SDump());
@@ -139,51 +210,51 @@ public class TestBasic {
 		
 		return true;
 	}
-	// Read and Write Perso to XML
-	boolean testPersoXML( String[] args) {
-		Zorgas zorgas = new Zorgas();
-		int idAlain = zorgas.add("Alain");
-		
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-		
-		XStream xStream = new XStream(new DomDriver());
-        xStream.registerConverter(new PersoConverter());
-        xStream.alias("perso", Perso.class);
-        System.out.println("** Perso to XML **");
-        System.out.println(xStream.toXML(perso1));
-        
-        File outfile = new File("tmp/perso.xml");
-        try {
-			FileOutputStream writer = new FileOutputStream(outfile);
-			xStream.toXML(perso1, writer);
-			writer.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-        
-        Perso persoRead = (Perso) xStream.fromXML(new File("tmp/perso.xml"));
-        persoRead.setZorgaList(zorgas);
-        System.out.println("** Perso from XML **");
-        System.out.println(persoRead.SDump());
-        
-        return (perso1.getName().equals(persoRead.getName()) && 
-        		perso1.getPlayer().equals(persoRead.getPlayer()) &&
-        		perso1.getZorga().equals(persoRead.getZorga()));
-	}
+//	// Read and Write Perso to XML
+//	boolean testPersoXML( String[] args) {
+//		Zorgas zorgas = new Zorgas();
+//		Zorga zorgAlain = new Zorga("Alain");
+////		int idAlain = zorgas.add("Alain");
+//		
+//		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
+//		
+//		XStream xStream = new XStream(new DomDriver());
+//        xStream.registerConverter(new PersoConverter());
+//        xStream.alias("perso", Perso.class);
+//        System.out.println("** Perso to XML **");
+//        System.out.println(xStream.toXML(perso1));
+//        
+//        File outfile = new File("tmp/perso.xml");
+//        try {
+//			FileOutputStream writer = new FileOutputStream(outfile);
+//			xStream.toXML(perso1, writer);
+//			writer.close();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//        
+//        
+//        Perso persoRead = (Perso) xStream.fromXML(new File("tmp/perso.xml"));
+//        persoRead.setZorgaList(zorgas);
+//        System.out.println("** Perso from XML **");
+//        System.out.println(persoRead.SDump());
+//        
+//        return (perso1.getName().equals(persoRead.getName()) && 
+//        		perso1.getPlayer().equals(persoRead.getPlayer()) &&
+//        		perso1.getZorga().equals(persoRead.getZorga()));
+//	}
 	// Save and Load, then compare.
 	boolean testStoryXML(String[] args) {
 		Story story = new Story();
-		Zorgas zorgas = new Zorgas();
-		int idAlain = zorgas.add("Alain");
-		story._zorgas = zorgas;
+		Zorga zorgAlain = new Zorga("Alain");
+		story._zorgaList.add( new Zorga("Alain"));
 		
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
-		story._perso.add(perso1);
-		story._perso.add(perso2);
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgAlain);
+		story._persoList.add(perso1);
+		story._persoList.add(perso2);
 		Event evt1 = new Event(story,
 				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
@@ -200,7 +271,7 @@ public class TestBasic {
 		XStream xStream = new XStream(new DomDriver());
 		xStream.registerConverter(new StoryConverter());
         xStream.registerConverter(new PersoConverter());
-        xStream.registerConverter(new ZorgasConverter());
+        xStream.registerConverter(new ZorgaConverter());
         xStream.alias("story", Story.class);
         System.out.println(xStream.toXML(story));
         
@@ -217,19 +288,31 @@ public class TestBasic {
         
 		Story stRead = (Story) xStream.fromXML(new File("tmp/story.xml"));
 		System.out.println("** Story from XML **");
-        System.out.println(stRead.SDump());
+        System.out.println(stRead.sDump());
 		
 
 		boolean res = true;
 		res = res && story.getName().equals(stRead.getName());
+		if (res==false) {
+			System.err.println("Nom de Story différents");
+			System.err.println("story = "+story.getName()+" read="+stRead.getName());
+			return res;
+		}
 		// Perso
 		//res = res && (story._perso.size() == stRead._perso.size());
-		for (Entry<Integer, Perso> entry : story._perso.entrySet()) {
+		for (Entry<Integer, Perso> entry : story._persoList.entrySet()) {
 			Perso pOri = entry.getValue();
-			Perso pRead = stRead._perso.get(entry.getKey());
+			Perso pRead = stRead._persoList.get(entry.getKey());
 			res = res && (pOri.getName().equals(pRead.getName()) && 
 	        		pOri.getPlayer().equals(pRead.getPlayer()) &&
-	        		pOri.getZorga().equals(pRead.getZorga()));
+	        		pOri.getZorga().getName().equals(pRead.getZorga().getName()));
+			if (res==false) {
+				System.err.println("Pb de Perso");
+				System.err.println("story id= "+pOri.getId()+" read="+pRead.getId());
+				System.err.println("Story "+pOri.sDump());
+				System.err.println("Read "+pRead.sDump());
+				return res;
+			}
 		}
 		// Event
 		res = res && (story._story.size() == stRead._story.size());
@@ -238,95 +321,56 @@ public class TestBasic {
 			Event eRead = stRead._story.get(i);
 			res = res && (eOri.getTitle().equals(eRead.getTitle()) &&
 					eOri.getBody().equals(eRead.getBody()));
+			if (res==false) {
+				System.err.println("Pb avec Titre ou Body Event="+i);
+				System.err.println("Story evt="+eOri.SDump());
+				System.err.println("Story evt="+eRead.SDump());
+				return res;
+			}
 			// PersoEvent
 			res = res && (eOri._perso.size() == eRead._perso.size());
+			if (res==false) {
+				System.err.println("Pb avec NbPerso Event="+i);
+				System.err.println("Story evt="+eOri._perso.size());
+				System.err.println("Story evt="+eRead._perso.size());
+				return res;
+			}
 			for (Perso p : eOri._perso.keySet()) {
 				Event.PersoEvent peOri = eOri._perso.get(p);
 				// Trouver le pers correspondant dans stRead
-				Perso pRead = stRead._perso.get(story._perso.indexOf(p));
+				Perso pRead = stRead._persoList.get(p.getId());
 				Event.PersoEvent peRead = eRead._perso.get(pRead);
 				res = res && (peOri._perso.getName().equals(peRead._perso.getName()) &&
 						peOri._status == peRead._status &&
 						peOri.getDesc().equals(peRead.getDesc()));
+				if (res==false) {
+					System.err.println("Pb avec Perso dans Event="+i);
+					System.err.println("Story evt="+peOri._perso.sDump());
+					System.err.println("Story evt="+pRead.sDump());
+					return res;
+				}
 			}
 		}
 		return res;
 	}
-	// Teste la liste d'Orga.
-	boolean testZorga(String[] args ) {
-		boolean res = true;
-		// Création
-		Zorgas zorg = new Zorgas();
-		
-		// Ajoute Fab
-		int idFab = zorg.add("Fab");
-		res = res && ( idFab >= 0);
-		if (res==false) {
-			System.err.println("testZorga : Cannot add Fab");
-			System.err.println(zorg.SDump());
-			return res;
-		}
-
-		// Ré-Ajoute Fab
-		res = res && (zorg.add("Fab") == -1);
-		if (res==false) {
-			System.err.println("testZorga : Added Fab twice");
-			System.err.println(zorg.SDump());
-			return res;
-		}
-		
-		// Ajoute alain
-		int idAlain = zorg.add("alain");
-		res = res && ( idAlain >= 0);
-		if (res==false) {
-			System.err.println("testZorga : Cannot add alain");
-			System.err.println(zorg.SDump());
-			return res;
-		}
-		
-		// Corrige Alain
-		String resAlain = zorg.set(idAlain, "Alain");
-		res = res && (resAlain.equals("alain"));
-		if (res==false) {
-			System.err.println("testZorga : alain not corrected");
-			System.err.println(zorg.SDump());
-			return res;
-		}
-		// Should be corrected
-		res = res && (zorg.get(idAlain).equals("Alain"));
-		if (res==false) {
-			System.err.println("testZorga : alain not corrected into Alain");
-			System.err.println(zorg.SDump());
-			return res;
-		}
-		// Ré-Ajoute Alain
-		res = res && (zorg.add("Alain") == -1);
-		if (res==false) {
-			System.err.println("testZorga : Added Alain twice");
-			System.err.println(zorg.SDump());
-			return res;
-		}		
-		System.out.println("****** Zorgas ******\n"+zorg.SDump());
-		
-		return res;
-	}
-	boolean testZorga2Perso(String[] args) {
-		System.out.println("****** Zorga2Perso ******");
-		Zorgas zorgas = new Zorgas();
-		int idAlain = zorgas.add("Alain");
-		
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-		
-		zorgas.set( idAlain, "AlainChef");
-		boolean res = perso1.getZorga().equals("AlainChef");
-		if (res==false) {
-			System.err.println("testZorga2Perso : Alain not modified");
-			System.err.println(perso1.SDump());
-			System.err.println(zorgas.SDump());
-			return res;
-		}
-		return true;
-	}
+//	
+//	boolean testZorga2Perso(String[] args) {
+//		System.out.println("****** Zorga2Perso ******");
+//		Zorgas zorgas = new Zorgas();
+//		int idAlain = zorgas.add("Alain");
+//		
+//		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+//		
+//		zorgas.set( idAlain, "AlainChef");
+//		boolean res = perso1.getZorga().equals("AlainChef");
+//		if (res==false) {
+//			System.err.println("testZorga2Perso : Alain not modified");
+//			System.err.println(perso1.SDump());
+//			System.err.println(zorgas.SDump());
+//			return res;
+//		}
+//		return true;
+//	}
 	/**
 	 * @param args
 	 */

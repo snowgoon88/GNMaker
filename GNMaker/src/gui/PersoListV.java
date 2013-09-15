@@ -219,6 +219,12 @@ public class PersoListV extends JPanel implements Observer {
 							}
 							this.removeItem(_persoList._zorgas.get(id));
 						}
+						// "set" - modifier l'item concerné
+						// C'est embettant car il faut l'ancienne valeur ET la nouvelle !
+						// TODO Faire que Zorga soit une liste de Zorga. => tester JComboBox OKOKOK
+						else if (command.equals("set")) {
+							
+						}
 						this.revalidate();
 						this.repaint();
 					}

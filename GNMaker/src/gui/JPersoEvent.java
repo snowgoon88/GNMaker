@@ -151,7 +151,7 @@ public class JPersoEvent extends JButton implements Observer {
 		}
 		public void update() {
 			if (_pers != null) {
-				_statusItem.setText(_pers.SDump());
+				_statusItem.setText(_pers.sDump());
 			}
 			else {
 				_statusItem.setText("-");

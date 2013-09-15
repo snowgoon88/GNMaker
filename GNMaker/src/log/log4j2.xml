@@ -6,8 +6,11 @@
     </Console>
   </appenders>
   <loggers>
-    <root level="debug">
+    <root level="trace">
       <appender-ref ref="Console"/>
     </root>
+    <logger name="data.converter.StoryConverter">
+      <level value="trace"/> 	
+    </logger>
   </loggers>
  </configuration>

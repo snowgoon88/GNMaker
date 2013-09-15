@@ -121,7 +121,7 @@ public class JPersoEventList implements Observer {
 		for (PersoEvent p : _evt._perso.values()) {
 			JPersoEvent persoBtn = new JPersoEvent(p._perso, _evt);
 			_persoPanel.add( persoBtn );
-			PersoLabel nameLabel = new PersoLabel(p._perso.SDump(), p._perso);
+			PersoLabel nameLabel = new PersoLabel(p._perso.sDump(), p._perso);
 			_nameLabel.add(nameLabel);
 			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
@@ -158,7 +158,7 @@ public class JPersoEventList implements Observer {
 			JPersoEvent persoBtn = new JPersoEvent(pe._perso, _evt);
 			_persoPanel.add( persoBtn );
 			
-			PersoLabel nameLabel = new PersoLabel(pe._perso.SDump(), pe._perso);
+			PersoLabel nameLabel = new PersoLabel(pe._perso.sDump(), pe._perso);
 			_nameLabel.add(nameLabel);
 			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
 			
@@ -267,7 +267,7 @@ public class JPersoEventList implements Observer {
 		public void update(Observable o, Object arg) {
 			String command = (String) arg;
 			if (command.equals("set")) {
-				this.setText(this._pers.SDump());
+				this.setText(this._pers.sDump());
 			}
 		}
 		

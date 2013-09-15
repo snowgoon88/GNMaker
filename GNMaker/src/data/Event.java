@@ -145,10 +145,10 @@ public class Event extends Observable {
 		str.append( _body);
 		for (Map.Entry<Perso, PersoEvent> e : _perso.entrySet()) {
 			if (e.getValue()._status==false) {
-				str.append( "\n-"+e.getKey().SDump()+" => ");
+				str.append( "\n-"+e.getKey().sDump()+" => ");
 			}
 			else {
-				str.append( "\n+"+e.getKey().SDump()+" => ");
+				str.append( "\n+"+e.getKey().sDump()+" => ");
 			}
 			str.append(e.getValue()._desc);
 		}

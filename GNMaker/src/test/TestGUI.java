@@ -103,6 +103,15 @@ public class TestGUI {
 		} else {
 			System.err.println("testApplication >> " + res);
 		}
+		// -------
+		nbTest++;
+		res = testComboBox(args);
+		if (res) {
+			System.out.println("testComboBox >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testComboBox >> " + res);
+		}
 		
 		// ---------------------
 		if (nbTest > nbPassed) {
@@ -239,6 +248,13 @@ public class TestGUI {
         
         boolean res =  testComponent("GNMaker", tabbedPane);
 		System.out.println("End of testApplication");
+		return res;
+	}
+	boolean testComboBox(String[] args) {
+		TestComboBox model = new TestComboBox();
+		TestComboBoxV view = new TestComboBoxV(model);
+		boolean res =  testComponent("JCombo", view);
+		System.out.println("End of testComboBox");
 		return res;
 	}
 	
