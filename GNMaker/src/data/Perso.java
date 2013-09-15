@@ -30,11 +30,6 @@ public class Perso extends Observable implements Observer, IElement {
 	String _player;
 	/** Zorga */
 	Zorga _zorga;
-//	/** Nom de l'orga */
-//	String _zorga;
-//	/** Pour connaître le Nom du Zorga */
-//	ListOf<Zorga> _zorgaList;
-//	int _zorgaId;
 	
 	/** Perso has been modified ? */
 	boolean _fgModified;
@@ -49,43 +44,15 @@ public class Perso extends Observable implements Observer, IElement {
 	 * @param zorgaList Liste de Zorga
 	 * @param id du Zorga dans la Liste
 	 */
-//	public Perso(String name, String player, ListOf<Zorga> zorgaList, int id) {
-//		this._name = name;
-//		this._player = player;
-//		this._zorgaList = zorgaList;
-//		this._zorgaId = id;
-//		logger.trace(getName()+" _zorgaId="+_zorgaId);
-//		updateZorga();
-//		
-//		// Listen to Zorgas
-//		_zorgaList.addObserver(this);
-//	}
 	public Perso(String name, String player, Zorga zorga) {
 		this._name = name;
 		this._player = player;
 		this._zorga = zorga;
-//		this._zorgaList = zorgaList;
-//		this._zorgaId = id;
-//		logger.trace(getName()+" _zorgaId="+_zorgaId);
-//		updateZorga();
 		
 		// Listen to Zorgas
 		_zorga.addObserver(this);
 	}
-//	/**
-//	 * Creation sans ZorgasList : pas d'update ou d'attachement à un Observable.
-//	 * @param _name Nom du Personnage
-//	 * @param _player Nom du Joueur
-//	 * @param _zorgaId Id du Zorga
-//	 */
-//	public Perso(String name, String player, int zorgaId) {
-//		this._name = name;
-//		this._player = player;
-//		this._zorgaId = zorgaId;
-//		logger.trace(getName()+" _zorgaId="+_zorgaId);
-//	}
 	
-
 	/** 
 	 * Dump all Perso as a String.
 	 * @return String
@@ -140,43 +107,6 @@ public class Perso extends Observable implements Observer, IElement {
 	public Zorga getZorga() {
 		return _zorga;
 	}
-//	public int getZorgaId() {
-//		return _zorgaId;
-//	}
-//	public void setZorga(String zorgName ) {
-//		_zorgaId = _zorgaList.indexOf(zorgName);
-//		logger.trace(getName()+" _zorgaId="+_zorgaId);
-//		updateZorga();
-//	}
-//	public void setZorgaList( ListOf<Zorga> zorgaList ) {
-//		this._zorgaList = zorgaList;
-//		updateZorga();
-//		// Listen to Zorgas
-//		_zorgaList.addObserver(this);
-//	}
-//	/**
-//	 * @return the _zorga
-//	 */
-//	public String getZorga() {
-//		return _zorga;
-//	}
-//	/**
-//	 * @param zorga the _zorga to set
-//	 * @toObserver : "set"
-//	 */
-//	void updateZorga() {
-//		//System.out.println("Perso.updateZorga() : _zorgaId="+_zorgaId);
-//		if (_zorgaId >= 0) {
-//			//System.out.println("Perso.updateZorga() : "+_zorgaList.get(_zorgaId));
-//			_zorga = _zorgaList.get(_zorgaId);
-//		}
-//		else {
-//			_zorga = "---";
-//		}
-//		setChanged();
-//		notifyObservers("set");
-//		_fgModified = true;
-//	}
 
 
 	/**
@@ -201,31 +131,8 @@ public class Perso extends Observable implements Observer, IElement {
 	@Override
 	public void update(Observable o, Object arg) {	
 		// Log
-//		logger.debug(getName()+" _zorgaId="+_zorgaId+" o is a "+o.getClass().getName()+ " arg="+arg);
 		logger.debug(getName()+" "+_zorga.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
-		
-//		// Observe seulement un Zorga => arg is String
-//		StringTokenizer sTok = new StringTokenizer((String)arg, "_");
-//		int id = Integer.parseInt(sTok.nextToken());
-//		// Intéressant si c'est _zorgaId
-//		if (id == _zorgaId) {
-//			String command = sTok.nextToken();
-//			switch (command) {
-//			case "set":
-//				logger.debug("SET with id="+id);
-//				updateZorga();
-//				break;
-//			case "del":
-//				logger.debug("DEL with id="+id);
-//				_zorgaId = -1;
-//				updateZorga();
-//				break;
-//			default:
-//				logger.debug(command+" with id="+id);
-//				break;
-//			}
-//		}
-		
+	
 		// Observe un Zorga
 		// rien à faire.
 	}

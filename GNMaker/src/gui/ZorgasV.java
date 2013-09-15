@@ -201,7 +201,7 @@ public class ZorgasV extends JPanel implements Observer {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("***** DumpALLAction *************");
-			System.out.println(_zorgas.SDump());
+			System.out.println(_zorgas.sDump());
 		}
 	}
 	/**

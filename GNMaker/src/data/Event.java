@@ -28,10 +28,6 @@ public class Event extends Observable {
 	 */
 	public HashMap<Perso,PersoEvent> _perso;
 	
-	/** Event has been modified ? */
-	boolean _fgModified;
-
-	
 	/**
 	 * Creation sans Personnage
 	 * @param _title Titre de l'événement
@@ -42,7 +38,6 @@ public class Event extends Observable {
 		this._title = _title;
 		this._body = _body;
 		_perso = new HashMap<Perso,PersoEvent>();
-		_fgModified = false;
 	}
 
 	/** 
@@ -53,12 +48,10 @@ public class Event extends Observable {
 	 */
 	public void addPerso( Perso pers) {
 		addPerso( pers, false, "-");
-		_fgModified = true;
 	}
 	public void addPerso( Perso pers, boolean status, String desc) {
 		PersoEvent pe = new PersoEvent( pers, status, desc);
 		_perso.put( pers, pe);
-		_fgModified = true;
 		
 		// Notify Observers
 		setChanged();
@@ -74,7 +67,6 @@ public class Event extends Observable {
 		if (_perso.containsKey(pers)) {
 			_perso.remove(pers);
 			
-			_fgModified = true;
 			// Notify Observers
 			setChanged();
 			notifyObservers("removed");
@@ -89,7 +81,6 @@ public class Event extends Observable {
 		PersoEvent data = _perso.get(pers);
 		data._status = status;
 		
-		_fgModified = true;
 		// Notify Observers
 		setChanged();
 		notifyObservers();
@@ -118,7 +109,6 @@ public class Event extends Observable {
 	 */
 	public void setTitle(String title) {
 		this._title = title;
-		_fgModified = true;
 	}
 
 	/**
@@ -132,14 +122,13 @@ public class Event extends Observable {
 	 */
 	public void setBody(String body) {
 		this._body = body;
-		_fgModified = true;
 	}
 
 	/** 
 	 * Dump all Perso as a String.
 	 * @return String
 	 */
-	public String SDump() {
+	public String sDump() {
 		StringBuffer str = new StringBuffer();
 		str.append( "Event : "+_title+"\n");
 		str.append( _body);
@@ -154,22 +143,6 @@ public class Event extends Observable {
 		}
 		str.append( "\n" );
 		return str.toString();
-	}
-	
-	/**
-	 * Est-ce que cet Event a été modifié?
-	 * @return recursive true or false.
-	 */
-	public boolean isModified() {
-		boolean res = _fgModified;
-		return res;
-	}
-	/**
-	 * Indique si cet Event a été modifiée.
-	 * @param flag
-	 */
-	public void setModified( boolean flag ) {
-		_fgModified = flag;
 	}
 	
 	/**
@@ -201,7 +174,6 @@ public class Event extends Observable {
 		 */
 		public void setDesc(String desc) {
 			this._desc = desc;
-			_fgModified = true;
 		}
 	}
 }

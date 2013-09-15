@@ -310,7 +310,7 @@ public class PersoListV extends JPanel implements Observer {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("***** DumpALLAction *************");
-			System.out.println(_persoList.SDump());
+			System.out.println(_persoList.sDump());
 		}
 	}
 	/**

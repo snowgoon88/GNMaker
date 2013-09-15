@@ -25,10 +25,8 @@ public class Story extends Observable {
 	/** Story is a list of Event */
 	public ArrayList<Event> _story;
 	/** Story is about a list of People */
-//	public PersoList _perso;
 	public ListOf<Perso> _persoList;
 	/** Story is made by a List of Zorga */
-//	public Zorgas _zorgas;
 	public ListOf<Zorga> _zorgaList;
 	
 	
@@ -43,8 +41,6 @@ public class Story extends Observable {
 	public Story() {
 		_name = "A Story with no Name";
 		_story = new ArrayList<Event>();
-//		_zorgas = new Zorgas();
-//		_perso = new PersoList(_zorgas);
 		_zorgaList = new ListOf<Zorga>();
 		_persoList = new ListOf<Perso>();
 		_fgModified = false;
@@ -90,7 +86,7 @@ public class Story extends Observable {
 		str.append( "Zorgas : "+_zorgaList.sDump()+"\n");
 		str.append( "Persos : "+ _persoList.sDump()+ "\n");
 		for (Event e : _story) {
-			str.append( e.SDump()+"\n");
+			str.append( e.sDump()+"\n");
 		}
 		return str.toString();
 	}
@@ -110,30 +106,5 @@ public class Story extends Observable {
 		notifyObservers();
 		this._name = name;
 	}
-	
-//	/**
-//	 * Est-ce que cette Story (ou ses Elements) on été modifiés (besoin de save).
-//	 * @return recursive true or false.
-//	 */
-//	public boolean isModified() {
-//		boolean res = _fgModified;
-//		res = res || _zorgaList.isModified();
-//		res = res || _persoList.isModified();
-//		for (Event evt : _story) {
-//			res = res || evt.isModified();
-//		}
-//		return res;
-//	}
-//	/**
-//	 * Indique si cette Story a été modifiée.
-//	 * @param flag
-//	 */
-//	public void setModified( boolean flag ) {
-//		_fgModified = flag;
-//		_zorgas.setModified(flag);
-//		_perso.setModified(flag);
-//		for (Event evt : _story) {
-//			evt.setModified(flag);
-//		}
-//	}
+
 }

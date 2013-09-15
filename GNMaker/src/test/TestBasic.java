@@ -188,17 +188,17 @@ public class TestBasic {
 		System.out.println("** Event sans Perso **");
 		Event evt1 = new Event(null,
 				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-		System.out.println(evt1.SDump());
+		System.out.println(evt1.sDump());
 		
 		System.out.println("** Event avec ValeriB **");
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
 		// First time 
 		evt1.addPerso(perso1);
-		System.out.println(evt1.SDump());
+		System.out.println(evt1.sDump());
 		
 		System.out.println("** Event avec 2xValeriB **");
 		evt1.addPerso(perso1);
-		System.out.println(evt1.SDump());
+		System.out.println(evt1.sDump());
 		
 		System.out.println("** Valeri To OK **");
 		evt1.setStatusPerso(perso1, true);
@@ -206,7 +206,7 @@ public class TestBasic {
 			System.err.println("testCreationEvent : ValeriB status SHOULD be true");
 			return false;
 		}
-		System.out.println(evt1.SDump());
+		System.out.println(evt1.sDump());
 		
 		return true;
 	}
@@ -323,8 +323,8 @@ public class TestBasic {
 					eOri.getBody().equals(eRead.getBody()));
 			if (res==false) {
 				System.err.println("Pb avec Titre ou Body Event="+i);
-				System.err.println("Story evt="+eOri.SDump());
-				System.err.println("Story evt="+eRead.SDump());
+				System.err.println("Story evt="+eOri.sDump());
+				System.err.println("Story evt="+eRead.sDump());
 				return res;
 			}
 			// PersoEvent

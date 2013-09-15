@@ -104,7 +104,7 @@ public class StoryC {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("***** DumpALLAction *************");
-			System.out.println(_story.SDump());
+			System.out.println(_story.sDump());
 		}
 	}
 	/**

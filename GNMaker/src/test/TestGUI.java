@@ -203,7 +203,7 @@ public class TestGUI {
         
 		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
 		System.out.println("** Story from XML **");
-        System.out.println(story.SDump());
+        System.out.println(story.sDump());
         
         JStory comp = new JStory(story);
 //        JScrollPane main = new JScrollPane(comp);
@@ -224,7 +224,7 @@ public class TestGUI {
         File storyFile = new File("tmp/story_test.xml");
 		Story story = (Story) xStream.fromXML( storyFile );
 		System.out.println("** Story from XML **");
-        System.out.println(story.SDump());
+        System.out.println(story.sDump());
         
         
         // Tabbed Panel

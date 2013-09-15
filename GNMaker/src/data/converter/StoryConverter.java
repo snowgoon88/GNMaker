@@ -51,9 +51,6 @@ public class StoryConverter implements Converter {
 		writer.endNode();
 		
 		// Write the Zorgas
-//		writer.startNode("zorga_list");
-//		context.convertAnother(story._zorgas);
-//		writer.endNode();
 		writer.startNode("zorga_list");
 		for (Entry<Integer, Zorga> entry : story._zorgaList.entrySet()) {
 			writer.startNode("zorga");
@@ -124,19 +121,16 @@ public class StoryConverter implements Converter {
 		
 		// ListZorga
 		reader.moveDown();
-//		story._zorgas = (Zorgas)context.convertAnother(story, Zorgas.class);
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
 			int id = Integer.parseInt(reader.getAttribute("id"));
 			Zorga zorga = (Zorga)context.convertAnother(story, Zorga.class);
-//			pers.setZorgaList(story._zorgas);
 			story._zorgaList.put(id, zorga);
 			reader.moveUp();
 		}
 		reader.moveUp();
 		
 		// PersoList
-//		story._perso= new PersoList(story._zorgas);
 		context.put("story", story);
 		reader.moveDown();
 		while (reader.hasMoreChildren()) {
@@ -144,7 +138,6 @@ public class StoryConverter implements Converter {
 			int id = Integer.parseInt(reader.getAttribute("id"));
 //			System.out.println("StoryConverter.unmarshal() : "+reader.getNodeName()+" id="+id);
 			Perso pers = (Perso)context.convertAnother(story, Perso.class);
-//			pers.setZorgaList(story._zorgas);
 			story._persoList.put(id, pers);
 			reader.moveUp();
 		}
@@ -153,11 +146,6 @@ public class StoryConverter implements Converter {
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
 			if ("perso".equals(reader.getNodeName())) {
-//				@SuppressWarnings("unused")
-//				int id = Integer.parseInt(reader.getAttribute("id"));
-//				Perso pers = (Perso)context.convertAnother(story, Perso.class);
-//				pers.setZorgaList(story._zorgas);
-//				story._perso.add( pers );
 				System.err.println("reader=>perso : should not be here");
 			}
 			else {
