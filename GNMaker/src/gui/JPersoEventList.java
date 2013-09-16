@@ -118,7 +118,7 @@ public class JPersoEventList implements Observer {
 		//_descPanel.setLayout(descLayout);
 		_descPanel = new MyPanel(descLayout);
 		
-		for (PersoEvent p : _evt._perso.values()) {
+		for (PersoEvent p : _evt._persoMap.values()) {
 			JPersoEvent persoBtn = new JPersoEvent(p._perso, _evt);
 			_persoPanel.add( persoBtn );
 			PersoLabel nameLabel = new PersoLabel(p._perso.sDump(), p._perso);
@@ -183,7 +183,7 @@ public class JPersoEventList implements Observer {
 				// sont stockés dans le même ordre.
 				for (int i = 1; i < _persoPanel.getComponentCount(); i++) {
 					JPersoEvent jpe = (JPersoEvent) _persoPanel.getComponent(i);
-					if (_evt._perso.containsKey(jpe._pers) == false ) {
+					if (_evt._persoMap.containsKey(jpe._pers) == false ) {
 						_persoPanel.remove(jpe);
 						_nameLabel.remove(i-1);
 						_descArea.remove(i-1);

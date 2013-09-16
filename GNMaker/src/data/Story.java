@@ -16,6 +16,12 @@ import java.util.Observable;
  * Remove Event
  * Dump All
  * 
+ * Notify Observers:
+ * <li>Event : when added</li>
+ * <li>"removed"</li>
+ * <li>'' when setName</li>
+ * SHOULD be armonized with other Observable
+ * 
  * @author snowgoon88@gmail.com.
  */
 public class Story extends Observable {

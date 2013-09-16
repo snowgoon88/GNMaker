@@ -1,8 +1,12 @@
 package data;
 
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Observer;
+import java.util.StringTokenizer;
+
 
 /**
  * Un événement composé de :
@@ -11,12 +15,15 @@ import java.util.Observable;
  * <li>String: Un Body</li>
  * <li>HashMap(Perso) : une liste de PersoxPointDeVuexBoolean (ok, todo) (</li>
  * 
- * Should listen to Perso
- * MUST listen to LisOf<Perso> to remove deleted Perso.
+ * Notify Observers:
+ * <li>Perso : when added</li>
+ * <li>"removed"</li>
+ * <li>'' when setStatusChanged</li>
+ * SHOULD armonize with other Observable
  * 
  * @author snowgoon88@gmail.com
  */
-public class Event extends Observable {
+public class Event extends Observable implements Observer {
 	/** Appartient à une Story */
 	public Story _story;
 	/** Titre de l'événement */
@@ -28,7 +35,7 @@ public class Event extends Observable {
 	/** Liste de Perso impliqués : Le boolean indique si l'événement a été pris en compte
 	 * pour le perso : ok=true, todo=false.
 	 */
-	public HashMap<Perso,PersoEvent> _perso;
+	public HashMap<Perso,PersoEvent> _persoMap;
 	
 	/**
 	 * Creation sans Personnage
@@ -39,7 +46,9 @@ public class Event extends Observable {
 		_story = story;
 		this._title = _title;
 		this._body = _body;
-		_perso = new HashMap<Perso,PersoEvent>();
+		_persoMap = new HashMap<Perso,PersoEvent>();
+		
+		_story._persoList.addObserver(this);
 	}
 
 	/** 
@@ -53,7 +62,7 @@ public class Event extends Observable {
 	}
 	public void addPerso( Perso pers, boolean status, String desc) {
 		PersoEvent pe = new PersoEvent( pers, status, desc);
-		_perso.put( pers, pe);
+		_persoMap.put( pers, pe);
 		
 		// Notify Observers
 		setChanged();
@@ -66,8 +75,8 @@ public class Event extends Observable {
 	 * @toObserver : "removed"
 	 */
 	public void removePerso( Perso pers ) {
-		if (_perso.containsKey(pers)) {
-			_perso.remove(pers);
+		if (_persoMap.containsKey(pers)) {
+			_persoMap.remove(pers);
 			
 			// Notify Observers
 			setChanged();
@@ -80,7 +89,7 @@ public class Event extends Observable {
 	 * @param status false(todo) or true (ok).
 	 */
 	public void setStatusPerso( Perso pers, boolean status ) {
-		PersoEvent data = _perso.get(pers);
+		PersoEvent data = _persoMap.get(pers);
 		data._status = status;
 		
 		// Notify Observers
@@ -93,8 +102,8 @@ public class Event extends Observable {
 	 * @return true (ok) or false (todo or no status)
 	 */
 	public Boolean getStatusPerso( Perso pers ) {
-		if (_perso.containsKey(pers)) {
-			return _perso.get(pers)._status;
+		if (_persoMap.containsKey(pers)) {
+			return _persoMap.get(pers)._status;
 		}
 		return false;
 	}
@@ -134,7 +143,7 @@ public class Event extends Observable {
 		StringBuffer str = new StringBuffer();
 		str.append( "Event : "+_title+"\n");
 		str.append( _body);
-		for (Map.Entry<Perso, PersoEvent> e : _perso.entrySet()) {
+		for (Map.Entry<Perso, PersoEvent> e : _persoMap.entrySet()) {
 			if (e.getValue()._status==false) {
 				str.append( "\n-"+e.getKey().sDump()+" => ");
 			}
@@ -145,6 +154,22 @@ public class Event extends Observable {
 		}
 		str.append( "\n" );
 		return str.toString();
+	}
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		// Observe seulement un ListOf<Perso>
+		// o est un ListOf<Perso>
+		// arg est un string
+		StringTokenizer sTok = new StringTokenizer((String)arg, "_");
+		int id = Integer.parseInt(sTok.nextToken());
+		String command = sTok.nextToken();
+
+		// "add" -> une nouvelle ligne dans _listPanel.
+		if (command.equals("del")) {
+			removePerso(_story._persoList.get(id));
+		}
+
 	}
 	
 	/**
@@ -178,4 +203,6 @@ public class Event extends Observable {
 			this._desc = desc;
 		}
 	}
+
+	
 }

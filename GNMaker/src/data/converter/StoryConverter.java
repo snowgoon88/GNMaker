@@ -89,7 +89,7 @@ public class StoryConverter implements Converter {
 			writer.setValue(evt.getBody());
 			writer.endNode();
 			// PersoEvent
-			for (Event.PersoEvent pe : evt._perso.values()) {
+			for (Event.PersoEvent pe : evt._persoMap.values()) {
 				// Trouver l'id de pe._perso
 				int id = pe._perso.getId();
 				writer.startNode("perso_event");

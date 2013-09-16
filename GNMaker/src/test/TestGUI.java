@@ -152,7 +152,7 @@ public class TestGUI {
 		Event evt1 = new Event(null,
 				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
-		evt1._perso.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
 		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
 		evt1.addPerso(perso2);
 		
@@ -175,7 +175,7 @@ public class TestGUI {
 		Event evt1 = new Event(null,
 				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
-		evt1._perso.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
 		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
 		evt1.addPerso(perso2);
 		JEvent comp = new JEvent( evt1);

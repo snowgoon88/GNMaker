@@ -224,7 +224,7 @@ public class JEvent extends JPanel implements Observer {
 			System.out.println("Choice : "+choice.toString());
 			
 			// Ajoute seulemen si un nouveau
-			if (_evt._perso.containsKey(choice) == false) {
+			if (_evt._persoMap.containsKey(choice) == false) {
 				_evt.addPerso(choice);
 			}
 			else {
