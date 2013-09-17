@@ -150,6 +150,19 @@ public class TestBasic {
 			return res;
 		}
 		
+		// Add some dummies then clear.
+		zorgas.add( new Zorga("Un"));
+		zorgas.add( new Zorga("Deux"));
+		zorgas.add( new Zorga("Trois"));
+		zorgas.clear();
+		// il doit rester -1
+		res = (zorgas.get(-1).equals(Zorga.zorgaNull));
+		if (res==false) {
+			System.err.println("testZorga : clear removed elem '-1'");
+			System.err.println(zorgas.sDump());
+			return res;
+		}
+		
 		//on peut modifier un Zorga, directement.
 		
 		return res;

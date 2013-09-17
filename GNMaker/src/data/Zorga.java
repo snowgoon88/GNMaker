@@ -80,7 +80,6 @@ public class Zorga extends Observable implements IElement {
 		logger.debug(getName()+" del");
 		setChanged();
 		notifyObservers("del");
-		
 	}
 	
 

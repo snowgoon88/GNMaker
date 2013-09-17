@@ -9,7 +9,7 @@ import gui.JPersoEventList;
 import gui.JStory;
 import gui.PersoListV;
 import gui.StoryC;
-import gui.ZorgasV;
+import gui.ZorgaListV;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -28,12 +28,13 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import Inspiration.Expandable;
 
 import data.Event;
+import data.ListOf;
 import data.Perso;
 import data.Story;
-import data.Zorgas;
+import data.Zorga;
 import data.converter.PersoConverter;
 import data.converter.StoryConverter;
-import data.converter.ZorgasConverter;
+import data.converter.ZorgaConverter;
 
 /**
  * @author dutech
@@ -49,6 +50,15 @@ public class TestGUI {
 		int nbTest = 0;
 		int nbPassed = 0;
 		
+		// -------
+		nbTest++;
+		res = testZorgaV(args);
+		if (res) {
+			System.out.println("testZorgaV >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testZorgaV >> " + res);
+		}
 //		// -------
 //		nbTest++;
 //		res = testJEventPerso(args);
@@ -94,24 +104,24 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testJStory >> " + res);
 //		}
-		// -------
-		nbTest++;
-		res = testApplication(args);
-		if (res) {
-			System.out.println("testApplication >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testApplication >> " + res);
-		}
-		// -------
-		nbTest++;
-		res = testComboBox(args);
-		if (res) {
-			System.out.println("testComboBox >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testComboBox >> " + res);
-		}
+//		// -------
+//		nbTest++;
+//		res = testApplication(args);
+//		if (res) {
+//			System.out.println("testApplication >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testApplication >> " + res);
+//		}
+//		// -------
+//		nbTest++;
+//		res = testComboBox(args);
+//		if (res) {
+//			System.out.println("testComboBox >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testComboBox >> " + res);
+//		}
 		
 		// ---------------------
 		if (nbTest > nbPassed) {
@@ -124,139 +134,155 @@ public class TestGUI {
 		}
 	}
 	
-	// Afficher Perso : Bouton Nom
-	//               click gauche => switch status
-	//               click droit => popup avec delete (+ confirm) ou change status
-	//               et info.
-	boolean testJPersoEvent(String[] args) {
-		Zorgas zorgas = new Zorgas();
-		int idAlain = zorgas.add("Alain");
+	// viewer de ListOf<Zorga>
+	boolean testZorgaV(String[] args) {
+		ListOf<Zorga> zorgaList = new ListOf<Zorga>(Zorga.zorgaNull);
 		
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+		// Ajoute Fab
+		Zorga zorgaFab = new Zorga("Fab");
+		int idFab = zorgaList.add( zorgaFab);
+		zorgaList.add(new Zorga("Alain"));
 		
-		Event evt1 = new Event(null,
-				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		ZorgaListV comp = new ZorgaListV(zorgaList);
 		
-		JPersoEvent comp = new JPersoEvent(perso1, evt1);
-
-		boolean res =  testComponent("Basic JEventPerso", comp);
-		System.out.println("End of testJEventPerso");
-		return res;
+		boolean res =  testComponent("testZorgaV", comp);
+		System.out.println("End of testZorgaV");
+		return true;
 	}
-	boolean testJPersoEventList(String[] args) {
-		Zorgas zorgas = new Zorgas();
-		int idAlain = zorgas.add("Alain");
-		
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-		
-		Event evt1 = new Event(null,
-				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-		evt1.addPerso(perso1);
-		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
-		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
-		evt1.addPerso(perso2);
-		
-		JPersoEventList persoList = new JPersoEventList( evt1 );
-		
-		boolean res = testComponent( "TestJPersoEventList", persoList._component);
-		System.out.println("End of TestJPersoEventList");
-		return res;
-	}
-	// Afficher Event in GUI
-	// Titre
-	// Corps
-	// Liste <Perso>*
-	boolean testJEvent(String[] args) {
-		Zorgas zorgas = new Zorgas();
-		int idAlain = zorgas.add("Alain");
-		
-		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-		
-		Event evt1 = new Event(null,
-				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-		evt1.addPerso(perso1);
-		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
-		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
-		evt1.addPerso(perso2);
-		JEvent comp = new JEvent( evt1);
-		
-		boolean res =  testComponent("JEvent", comp);
-		System.out.println("End of testJEvent");
-		return res;
-	}
-	boolean testExpand(String[] args) {
-		Expandable truc = new Expandable();
-		truc.buildMIG();
-		
-		boolean res =  testComponent("JEvent", truc._main);
-		System.out.println("End of testExpand");
-		return res;
-	}
-	// Read Story from tmp/story_test.xml
-	// Display Story
-	boolean testJStory( String[] args) {
-		XStream xStream = new XStream(new DomDriver());
-		xStream.registerConverter(new StoryConverter());
-        xStream.registerConverter(new PersoConverter());
-        xStream.registerConverter(new ZorgasConverter());
-        xStream.alias("story", Story.class);
-        
-		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
-		System.out.println("** Story from XML **");
-        System.out.println(story.sDump());
-        
-        JStory comp = new JStory(story);
-//        JScrollPane main = new JScrollPane(comp);
-//        main.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		boolean res =  testComponent("JStory", comp);
-		System.out.println("End of testJStory");
-		return res;
-	}
-	boolean testApplication( String[] args ) {
-		// Story
-		XStream xStream = new XStream(new DomDriver());
-		xStream.registerConverter(new StoryConverter());
-        xStream.registerConverter(new PersoConverter());
-        xStream.registerConverter(new ZorgasConverter());
-        xStream.alias("story", Story.class);
-        
-        File storyFile = new File("tmp/story_test.xml");
-		Story story = (Story) xStream.fromXML( storyFile );
-		System.out.println("** Story from XML **");
-        System.out.println(story.sDump());
-        
-        
-        // Tabbed Panel
-        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
-        
-		// Main Panel
-		JPanel mainP = new JPanel( new BorderLayout());
-		JStory comp = new JStory(story);
-		story.addObserver(comp);
-        JScrollPane storyScroll = new JScrollPane(comp);
-        mainP.add( storyScroll, BorderLayout.CENTER);
-        StoryC storyControler = new StoryC(story, storyFile);
-        mainP.add( storyControler._component, BorderLayout.NORTH);
-        tabbedPane.addTab("Intrigue", mainP);
-        
-        PersoListV persoP = new PersoListV(story._perso);
-        tabbedPane.addTab("Perso", persoP);
-        
-        ZorgasV zorgaP = new ZorgasV(story._zorgas);
-        tabbedPane.addTab("Zorga", zorgaP);
-        
-        boolean res =  testComponent("GNMaker", tabbedPane);
-		System.out.println("End of testApplication");
-		return res;
-	}
-	boolean testComboBox(String[] args) {
-		TestComboBox model = new TestComboBox();
-		TestComboBoxV view = new TestComboBoxV(model);
-		boolean res =  testComponent("JCombo", view);
-		System.out.println("End of testComboBox");
-		return res;
-	}
+	
+//	// Afficher Perso : Bouton Nom
+//	//               click gauche => switch status
+//	//               click droit => popup avec delete (+ confirm) ou change status
+//	//               et info.
+//	boolean testJPersoEvent(String[] args) {
+//		Zorgas zorgas = new Zorgas();
+//		int idAlain = zorgas.add("Alain");
+//		
+//		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+//		
+//		Event evt1 = new Event(null,
+//				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+//		
+//		JPersoEvent comp = new JPersoEvent(perso1, evt1);
+//
+//		boolean res =  testComponent("Basic JEventPerso", comp);
+//		System.out.println("End of testJEventPerso");
+//		return res;
+//	}
+//	boolean testJPersoEventList(String[] args) {
+//		Zorgas zorgas = new Zorgas();
+//		int idAlain = zorgas.add("Alain");
+//		
+//		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+//		
+//		Event evt1 = new Event(null,
+//				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+//		evt1.addPerso(perso1);
+//		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+//		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
+//		evt1.addPerso(perso2);
+//		
+//		JPersoEventList persoList = new JPersoEventList( evt1 );
+//		
+//		boolean res = testComponent( "TestJPersoEventList", persoList._component);
+//		System.out.println("End of TestJPersoEventList");
+//		return res;
+//	}
+//	// Afficher Event in GUI
+//	// Titre
+//	// Corps
+//	// Liste <Perso>*
+//	boolean testJEvent(String[] args) {
+//		Zorgas zorgas = new Zorgas();
+//		int idAlain = zorgas.add("Alain");
+//		
+//		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
+//		
+//		Event evt1 = new Event(null,
+//				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+//		evt1.addPerso(perso1);
+//		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+//		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
+//		evt1.addPerso(perso2);
+//		JEvent comp = new JEvent( evt1);
+//		
+//		boolean res =  testComponent("JEvent", comp);
+//		System.out.println("End of testJEvent");
+//		return res;
+//	}
+//	boolean testExpand(String[] args) {
+//		Expandable truc = new Expandable();
+//		truc.buildMIG();
+//		
+//		boolean res =  testComponent("JEvent", truc._main);
+//		System.out.println("End of testExpand");
+//		return res;
+//	}
+//	// Read Story from tmp/story_test.xml
+//	// Display Story
+//	boolean testJStory( String[] args) {
+//		XStream xStream = new XStream(new DomDriver());
+//		xStream.registerConverter(new StoryConverter());
+//        xStream.registerConverter(new PersoConverter());
+//        xStream.registerConverter(new ZorgasConverter());
+//        xStream.alias("story", Story.class);
+//        
+//		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
+//		System.out.println("** Story from XML **");
+//        System.out.println(story.sDump());
+//        
+//        JStory comp = new JStory(story);
+////        JScrollPane main = new JScrollPane(comp);
+////        main.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+//		
+//		boolean res =  testComponent("JStory", comp);
+//		System.out.println("End of testJStory");
+//		return res;
+//	}
+//	boolean testApplication( String[] args ) {
+//		// Story
+//		XStream xStream = new XStream(new DomDriver());
+//		xStream.registerConverter(new StoryConverter());
+//        xStream.registerConverter(new PersoConverter());
+//        xStream.registerConverter(new ZorgasConverter());
+//        xStream.alias("story", Story.class);
+//        
+//        File storyFile = new File("tmp/story_test.xml");
+//		Story story = (Story) xStream.fromXML( storyFile );
+//		System.out.println("** Story from XML **");
+//        System.out.println(story.sDump());
+//        
+//        
+//        // Tabbed Panel
+//        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+//        
+//		// Main Panel
+//		JPanel mainP = new JPanel( new BorderLayout());
+//		JStory comp = new JStory(story);
+//		story.addObserver(comp);
+//        JScrollPane storyScroll = new JScrollPane(comp);
+//        mainP.add( storyScroll, BorderLayout.CENTER);
+//        StoryC storyControler = new StoryC(story, storyFile);
+//        mainP.add( storyControler._component, BorderLayout.NORTH);
+//        tabbedPane.addTab("Intrigue", mainP);
+//        
+//        PersoListV persoP = new PersoListV(story._perso);
+//        tabbedPane.addTab("Perso", persoP);
+//        
+//        ZorgasV zorgaP = new ZorgasV(story._zorgas);
+//        tabbedPane.addTab("Zorga", zorgaP);
+//        
+//        boolean res =  testComponent("GNMaker", tabbedPane);
+//		System.out.println("End of testApplication");
+//		return res;
+//	}
+//	boolean testComboBox(String[] args) {
+//		TestComboBox model = new TestComboBox();
+//		TestComboBoxV view = new TestComboBoxV(model);
+//		boolean res =  testComponent("JCombo", view);
+//		System.out.println("End of testComboBox");
+//		return res;
+//	}
 	
 	/**
 	 * Utilise un JDialog modal (freeze until all event are processed) 

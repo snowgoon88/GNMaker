@@ -26,7 +26,9 @@ import org.apache.logging.log4j.Logger;
 
 import net.miginfocom.swing.MigLayout;
 
-import data.Zorgas;
+import data.ListOf;
+import data.Zorga
+;
 
 /**
  * Affiche tous les Zorgas comme une liste de DEL+JTextField pour les éditer.
@@ -35,23 +37,23 @@ import data.Zorgas;
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class ZorgasV extends JPanel implements Observer {
+public class ZorgaListV extends JPanel implements Observer {
 	/** Zorgas comme Model */
-	Zorgas _zorgas;
+	ListOf<Zorga> _zorgaList;
 	
 	/** Panel pour les Zorgas */
-	MyPanel _zorgaPanel;
+	MyPanel _listPanel;
 	
 	/* In order to Log */
-	private static Logger logger = LogManager.getLogger(ZorgasV.class.getName());
+	private static Logger logger = LogManager.getLogger(ZorgaListV.class.getName());
 	
 	/**
-	 * @param _zorgas
+	 * @param _zorgaList
 	 */
-	public ZorgasV(Zorgas zorgas) {
+	public ZorgaListV(ListOf<Zorga> zorgas) {
 		super();
-		this._zorgas = zorgas;
-		_zorgas.addObserver(this);
+		this._zorgaList = zorgas;
+		_zorgaList.addObserver(this);
 		buildGUI();
 	}
 
@@ -69,23 +71,18 @@ public class ZorgasV extends JPanel implements Observer {
 		btnPanel.add( clearBtn );
 		
 		MigLayout zorgasLayout = new MigLayout(
-				"debug, hidemode 3", // Layout Constraints
-				"[][grow,fill]", // Column constraints
+				"debug, hidemode 3,flowy", // Layout Constraints
+				"[grow,fill]", // Column constraints
 				""); // Row constraints);
-		_zorgaPanel = new MyPanel(zorgasLayout);
-		this.add(_zorgaPanel, BorderLayout.CENTER);
+		_listPanel = new MyPanel(zorgasLayout);
+		this.add(_listPanel, BorderLayout.CENTER);
 		
-		JButton delBtn;
-		JTextField zorgaText;
-		// Add [DEL][JTextField]
-		for (Entry<Integer, String> entry : _zorgas.entrySet()) {
-			delBtn = new JButton( new DelAction(entry.getKey()));
-			_zorgaPanel.add( delBtn, "");
-			
-			zorgaText = new JTextField( entry.getValue() );
-			// Action Listener : when ENTER pressed.
-			zorgaText.addActionListener( new SetActionListener(entry.getKey(), zorgaText));
-			_zorgaPanel.add( zorgaText, "wrap");
+		// Add [ZorgaPanel], only for id >=0
+		for (Entry<Integer, Zorga> entry : _zorgaList.entrySet()) {
+			if (entry.getKey() >= 0) {
+				ZorgaPanel zorgaPanel = new ZorgaPanel(entry.getValue());
+				_listPanel.add( zorgaPanel);
+			}
 		}
 	}
 	
@@ -101,74 +98,102 @@ public class ZorgasV extends JPanel implements Observer {
 				String command = sTok.nextToken();
 				// "add" -> une nouvelle ligne dans _zorgaPanel.
 				if (command.equals("add")) {
-					JButton delBtn = new JButton( new DelAction(id));
-					_zorgaPanel.add( delBtn, "");
-					
-					JTextField zorgaText = new JTextField( _zorgas.get(id) );
-					// Action Listener : when ENTER pressed.
-					zorgaText.addActionListener( new SetActionListener(id, zorgaText));
-					_zorgaPanel.add( zorgaText, "wrap");
+					ZorgaPanel zorgaPanel = new ZorgaPanel(_zorgaList.get(id));
+					_listPanel.add( zorgaPanel);
 					this.revalidate();
 					this.repaint();
 				}
 				// "del" reconstruit tout sauf id
 				else if (command.equals("del")){
-					_zorgaPanel.removeAll();
-					JButton delBtn;
-					JTextField zorgaText;
-					// Add [DEL][JTextField]
-					for (Entry<Integer, String> entry : _zorgas.entrySet()) {
-						if (entry.getKey() != id) {
-							delBtn = new JButton( new DelAction(entry.getKey()));
-							_zorgaPanel.add( delBtn, "");
-
-							zorgaText = new JTextField( entry.getValue() );
-							// Action Listener : when ENTER pressed.
-							zorgaText.addActionListener( new SetActionListener(entry.getKey(), zorgaText));
-							_zorgaPanel.add( zorgaText, "wrap");
+					for (int i = 0; i < _listPanel.getComponentCount(); i++) {
+						ZorgaPanel zorgaPanel = (ZorgaPanel) _listPanel.getComponent(i);
+						if (zorgaPanel._zorga.equals(_zorgaList.get(id))) {
+							_listPanel.remove(i);
+							this.revalidate();
+							this.repaint();
+							return;
 						}
+						
 					}
-					this.revalidate();
-					this.repaint();
 				}
 			}
 		}
 	}
 
-	/**
-	 * Détruit un Zorga Particulier.
-	 */
-	class DelAction extends AbstractAction {
-		int _delId;
+	class ZorgaPanel extends JPanel implements Observer {
+		/** Zorga comme Model */
+		Zorga _zorga;
 		
-		public DelAction(int zorgaId) {
-			super("DEL", null);
-			putValue(SHORT_DESCRIPTION, "Détruit ce Zorga.");
-			putValue(MNEMONIC_KEY, null);
-			_delId = zorgaId;
+		/** GUI element à mettre à jour */
+		JTextField _nameField;
+		
+		public ZorgaPanel(Zorga zorga) {
+			super();
+			_zorga = zorga;
+			buildGUI();
+			_zorga.addObserver(this);
 		}
+		void buildGUI() {
+			// [Buttons][Name]
+			MigLayout zorgaLayout = new MigLayout(
+					"", // Layout Constraints
+					"[][grow,fill]", // Column constraints
+					""); // Row constraints);
+			this.setLayout(zorgaLayout);
+			
+			JButton delBtn = new JButton( new DelAction());
+			this.add( delBtn );
+			_nameField = new JTextField(_zorga.getName());
+			_nameField.addActionListener(new SetNameActionListener(_nameField));
+			this.add(_nameField);
+		}
+		
+		@Override
+		public void update(Observable o, Object arg) {
+			// Observe seulement des Zorga
+			// o should be a Zorga
+			// arg is a String
+			String command = (String) arg;
+			if (command.equals("set")) {
+				_nameField.setText(_zorga.getName());
+			}
+			
+		}
+		
+		/**
+		 * Détruit un Zorga Particulier.
+		 */
+		class DelAction extends AbstractAction {
+			
+			public DelAction() {
+				super("DEL", null);
+				putValue(SHORT_DESCRIPTION, "Détruit ce Zorga.");
+				putValue(MNEMONIC_KEY, null);
+			}
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			_zorgas.remove(_delId);
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_zorgaList.remove(_zorga.getId());
+			}
+		}
+		/**
+		 * Modifie un Name de Zorga (après appui sur ENTER).
+		 */
+		class SetNameActionListener implements ActionListener {
+			JTextField _textField;
+			
+			public SetNameActionListener(JTextField textField) {
+				this._textField = textField;
+			}
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_zorga.setName(_textField.getText());
+			}
 		}
 	}
-	/**
-	 * Modifie un Zorga (après appuis ENTER).
-	 */
-	class SetActionListener implements ActionListener {
-		int _setId;
-		JTextField _textField;
-		
-		public SetActionListener(int zorgaId, JTextField textField) {
-			this._setId = zorgaId;
-			this._textField = textField;
-		}
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			_zorgas.set( _setId, _textField.getText());
-		}
-	}
+
+	
+	
 	
 	/**
 	 * Crée un nouveau Zorga qu'on ajoute aux Zorgas.
@@ -183,7 +208,7 @@ public class ZorgasV extends JPanel implements Observer {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_zorgas.add("Nouveau Zorga");
+			_zorgaList.add(new Zorga("NEW"));
 		}
 	}
 	
@@ -201,7 +226,7 @@ public class ZorgasV extends JPanel implements Observer {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("***** DumpALLAction *************");
-			System.out.println(_zorgas.sDump());
+			System.out.println(_zorgaList.sDump());
 		}
 	}
 	/**
@@ -217,7 +242,7 @@ public class ZorgasV extends JPanel implements Observer {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_zorgas.clear();
+			_zorgaList.clear();
 		}
 	}
 	

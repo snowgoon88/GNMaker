@@ -150,7 +150,7 @@ public class PersoListV extends JPanel implements Observer {
 			_playerField.addActionListener(new SetPlayerActionListener(_playerField));
 			this.add(_playerField);
 			
-			ZorgaCombo zorgaCombo = new ZorgaCombo(_persoList._zorgas.toArray());
+			ZorgaCombo zorgaCombo = new ZorgaCombo(_persoList._zorgaList.toArray());
 			//zorgaCombo.getSelectedItem();
 			this.add(zorgaCombo);
 		}
@@ -173,7 +173,7 @@ public class PersoListV extends JPanel implements Observer {
 		 */
 		class ZorgaCombo extends JComboBox<Object> implements Observer {
 			/**
-			 * @param _zorgas
+			 * @param _zorgaList
 			 */
 			/* In order to Log */
 			private Logger logger = LogManager.getLogger(ZorgaCombo.class.getName());
@@ -197,7 +197,7 @@ public class PersoListV extends JPanel implements Observer {
 						_perso.setZorga((String) zorgaName);
 					}
 				});
-				_persoList._zorgas.addObserver(this);
+				_persoList._zorgaList.addObserver(this);
 			}
 			@Override
 			public void update(Observable o, Object arg) {
@@ -210,14 +210,14 @@ public class PersoListV extends JPanel implements Observer {
 						String command = sTok.nextToken();
 						// "add" -> un nouvel item dans ComboBox.
 						if (command.equals("add")) {
-							this.addItem( _persoList._zorgas.get(id));
+							this.addItem( _persoList._zorgaList.get(id));
 						}
 						// "del" => modifie sélection si besoin, et détruit l'objet.
 						else if (command.equals("del")) {
 							if (_perso.getZorgaId() == id) {
 								this.setSelectedItem("---");
 							}
-							this.removeItem(_persoList._zorgas.get(id));
+							this.removeItem(_persoList._zorgaList.get(id));
 						}
 						// "set" - modifier l'item concerné
 						// C'est embettant car il faut l'ancienne valeur ET la nouvelle !
@@ -291,7 +291,7 @@ public class PersoListV extends JPanel implements Observer {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Perso pers = new Perso("---", "---", _persoList._zorgas, -1);
+			Perso pers = new Perso("---", "---", _persoList._zorgaList, -1);
 			_persoList.add(pers);
 		}
 	}

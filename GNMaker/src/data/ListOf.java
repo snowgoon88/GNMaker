@@ -28,6 +28,8 @@ public class ListOf<T extends IElement> extends Observable {
 	HashMap<Integer, T> _list;
 	/** Internal : current next Id */
 	int _nextId = 0;
+	/** Internal : elemNull of id=-1*/
+	T _elemNull;
 	/** ListOf has been modified ? */
 	boolean _fgModified;
 	
@@ -38,6 +40,7 @@ public class ListOf<T extends IElement> extends Observable {
 	 * Création d'une liste vide.
 	 */
 	public ListOf(T elemNull) {
+		_elemNull = elemNull;
 		_list = new HashMap<Integer, T>();
 		_list.put(-1,  elemNull);
 		_nextId = 0;
@@ -116,22 +119,30 @@ public class ListOf<T extends IElement> extends Observable {
 	}
 	
 	/**
-	 * Vide la liste et prévient les Observers pour chaque T détruit.
+	 * Vide la liste (sauf l'élément '-1') et prévient les Observers pour chaque T détruit.
 	 * @see java.util.List#clear()
 	 * @toObserver : id_del
 	 */
 	public void clear() {
+//		
+//		Set<Integer> keys = _list.keySet();
+//		
+//		//Vérifier qu'on en tien compte
+//		
+//		_list.clear();
+//		_nextId = 0;
+//		_list.put(-1, _elemNull);
+		
 		Set<Integer> keys = _list.keySet();
-		
-		//Vérifier qu'on en tien compte
-		
-		_list.clear();
-		_nextId = 0;
-		
-		for (Integer index : keys) {
-			logger.debug(index+"_del");
-			setChanged();
-			notifyObservers(index+"_del");	
+		Object[] arrayOfKey = keys.toArray();
+		for( int i=0; i<arrayOfKey.length; i++) {
+			int index = (int) arrayOfKey[i];
+			if (index >= 0) {
+				logger.debug(index+"_del");
+				setChanged();
+				notifyObservers(index+"_del");
+				_list.remove(index);
+			}
 		}
 	}
 	
