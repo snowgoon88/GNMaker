@@ -103,7 +103,7 @@ public class ZorgaListV extends JPanel implements Observer {
 					this.revalidate();
 					this.repaint();
 				}
-				// "del" reconstruit tout sauf id
+				// "del" efface le composant incriminé
 				else if (command.equals("del")){
 					for (int i = 0; i < _listPanel.getComponentCount(); i++) {
 						ZorgaPanel zorgaPanel = (ZorgaPanel) _listPanel.getComponent(i);

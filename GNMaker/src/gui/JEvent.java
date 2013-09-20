@@ -219,7 +219,7 @@ public class JEvent extends JPanel implements Observer {
 			Perso choice = (Perso) JOptionPane.showInputDialog(_comp, 
 					"Choisissez un Personnage à ajouter",
 					"Ajout Perso", JOptionPane.PLAIN_MESSAGE, null,
-					_story._perso.toArray(), null);
+					_story._persoList.toArray(), null);
 			System.out.println("Choice is a "+choice.getClass().getName());
 			System.out.println("Choice : "+choice.toString());
 			

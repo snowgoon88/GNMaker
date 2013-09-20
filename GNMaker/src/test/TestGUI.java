@@ -3,9 +3,6 @@
  */
 package test;
 
-import gui.JEvent;
-import gui.JPersoEvent;
-import gui.JPersoEventList;
 import gui.JStory;
 import gui.PersoListV;
 import gui.StoryC;
@@ -25,9 +22,6 @@ import javax.swing.SwingUtilities;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
-import Inspiration.Expandable;
-
-import data.Event;
 import data.ListOf;
 import data.Perso;
 import data.Story;
@@ -58,6 +52,15 @@ public class TestGUI {
 			nbPassed++;
 		} else {
 			System.err.println("testZorgaV >> " + res);
+		}
+		// -------
+		nbTest++;
+		res = testPersoListV(args);
+		if (res) {
+			System.out.println("testPersoListV >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testPersoListV >> " + res);
 		}
 //		// -------
 //		nbTest++;
@@ -104,15 +107,15 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testJStory >> " + res);
 //		}
-//		// -------
-//		nbTest++;
-//		res = testApplication(args);
-//		if (res) {
-//			System.out.println("testApplication >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testApplication >> " + res);
-//		}
+		// -------
+		nbTest++;
+		res = testApplication(args);
+		if (res) {
+			System.out.println("testApplication >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testApplication >> " + res);
+		}
 //		// -------
 //		nbTest++;
 //		res = testComboBox(args);
@@ -135,6 +138,7 @@ public class TestGUI {
 	}
 	
 	// viewer de ListOf<Zorga>
+	@SuppressWarnings("unused")
 	boolean testZorgaV(String[] args) {
 		ListOf<Zorga> zorgaList = new ListOf<Zorga>(Zorga.zorgaNull);
 		
@@ -147,8 +151,30 @@ public class TestGUI {
 		
 		boolean res =  testComponent("testZorgaV", comp);
 		System.out.println("End of testZorgaV");
-		return true;
+		return res;
 	}
+	// viewer de ListOf<Perso> et ListOf<Zorga>
+	boolean testPersoListV(String[] args) {
+		ListOf<Zorga> zorgaList = new ListOf<Zorga>(Zorga.zorgaNull);
+		Zorga zorgAlain = new Zorga("Alain");
+		zorgaList.add(zorgAlain);
+		
+		ListOf<Perso> persoList = new ListOf<Perso>(Perso.persoNull);
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgAlain);
+		persoList.add(perso1);
+		persoList.add(perso2);
+		
+		JPanel mainPanel = new JPanel();
+		ZorgaListV zorgaPanel = new ZorgaListV(zorgaList);
+		PersoListV persoPanel = new PersoListV(persoList, zorgaList);
+		mainPanel.add( zorgaPanel);
+		mainPanel.add( persoPanel);
+		boolean res =  testComponent("testPersoListV", mainPanel);
+		System.out.println("End of testPersoListV");
+		return res;
+	}
+	
 	
 //	// Afficher Perso : Bouton Nom
 //	//               click gauche => switch status
@@ -220,62 +246,62 @@ public class TestGUI {
 //	}
 //	// Read Story from tmp/story_test.xml
 //	// Display Story
-//	boolean testJStory( String[] args) {
-//		XStream xStream = new XStream(new DomDriver());
-//		xStream.registerConverter(new StoryConverter());
-//        xStream.registerConverter(new PersoConverter());
-//        xStream.registerConverter(new ZorgasConverter());
-//        xStream.alias("story", Story.class);
-//        
-//		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
-//		System.out.println("** Story from XML **");
-//        System.out.println(story.sDump());
-//        
-//        JStory comp = new JStory(story);
-////        JScrollPane main = new JScrollPane(comp);
-////        main.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-//		
-//		boolean res =  testComponent("JStory", comp);
-//		System.out.println("End of testJStory");
-//		return res;
-//	}
-//	boolean testApplication( String[] args ) {
-//		// Story
-//		XStream xStream = new XStream(new DomDriver());
-//		xStream.registerConverter(new StoryConverter());
-//        xStream.registerConverter(new PersoConverter());
-//        xStream.registerConverter(new ZorgasConverter());
-//        xStream.alias("story", Story.class);
-//        
-//        File storyFile = new File("tmp/story_test.xml");
-//		Story story = (Story) xStream.fromXML( storyFile );
-//		System.out.println("** Story from XML **");
-//        System.out.println(story.sDump());
-//        
-//        
-//        // Tabbed Panel
-//        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
-//        
-//		// Main Panel
-//		JPanel mainP = new JPanel( new BorderLayout());
-//		JStory comp = new JStory(story);
-//		story.addObserver(comp);
-//        JScrollPane storyScroll = new JScrollPane(comp);
-//        mainP.add( storyScroll, BorderLayout.CENTER);
-//        StoryC storyControler = new StoryC(story, storyFile);
-//        mainP.add( storyControler._component, BorderLayout.NORTH);
-//        tabbedPane.addTab("Intrigue", mainP);
-//        
-//        PersoListV persoP = new PersoListV(story._perso);
-//        tabbedPane.addTab("Perso", persoP);
-//        
-//        ZorgasV zorgaP = new ZorgasV(story._zorgas);
-//        tabbedPane.addTab("Zorga", zorgaP);
-//        
-//        boolean res =  testComponent("GNMaker", tabbedPane);
-//		System.out.println("End of testApplication");
-//		return res;
-//	}
+	boolean testJStory( String[] args) {
+		XStream xStream = new XStream(new DomDriver());
+		xStream.registerConverter(new StoryConverter());
+        xStream.registerConverter(new PersoConverter());
+        xStream.registerConverter(new ZorgaConverter());
+        xStream.alias("story", Story.class);
+        
+		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
+		System.out.println("** Story from XML **");
+        System.out.println(story.sDump());
+        
+        JStory comp = new JStory(story);
+//        JScrollPane main = new JScrollPane(comp);
+//        main.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		boolean res =  testComponent("JStory", comp);
+		System.out.println("End of testJStory");
+		return res;
+	}
+	boolean testApplication( String[] args ) {
+		// Story
+		XStream xStream = new XStream(new DomDriver());
+		xStream.registerConverter(new StoryConverter());
+        xStream.registerConverter(new PersoConverter());
+        xStream.registerConverter(new ZorgaConverter());
+        xStream.alias("story", Story.class);
+        
+        File storyFile = new File("tmp/story_test.xml");
+		Story story = (Story) xStream.fromXML( storyFile );
+		System.out.println("** Story from XML **");
+        System.out.println(story.sDump());
+        
+        
+        // Tabbed Panel
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+        
+		// Main Panel
+		JPanel mainP = new JPanel( new BorderLayout());
+		JStory comp = new JStory(story);
+		story.addObserver(comp);
+        JScrollPane storyScroll = new JScrollPane(comp);
+        mainP.add( storyScroll, BorderLayout.CENTER);
+        StoryC storyControler = new StoryC(story, storyFile);
+        mainP.add( storyControler._component, BorderLayout.NORTH);
+        tabbedPane.addTab("Intrigue", mainP);
+        
+        PersoListV persoP = new PersoListV(story._persoList, story._zorgaList);
+        tabbedPane.addTab("Perso", persoP);
+        
+        ZorgaListV zorgaP = new ZorgaListV(story._zorgaList);
+        tabbedPane.addTab("Zorga", zorgaP);
+        
+        boolean res =  testComponent("GNMaker", tabbedPane);
+		System.out.println("End of testApplication");
+		return res;
+	}
 //	boolean testComboBox(String[] args) {
 //		TestComboBox model = new TestComboBox();
 //		TestComboBoxV view = new TestComboBoxV(model);

@@ -27,8 +27,9 @@ import org.apache.logging.log4j.Logger;
 
 import net.miginfocom.swing.MigLayout;
 
+import data.ListOf;
 import data.Perso;
-import data.PersoList;
+import data.Zorga;
 
 /**
  * Liste de DEL+Name+Player+Zorga (as JComboBox)
@@ -40,21 +41,29 @@ import data.PersoList;
  */
 @SuppressWarnings("serial")
 public class PersoListV extends JPanel implements Observer {
-	/** PersoList comme Modèle */
-	PersoList _persoList;
+	/** ListOf<Perso> comme Modèle */
+	ListOf<Perso> _persoList;
+	/** ListOf<Zorga> comme Modèle */
+	ListOf<Zorga> _zorgaList;
 	
 	/** GUI element à mettre à jour */
 	JPanel _listPanel;
 	
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(PersoListV.class.getName());
+	
 	
 	/**
-	 * Creation avec un PersoList comme Modèle.
+	 * Creation avec un ListOf<Perso> comme Modèle.
 	 * @param _persoList
 	 */
-	public PersoListV(PersoList persos) {
+	public PersoListV(ListOf<Perso> persoList, ListOf<Zorga> zorgaList) {
 		super();
-		this._persoList = persos;
+		this._persoList = persoList;
 		_persoList.addObserver(this);
+		
+		this._zorgaList = zorgaList;
+		// not observed here.
 		
 		buildGUI();
 	}
@@ -90,6 +99,8 @@ public class PersoListV extends JPanel implements Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
+		// Log
+		logger.debug("o is a "+o.getClass().getName()+ " arg="+arg);
 		// Observe seulement un PersoList
 		// o est un PersoList
 		// arg est un string
@@ -104,24 +115,26 @@ public class PersoListV extends JPanel implements Observer {
 			this.revalidate();
 			this.repaint();
 		}
-		// "del" ou "clear" => reconstruit tout.
-		else if (command.equals("del") || command.equals("clear")) {
-			System.out.println("PersoListV.update() : "+command);
-			_listPanel.removeAll();
-			for (Entry<Integer, Perso> entry : _persoList.entrySet()) {
-				PersoPanel pPanel = new PersoPanel(entry.getKey(), entry.getValue());
-				_listPanel.add(pPanel);
+		// "del" efface le composant incriminé
+		else if (command.equals("del")) {
+			for (int i = 0; i < _listPanel.getComponentCount(); i++) {
+				PersoPanel persoPanel = (PersoPanel) _listPanel.getComponent(i);
+				if (persoPanel._perso.equals(_persoList.get(id))) {
+					_listPanel.remove(i);
+					this.revalidate();
+					this.repaint();
+					return;
+				}
+				
 			}
-			this.revalidate();
-			this.repaint();
 		}
 	}
 	
 	class PersoPanel extends JPanel implements Observer {
 		/** Perso comme Model */
 		Perso _perso;
-		/** Id du Perso pour effacer */
-		int _persId;
+//		/** Id du Perso pour effacer */
+//		int _persId;
 		
 		/** GUI element à mettre à jour */
 		JTextField _nameField;
@@ -129,7 +142,7 @@ public class PersoListV extends JPanel implements Observer {
 		
 		public PersoPanel(int persId, Perso pers) {
 			super();
-			_persId = persId;
+//			_persId = persId;
 			_perso = pers;
 			buildGUI();
 			_perso.addObserver(this);
@@ -150,13 +163,14 @@ public class PersoListV extends JPanel implements Observer {
 			_playerField.addActionListener(new SetPlayerActionListener(_playerField));
 			this.add(_playerField);
 			
-			ZorgaCombo zorgaCombo = new ZorgaCombo(_persoList._zorgaList.toArray());
+			ZorgaCombo zorgaCombo = new ZorgaCombo();
 			//zorgaCombo.getSelectedItem();
 			this.add(zorgaCombo);
 		}
 		
 		@Override
 		public void update(Observable o, Object arg) {
+			// MUST if Zorga is set !
 			// Observe seulement des Perso
 			// o should be a Perso
 			// arg is a String
@@ -172,18 +186,18 @@ public class PersoListV extends JPanel implements Observer {
 		 * TODO Mais qui doit aussi observer Perso (si change de Zorga)
 		 */
 		class ZorgaCombo extends JComboBox<Object> implements Observer {
+			//ListOf<Zorga> _zorgaList;
 			/**
 			 * @param _zorgaList
 			 */
 			/* In order to Log */
 			private Logger logger = LogManager.getLogger(ZorgaCombo.class.getName());
 			
-			public ZorgaCombo(Object[] items) {
+			public ZorgaCombo() {
 				super();
 				logger.trace("for "+_perso.getName());
-				this.addItem("---");
-				for (int i = 0; i < items.length; i++) {
-					this.addItem(items[i]);
+				for (Entry<Integer,Zorga> item : _zorgaList.entrySet()) {
+					this.addItem(item.getValue());
 				}
 				this.setSelectedItem(_perso.getZorga());
 				
@@ -193,15 +207,15 @@ public class PersoListV extends JPanel implements Observer {
 					public void actionPerformed(ActionEvent e) {
 						logger.trace("for "+_perso.getName()+" "+e.paramString());
 						@SuppressWarnings({ "unchecked" })
-						Object zorgaName = ((JComboBox<Object>) e.getSource()).getSelectedItem();
-						_perso.setZorga((String) zorgaName);
+						Object zorga = ((JComboBox<Object>) e.getSource()).getSelectedItem();
+						_perso.setZorga((Zorga) zorga);
 					}
 				});
-				_persoList._zorgaList.addObserver(this);
+				_zorgaList.addObserver(this);
 			}
 			@Override
 			public void update(Observable o, Object arg) {
-				// Observe un Zorgas
+				// Observe une ListOf<Zorga>
 				logger.debug("for "+_perso.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
 				if (arg != null) {
 					if (arg instanceof String) {
@@ -210,21 +224,14 @@ public class PersoListV extends JPanel implements Observer {
 						String command = sTok.nextToken();
 						// "add" -> un nouvel item dans ComboBox.
 						if (command.equals("add")) {
-							this.addItem( _persoList._zorgaList.get(id));
+							this.addItem( _zorgaList.get(id));
 						}
-						// "del" => modifie sélection si besoin, et détruit l'objet.
+						// "del" => détruit l'objet et modifie la sélection.
 						else if (command.equals("del")) {
-							if (_perso.getZorgaId() == id) {
-								this.setSelectedItem("---");
-							}
-							this.removeItem(_persoList._zorgaList.get(id));
+							this.removeItem(_zorgaList.get(id));
+							this.setSelectedItem( _perso.getZorga());
 						}
-						// "set" - modifier l'item concerné
-						// C'est embettant car il faut l'ancienne valeur ET la nouvelle !
-						// TODO Faire que Zorga soit une liste de Zorga. => tester JComboBox OKOKOK
-						else if (command.equals("set")) {
-							
-						}
+						// TODO "set" - modifier l'item concerné si cela vient de Zorga
 						this.revalidate();
 						this.repaint();
 					}
@@ -245,7 +252,7 @@ public class PersoListV extends JPanel implements Observer {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_persoList.remove(_persId);
+				_persoList.remove(_perso.getId());
 			}
 		}
 		/**
@@ -291,7 +298,7 @@ public class PersoListV extends JPanel implements Observer {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Perso pers = new Perso("---", "---", _persoList._zorgaList, -1);
+			Perso pers = new Perso("---", "---", Zorga.zorgaNull);
 			_persoList.add(pers);
 		}
 	}

@@ -117,6 +117,13 @@ public class ListOf<T extends IElement> extends Observable {
 	public Set<Entry<Integer, T>> entrySet() {
 		return _list.entrySet();
 	}
+	/**
+	 * Renvoie un Array contenant tous les éléments de la liste.
+	 * @return
+	 */
+	public Object[] toArray() {
+		return _list.values().toArray();
+	}
 	
 	/**
 	 * Vide la liste (sauf l'élément '-1') et prévient les Observers pour chaque T détruit.
