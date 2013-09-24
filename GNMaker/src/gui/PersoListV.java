@@ -89,8 +89,10 @@ public class PersoListV extends JPanel implements Observer {
 		this.add(_listPanel, BorderLayout.CENTER);
 		
 		for (Entry<Integer, Perso> entry : _persoList.entrySet()) {
-			PersoPanel pPanel = new PersoPanel(entry.getKey(), entry.getValue());
-			_listPanel.add(pPanel);
+			if (entry.getKey() >= 0) {
+				PersoPanel pPanel = new PersoPanel(entry.getKey(), entry.getValue());
+				_listPanel.add(pPanel);
+			}
 		}
 	}
 	
@@ -133,8 +135,6 @@ public class PersoListV extends JPanel implements Observer {
 	class PersoPanel extends JPanel implements Observer {
 		/** Perso comme Model */
 		Perso _perso;
-//		/** Id du Perso pour effacer */
-//		int _persId;
 		
 		/** GUI element à mettre à jour */
 		JTextField _nameField;
@@ -142,7 +142,7 @@ public class PersoListV extends JPanel implements Observer {
 		
 		public PersoPanel(int persId, Perso pers) {
 			super();
-//			_persId = persId;
+
 			_perso = pers;
 			buildGUI();
 			_perso.addObserver(this);
@@ -186,7 +186,6 @@ public class PersoListV extends JPanel implements Observer {
 		 * TODO Mais qui doit aussi observer Perso (si change de Zorga)
 		 */
 		class ZorgaCombo extends JComboBox<Object> implements Observer {
-			//ListOf<Zorga> _zorgaList;
 			/**
 			 * @param _zorgaList
 			 */

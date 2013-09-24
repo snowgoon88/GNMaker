@@ -98,15 +98,6 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testJPersoEventList >> " + res);
 //		}
-//		// -------
-//		nbTest++;
-//		res = testJStory(args);
-//		if (res) {
-//			System.out.println("testJStory >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testJStory >> " + res);
-//		}
 		// -------
 		nbTest++;
 		res = testApplication(args);
@@ -244,27 +235,6 @@ public class TestGUI {
 //		System.out.println("End of testExpand");
 //		return res;
 //	}
-//	// Read Story from tmp/story_test.xml
-//	// Display Story
-	boolean testJStory( String[] args) {
-		XStream xStream = new XStream(new DomDriver());
-		xStream.registerConverter(new StoryConverter());
-        xStream.registerConverter(new PersoConverter());
-        xStream.registerConverter(new ZorgaConverter());
-        xStream.alias("story", Story.class);
-        
-		Story story = (Story) xStream.fromXML(new File("tmp/story_test.xml"));
-		System.out.println("** Story from XML **");
-        System.out.println(story.sDump());
-        
-        JStory comp = new JStory(story);
-//        JScrollPane main = new JScrollPane(comp);
-//        main.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		boolean res =  testComponent("JStory", comp);
-		System.out.println("End of testJStory");
-		return res;
-	}
 	boolean testApplication( String[] args ) {
 		// Story
 		XStream xStream = new XStream(new DomDriver());
@@ -302,13 +272,6 @@ public class TestGUI {
 		System.out.println("End of testApplication");
 		return res;
 	}
-//	boolean testComboBox(String[] args) {
-//		TestComboBox model = new TestComboBox();
-//		TestComboBoxV view = new TestComboBoxV(model);
-//		boolean res =  testComponent("JCombo", view);
-//		System.out.println("End of testComboBox");
-//		return res;
-//	}
 	
 	/**
 	 * Utilise un JDialog modal (freeze until all event are processed) 

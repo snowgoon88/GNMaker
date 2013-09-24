@@ -220,18 +220,20 @@ public class JEvent extends JPanel implements Observer {
 					"Choisissez un Personnage à ajouter",
 					"Ajout Perso", JOptionPane.PLAIN_MESSAGE, null,
 					_story._persoList.toArray(), null);
-			System.out.println("Choice is a "+choice.getClass().getName());
-			System.out.println("Choice : "+choice.toString());
-			
-			// Ajoute seulemen si un nouveau
-			if (_evt._persoMap.containsKey(choice) == false) {
-				_evt.addPerso(choice);
+			if (choice != null ) {
+				System.out.println("Choice is a "+choice.getClass().getName());
+				System.out.println("Choice : "+choice.toString());
+
+				// Ajoute seulemen si un nouveau
+				if (_evt._persoMap.containsKey(choice) == false) {
+					_evt.addPerso(choice);
+				}
+				else {
+					JOptionPane.showMessageDialog(_comp,
+							choice.toString()+" est déjà impliqué.",
+							"Attention !",
+							JOptionPane.WARNING_MESSAGE);
 			}
-			else {
-				JOptionPane.showMessageDialog(_comp,
-					    choice.toString()+" est déjà impliqué.",
-					    "Attention !",
-					    JOptionPane.WARNING_MESSAGE);
 			}
 		}
 	}
