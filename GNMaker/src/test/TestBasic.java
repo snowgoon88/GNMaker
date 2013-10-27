@@ -217,13 +217,15 @@ public class TestBasic {
 		Event evt1 = new Event(story,
 				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
-		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+//		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+		evt1._listPE.get(perso1.getId()).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
 		evt1.addPerso(perso2);
 		story.add(evt1);
 		Event evt2 = new Event(story,
 				"Visite impromtue", "B. Erinska revoit sa \"fantômette\" (O. Petrequin).");
 		evt2.addPerso(perso2);
-		evt2._persoMap.get(perso2).setDesc("Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.");
+//		evt2._persoMap.get(perso2).setDesc("Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.");
+		evt2._listPE.get(perso2.getId()).setDesc("Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.");
 		story.add(evt2);
 		System.out.println("** Created **");
 		System.out.println(story.sDump());
@@ -289,25 +291,24 @@ public class TestBasic {
 				return res;
 			}
 			// PersoEvent
-			res = res && (eOri._persoMap.size() == eRead._persoMap.size());
+//			res = res && (eOri._persoMap.size() == eRead._persoMap.size());
+			res = res && (eOri._listPE.entrySet().size() == eRead._listPE.entrySet().size());
 			if (res==false) {
 				System.err.println("Pb avec NbPerso Event="+i);
-				System.err.println("Story evt="+eOri._persoMap.size());
-				System.err.println("Story evt="+eRead._persoMap.size());
+				System.err.println("Story evt="+eOri._listPE.entrySet().size());
+				System.err.println("Read evt="+eRead._listPE.entrySet().size());
 				return res;
 			}
-			for (Perso p : eOri._persoMap.keySet()) {
-				Event.PersoEvent peOri = eOri._persoMap.get(p);
-				// Trouver le pers correspondant dans stRead
-				Perso pRead = stRead._persoList.get(p.getId());
-				Event.PersoEvent peRead = eRead._persoMap.get(pRead);
-				res = res && (peOri._perso.getName().equals(peRead._perso.getName()) &&
-						peOri._status == peRead._status &&
+			for (Entry<Integer, Event.PersoEvent> entry : eOri._listPE.entrySet()) {
+				Event.PersoEvent peOri = entry.getValue();
+				// Trouver le pe correspondantg dans stRead
+				Event.PersoEvent peRead = eRead._listPE.get(peOri.getId());
+				res = res && (peOri.getStatus() == peRead.getStatus() &&
 						peOri.getDesc().equals(peRead.getDesc()));
 				if (res==false) {
-					System.err.println("Pb avec Perso dans Event="+i);
-					System.err.println("Story evt="+peOri._perso.sDump());
-					System.err.println("Story evt="+pRead.sDump());
+					System.err.println("Pb avec PersoEvent="+i);
+					System.err.println("Story evt="+peOri.sDump());
+					System.err.println("Read evt="+peRead.sDump());
 					return res;
 				}
 			}
@@ -364,33 +365,35 @@ public class TestBasic {
 		Event evt1 = new Event(story,
 				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
-		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+//		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+		evt1._listPE.get(perso1.getId()).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
 		evt1.addPerso(perso2);
 		story.add(evt1);
 		Event evt2 = new Event(story,
 				"Visite impromtue", "B. Erinska revoit sa \"fantômette\" (O. Petrequin).");
 		evt2.addPerso(perso2);
-		evt2._persoMap.get(perso2).setDesc("Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.");
+//		evt2._persoMap.get(perso2).setDesc("Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.");
+		evt2._listPE.get(perso2.getId()).setDesc("Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.");
 		story.add(evt2);
 		
 		// Delete perso1, should affect Events
 		story._persoList.remove(perso1.getId());
 		// Only 1 perso in evt1
-		boolean res = (evt1._persoMap.size() == 1);
+		boolean res = (evt1._listPE.entrySet().size() == 2); // 1 + nullPersoEvent
 		if (res == false) {
 			System.err.println("Pb with perso1 deleted in Event1 : still 2 perso");
 			System.err.println("evt1 ="+evt1.sDump());
 			return res;
 		}
 		// Should not be perso1
-		res = !(evt1._persoMap.containsKey(perso1));
+		res = (evt1._listPE.get(perso1.getId()) == null);
 		if (res == false) {
 			System.err.println("Pb with perso1 deleted in Event1 : still has "+perso1.getName());
 			System.err.println("evt1 ="+evt1.sDump());
 			return res;
 		}
 		// evt2 not touched
-		res = (evt2._persoMap.size() == 1);
+		res = (evt2._listPE.entrySet().size() == 2); // 1 + nullPersoEvent
 		if (res == false) {
 			System.err.println("Pb with perso1 deleted in Event2 : not 1 perso");
 			System.err.println("evt2 ="+evt1.sDump());

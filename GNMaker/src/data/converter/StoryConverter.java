@@ -89,21 +89,35 @@ public class StoryConverter implements Converter {
 			writer.setValue(evt.getBody());
 			writer.endNode();
 			// PersoEvent
-			for (Event.PersoEvent pe : evt._persoMap.values()) {
-				// Trouver l'id de pe._perso
-				int id = pe._perso.getId();
-				writer.startNode("perso_event");
-				writer.startNode("perso_id");
-				writer.setValue(Integer.toString(id));
-				writer.endNode();
-				writer.startNode("status");
-				writer.setValue(Boolean.toString(pe._status));
-				writer.endNode();
-				writer.startNode("desc");
-				writer.setValue(pe.getDesc());
-				writer.endNode();
-				writer.endNode();
+			for (Entry<Integer, Event.PersoEvent> entry : evt._listPE.entrySet()) {
+				if (entry.getKey() >= 0) {
+					writer.startNode("perso_event");
+					writer.addAttribute("id", Integer.toString(entry.getKey()));
+					writer.startNode("status");
+					writer.setValue(Boolean.toString(entry.getValue().getStatus()));
+					writer.endNode();
+					writer.startNode("desc");
+					writer.setValue(entry.getValue().getDesc());
+					writer.endNode();
+					writer.endNode();
+				}
 			}
+//			// PersoEvent
+//			for (Event.PersoEvent pe : evt._persoMap.values()) {
+//				// Trouver l'id de pe._perso
+//				int id = pe._perso.getId();
+//				writer.startNode("perso_event");
+//				writer.startNode("perso_id");
+//				writer.setValue(Integer.toString(id));
+//				writer.endNode();
+//				writer.startNode("status");
+//				writer.setValue(Boolean.toString(pe._status));
+//				writer.endNode();
+//				writer.startNode("desc");
+//				writer.setValue(pe.getDesc());
+//				writer.endNode();
+//				writer.endNode();
+//			}
 			writer.endNode();
 		}
 		
@@ -166,10 +180,11 @@ public class StoryConverter implements Converter {
 				// PersoEvent
 				while (reader.hasMoreChildren()) {
 					reader.moveDown();
-					// id
-					reader.moveDown();
-					int id = Integer.parseInt(reader.getValue());
-					reader.moveUp();
+					int id = Integer.parseInt(reader.getAttribute("id"));
+//					// id
+//					reader.moveDown();
+//					int id = Integer.parseInt(reader.getValue());
+//					reader.moveUp();
 					// status
 					reader.moveDown();
 					boolean status = Boolean.parseBoolean(reader.getValue());
