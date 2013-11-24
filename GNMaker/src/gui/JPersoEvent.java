@@ -18,6 +18,9 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import utils.GraphicHelper;
 
 
@@ -33,33 +36,41 @@ import data.Perso;
  */
 @SuppressWarnings("serial")
 public class JPersoEvent extends JButton implements Observer {
+	// Observes a PersoEvent, and thus a Perso
+	public Event.PersoEvent _pe;
+	// Need to know the Event to remove PersoEvent.
 	Event _evt;
-	Perso _pers;
 	MyJPopupMenu _popup;
 	
 	ImageIcon _iconRemove = GraphicHelper.createImageIcon(this,"user-group-delete.png", "");
+	
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(JPersoEvent.class.getName());
 	
 	public AbstractAction _leftClickAction = null;
 	
 	/**
 	 * Création avec un PersoEvent
 	 * @param evt
-	 * @param pers
+	 * @param perso
 	 */
-	public JPersoEvent(Perso pers, Event evt) {
-		super(pers.getName());
+	public JPersoEvent(Event evt, Event.PersoEvent persoEvent) {
+		super();
 		_evt = evt;
-		_pers = pers;
+		_pe = persoEvent;
 		
 		buildGUI();
-		
-		_pers.addObserver(this);
+		// Observes a PersoEvent, and thus a Perso
+		_pe.addObserver(this);
+		_pe._perso.addObserver(this);
 	}
 	
 	/**
 	 * Un JButton et un JPopup pour le context.
 	 */
 	void buildGUI() {
+		this.setText(_pe._perso.getName());
+		
 		// Build the associated PopupMenu
 		_popup = new MyJPopupMenu();
 		
@@ -75,7 +86,7 @@ public class JPersoEvent extends JButton implements Observer {
 	 */
 	void update() {
 		_popup.update();
-		if (_evt.getStatusPerso(_pers) == true) {
+		if (_pe.getStatus() == true) {
 			this.setBackground( Color.GREEN );
 		}
 		else {
@@ -87,7 +98,7 @@ public class JPersoEvent extends JButton implements Observer {
 	 * Action pour changer l'état (status) du PersoEvent.
 	 */
 	void switchStateAction() {
-		_evt.setStatusPerso(_pers, !_evt.getStatusPerso(_pers));
+		_pe.setStatus(!_pe.getStatus());
 		update();
 	}
 	
@@ -140,7 +151,7 @@ public class JPersoEvent extends JButton implements Observer {
 			});
 			add(_switchItem);
 			// Delete 
-			item = new JMenuItem(new RemovePersoAction(_pers));
+			item = new JMenuItem(new RemovePersoAction());
 			add(item);
 			// Separator
 			add( new Separator());
@@ -150,8 +161,8 @@ public class JPersoEvent extends JButton implements Observer {
 			add(_statusItem);
 		}
 		public void update() {
-			if (_pers != null) {
-				_statusItem.setText(_pers.sDump());
+			if (_pe._perso != null) {
+				_statusItem.setText(_pe._perso.sDump());
 			}
 			else {
 				_statusItem.setText("-");
@@ -163,27 +174,38 @@ public class JPersoEvent extends JButton implements Observer {
 	 * Enlève un Perso à un Event.
 	 */
 	public class RemovePersoAction extends AbstractAction {
- 		Perso _perso;
  	    
-		public RemovePersoAction(Perso perso) {
+		public RemovePersoAction() {
 			super("Enlève Perso", _iconRemove);
 			putValue(SHORT_DESCRIPTION, "Enlève un Perso à un Evénement.");
 			putValue(MNEMONIC_KEY, null);
-			
-			_perso = perso;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_evt.removePerso(_perso);
+			_evt.removePerso(_pe._perso);
 		}
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
+		// Log
+		logger.debug(_pe._perso.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
+		
 		// Observe un Perso
-		// arg = "set"
-		this.setName(_pers.getName());
-		_popup.update();
+		if (o.getClass() == Perso.class) {
+			// only "set" message
+			if (arg.equals("set")) {
+				this.setName(_pe._perso.getName());
+				_popup.update();
+			}
+		}
+		// Observe a PersoEvent
+		else if (o.getClass() == Event.PersoEvent.class) {
+			// only "status" message
+			if (arg.equals("status")) {
+				update();
+			}
+		}
 	}
 }

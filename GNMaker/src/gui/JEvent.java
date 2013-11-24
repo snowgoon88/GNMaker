@@ -24,6 +24,9 @@ import javax.swing.Scrollable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import utils.GraphicHelper;
 
 import net.miginfocom.swing.MigLayout;
@@ -56,6 +59,9 @@ public class JEvent extends JPanel implements Observer {
 	JTextField _title;
 	JTextArea _body;
 	JPersoEventList _persoList;
+	
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(JEvent.class.getName());
 	
 	/** Est-ce que le JEven est expanded ? */
 	boolean _expandFlag;
@@ -182,12 +188,11 @@ public class JEvent extends JPanel implements Observer {
 	@Override
 	// Implement Observer
 	public void update(Observable o, Object arg) {
-		if (arg != null ) {
-			System.out.println("### JEvent.Observable : arg is a "+arg.getClass().getName());
-		}
-		else {
-			System.out.println("### JEvent.Observable : arg is null");
-		}
+		// Log
+		logger.debug(_evt.getTitle()+" o is a "+o.getClass().getName()+ " arg="+arg);
+		
+		// Event wit msg="body"
+		_body.setText(_evt.getBody());
 		update(); // What is Visible ?
 	}
 	/**
@@ -225,7 +230,8 @@ public class JEvent extends JPanel implements Observer {
 				System.out.println("Choice : "+choice.toString());
 
 				// Ajoute seulemen si un nouveau
-				if (_evt._persoMap.containsKey(choice) == false) {
+//				if (_evt._persoMap.containsKey(choice) == false) {
+				if (_evt._listPE.get(choice.getId()) == null) {	
 					_evt.addPerso(choice);
 				}
 				else {

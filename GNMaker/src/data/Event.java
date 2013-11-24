@@ -70,6 +70,7 @@ public class Event extends Observable implements Observer {
 		addPerso( pers, false, "-");
 	}
 	public void addPerso( Perso pers, boolean status, String desc) {
+		logger.trace("adding : "+pers.sDump());
 		PersoEvent pe = new PersoEvent( pers, status, desc);
 //		_persoMap.put( pers, pe);
 		_listPE.put( pe.getId(), pe);
@@ -160,7 +161,7 @@ public class Event extends Observable implements Observer {
 	public String sDump() {
 		StringBuffer str = new StringBuffer();
 		str.append( "Event : "+_title+"\n");
-		str.append( _body);
+		str.append( _body+"\n");
 		str.append( _listPE.sDump());
 //		for (Map.Entry<Perso, PersoEvent> e : _persoMap.entrySet()) {
 //			if (e.getValue()._status==false) {
@@ -269,8 +270,8 @@ public class Event extends Observable implements Observer {
 		@Override
 		public String sDump() {
 			StringBuffer str = new StringBuffer();
-			str.append( "PersoEvent ( "+_status+") ");
-			str.append( _desc+"/n");
+			str.append( "PersoEvent with perso_id="+_perso.getId()+" ("+_status+") ");
+			str.append( _desc+"\n");
 			return str.toString();
 		}
 	}

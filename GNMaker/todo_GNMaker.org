@@ -1,2 +1,3 @@
-* ds Event, utiliser une ListOf<PersoEvent>
-=> OUI, mais id sera celui du Perso, car on veut savoir la liste des Perso facilement...
+* GUI et JPersoEventList (inspiration from PersoListV ??)
+** Affiche aussi les PersoEvent "null" ("...") => Non !!!
+*** Quand ajoute perso, ça merde (2 fois Erika) => Trace ??

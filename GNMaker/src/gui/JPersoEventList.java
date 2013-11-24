@@ -4,14 +4,18 @@
 package gui;
 
 
+import gui.ZorgaListV.ZorgaPanel;
+
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.StringTokenizer;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -23,12 +27,16 @@ import javax.swing.Scrollable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import utils.GraphicHelper;
 
 import net.miginfocom.swing.MigLayout;
 
 import data.Event;
 import data.Event.PersoEvent;
+import data.ListOf;
 import data.Perso;
 
 /**
@@ -43,7 +51,7 @@ import data.Perso;
  * @author snowgoon88@gmail.com
  */
 public class JPersoEventList implements Observer {
-	/** Un Event comme Model */
+	/** Un ListOf<PersoEvent> comme Model */
 	Event _evt;
 	
 	/** JPanel comme Component */
@@ -68,6 +76,9 @@ public class JPersoEventList implements Observer {
 	
 	/** Status Flag pour AllDescExpand */
 	boolean _allDescVisible = true;
+	
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(JPersoEventList.class.getName());
 
 	/**
 	 * Création avec un Event comme modèle (MVC).
@@ -77,29 +88,32 @@ public class JPersoEventList implements Observer {
 		this._evt = _evt;
 		buildGUI();
 		
-		_evt.addObserver(this);
+		_evt._listPE.addObserver(this);
 	}
 	
 	void buildGUI() {
+//		POURQUOI les BOUTONS n'ont pas de nom !!!!!
 		// Internal components list
 		_nameLabel = new ArrayList<JLabel>();
 		_descArea = new ArrayList<JTextArea>();
 		
 		// Main Panel avec un MigLayout
-		_component = new JPanel();
+//		_component = new JPanel();
 		MigLayout compLayout = new MigLayout(
-				"debug,flowy", // Layout Constraints
+				"debug,hidemode 3,flowy", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
-		_component.setLayout(compLayout);
+		_component = new MyPanel(compLayout);
+//		_component.setLayout(compLayout);
 		
 		// Liste des JPerso
-		_persoPanel = new JPanel();
+//		_persoPanel = new JPanel();
 		MigLayout persoLayout = new MigLayout(
 				"", // Layout Constraints
 				"2*indent", // Column constraints
 				""); // Row constraints);
-		_persoPanel.setLayout(persoLayout);
+//		_persoPanel.setLayout(persoLayout);
+		_persoPanel = new MyPanel(persoLayout);
 		_expandAllBtn = new JButton();
 		_expandAllBtn.addActionListener(new ActionListener() {
 			@Override
@@ -112,30 +126,45 @@ public class JPersoEventList implements Observer {
 		// Description/Body pour chaque perso.
 		//_descPanel = new JPanel();
 		MigLayout descLayout = new MigLayout(
-				"hidemode 3", // Layout Constraints
+				"hidemode 3,flowy", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
 		//_descPanel.setLayout(descLayout);
 		_descPanel = new MyPanel(descLayout);
 		
-		for (PersoEvent p : _evt._persoMap.values()) {
-			JPersoEvent persoBtn = new JPersoEvent(p._perso, _evt);
-			_persoPanel.add( persoBtn );
-			PersoLabel nameLabel = new PersoLabel(p._perso.sDump(), p._perso);
-			_nameLabel.add(nameLabel);
-			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
-			
-			JTextArea descArea = new JTextArea(p.getDesc());
-			descArea.setLineWrap(true);
-			descArea.setWrapStyleWord(true);
-			descArea.getDocument().addDocumentListener(new MyTextAreaListener(descArea, p));
-			_descArea.add(descArea);
-			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
-			
-			// Attache la bonne action 
-			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, "Détaille "+p._perso.getName(),
-					null, nameLabel, descArea);
+		for (Entry<Integer, Event.PersoEvent> entry : _evt._listPE.entrySet()) {
+			if (entry.getKey() >= 0) {
+				JPersoEvent persoBtn = new JPersoEvent(_evt, entry.getValue());
+				_persoPanel.add( persoBtn );
+
+				PersoEventPanel pePanel = new PersoEventPanel(entry.getValue());
+				_descPanel.add( pePanel );
+
+				// Attache la bonne action 
+				persoBtn._leftClickAction = new ExpandDescAction("Détaille", null,
+						"Détaille "+entry.getValue()._perso.getName(),
+						null, pePanel);
+			}
 		}
+		
+//		for (PersoEvent p : _evt._persoMap.values()) {
+//			JPersoEvent persoBtn = new JPersoEvent(p._perso, _evt);
+//			_persoPanel.add( persoBtn );
+//			PersoLabel nameLabel = new PersoLabel(p._perso.sDump(), p._perso);
+//			_nameLabel.add(nameLabel);
+//			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
+//			
+//			JTextArea descArea = new JTextArea(p.getDesc());
+//			descArea.setLineWrap(true);
+//			descArea.setWrapStyleWord(true);
+//			descArea.getDocument().addDocumentListener(new MyTextAreaListener(descArea, p));
+//			_descArea.add(descArea);
+//			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
+//			
+//			// Attache la bonne action 
+//			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, "Détaille "+p._perso.getName(),
+//					null, nameLabel, descArea);
+//		}
 		setAllDescVisible(true);
 		
 		_component.add(_persoPanel);
@@ -145,60 +174,101 @@ public class JPersoEventList implements Observer {
 	@Override
 	// Implement Observer
 	public void update(Observable o, Object arg) {
-		if (arg != null ) {
-			System.out.println("### JEvent.Observable : arg is a "+arg.getClass().getName());
-		}
-		else {
-			System.out.println("### JEvent.Observable : arg is null");
-		}
-		// Ajout => arg est un Perso
-		if (arg instanceof Event.PersoEvent) {
-			PersoEvent pe = (PersoEvent) arg;
-			
-			JPersoEvent persoBtn = new JPersoEvent(pe._perso, _evt);
-			_persoPanel.add( persoBtn );
-			
-			PersoLabel nameLabel = new PersoLabel(pe._perso.sDump(), pe._perso);
-			_nameLabel.add(nameLabel);
-			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
-			
-			JTextArea descArea = new JTextArea(pe.getDesc());
-			descArea.setLineWrap(true);
-			descArea.setWrapStyleWord(true);
-			descArea.getDocument().addDocumentListener(new MyTextAreaListener(descArea, pe));
-			_descArea.add(descArea);
-			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
-			
-			// Attache la bonne action 
-			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, 
-					"Détaille "+pe._perso.getName(), null,
-					nameLabel, descArea);
-			_component.revalidate();
-		}
-		else if (arg instanceof String) {
-			String command = (String) arg;
-			if (command.equals("removed")) {
-				// Peut-être pas propre car je fais l'hypothèse que les
-				// JPersoEvent et les élements de _nameLabel et _descArea
-				// sont stockés dans le même ordre.
-				for (int i = 1; i < _persoPanel.getComponentCount(); i++) {
-					JPersoEvent jpe = (JPersoEvent) _persoPanel.getComponent(i);
-					if (_evt._persoMap.containsKey(jpe._pers) == false ) {
-						_persoPanel.remove(jpe);
-						_nameLabel.remove(i-1);
-						_descArea.remove(i-1);
-
-						// Enlever 2 fois du _descPanel
-						_descPanel.remove( 2*(i-1));
-						_descPanel.remove( 2*(i-1));
-						
-						_component.revalidate();
-						return;
+		// Log
+		logger.debug(_evt.getTitle()+" o is a "+o.getClass().getName()+ " arg="+arg);
+		
+		// Observe un ListOf<PersoEvent>
+		if (arg != null) {
+			if (arg instanceof String) {
+				StringTokenizer sTok = new StringTokenizer((String)arg, "_");
+				int id = Integer.parseInt(sTok.nextToken());
+				String command = sTok.nextToken();
+				// "add" -> un nouveau JPersoEvent et PersoEventPanel.
+				if (command.equals("add")) {
+					PersoEvent pe = _evt._listPE.get(id);
+					JPersoEvent persoBtn = new JPersoEvent(_evt, pe);
+					_persoPanel.add( persoBtn );
+					
+					PersoEventPanel pePanel = new PersoEventPanel(pe);
+					_descPanel.add( pePanel );
+					
+					// Attache la bonne action 
+					persoBtn._leftClickAction = new ExpandDescAction("Détaille", null,
+							"Détaille "+pe._perso.getName(),
+							null, pePanel);
+					_component.revalidate();
+					_component.repaint();
+				}
+				// "del" efface les composants incriminé
+				else if (command.equals("del")){
+					// Efface JPersoEvent
+					for (int i = 0; i < _persoPanel.getComponentCount(); i++) {
+						JPersoEvent persoBtn = (JPersoEvent) _persoPanel.getComponent(i);
+						if (persoBtn._pe.getId() == id) {
+							_persoPanel.remove(i);
+						}
 					}
+					// Efface PersoEventPanel
+					for (int i = 0; i < _descPanel.getComponentCount(); i++) {
+						PersoEventPanel pePanel = (PersoEventPanel) _descPanel.getComponent(i);
+						if (pePanel._pe.getId() == id) {
+							_descPanel.remove(i);
+						}
+					}
+					_component.revalidate();
+					_component.repaint();
 				}
 			}
 		}
 	}
+		
+//		if (arg instanceof Event.PersoEvent) {
+//			PersoEvent pe = (PersoEvent) arg;
+//			
+//			JPersoEvent persoBtn = new JPersoEvent(pe._perso, _evt);
+//			_persoPanel.add( persoBtn );
+//			
+//			PersoLabel nameLabel = new PersoLabel(pe._perso.sDump(), pe._perso);
+//			_nameLabel.add(nameLabel);
+//			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
+//			
+//			JTextArea descArea = new JTextArea(pe.getDesc());
+//			descArea.setLineWrap(true);
+//			descArea.setWrapStyleWord(true);
+//			descArea.getDocument().addDocumentListener(new MyTextAreaListener(descArea, pe));
+//			_descArea.add(descArea);
+//			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
+//			
+//			// Attache la bonne action 
+//			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, 
+//					"Détaille "+pe._perso.getName(), null,
+//					nameLabel, descArea);
+//			_component.revalidate();
+//		}
+//		else if (arg instanceof String) {
+//			String command = (String) arg;
+//			if (command.equals("removed")) {
+//				// Peut-être pas propre car je fais l'hypothèse que les
+//				// JPersoEvent et les élements de _nameLabel et _descArea
+//				// sont stockés dans le même ordre.
+//				for (int i = 1; i < _persoPanel.getComponentCount(); i++) {
+//					JPersoEvent jpe = (JPersoEvent) _persoPanel.getComponent(i);
+//					if (_evt._persoMap.containsKey(jpe._perso) == false ) {
+//						_persoPanel.remove(jpe);
+//						_nameLabel.remove(i-1);
+//						_descArea.remove(i-1);
+//
+//						// Enlever 2 fois du _descPanel
+//						_descPanel.remove( 2*(i-1));
+//						_descPanel.remove( 2*(i-1));
+//						
+//						_component.revalidate();
+//						return;
+//					}
+//				}
+//			}
+//		}
+//	}
 	
 
 	@SuppressWarnings("serial")
@@ -206,23 +276,19 @@ public class JPersoEventList implements Observer {
 	 * Change l'état visible du descriptif d'un PersoEvent (label+desc).
 	 */
 	class ExpandDescAction extends AbstractAction {
-		JLabel _label;
-		JTextArea _desc;
+		JPanel _panel;
 		public ExpandDescAction(String text, ImageIcon icon, String help, Integer mnemonic,
-				JLabel label, JTextArea desc) {
+				JPanel panel) {
 			super(text, icon);
 			putValue(SHORT_DESCRIPTION, help);
 			putValue(MNEMONIC_KEY, mnemonic);
-			_label = label;
-			_desc = desc;
+			_panel = panel;
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("ExpandDescAction pour "+_label.getText());
-			_label.setVisible( !_label.isVisible());
-			_desc.setVisible( !_desc.isVisible());
-			_label.revalidate();
-			_desc.revalidate();
+//			System.out.println("ExpandDescAction pour "+_label.getText());
+			_panel.setVisible( !_panel.isVisible());
+			_panel.revalidate();
 		}
 	}
 	
@@ -238,6 +304,12 @@ public class JPersoEventList implements Observer {
 		for (JTextArea a : _descArea) {
 			a.setVisible(_allDescVisible);
 		}
+		// Change tous visible ou invisibles
+		for (int i = 0; i < _descPanel.getComponentCount(); i++) {
+			PersoEventPanel pePanel = (PersoEventPanel) _descPanel.getComponent(i);
+			pePanel.setVisible(_allDescVisible);
+		}
+		
 		if (_allDescVisible) {
 			_expandAllBtn.setIcon(_iconOpen);
 		}
@@ -272,6 +344,72 @@ public class JPersoEventList implements Observer {
 		}
 		
 	}
+	@SuppressWarnings("serial")
+	static class PersoEventPanel extends JPanel implements Observer {
+		/** Model */
+		PersoEvent _pe;
+		
+		/** Un JLabel pour le nom du Perso */
+		JLabel _persoName;
+		/** Un JTextArea pour la description */
+		JTextArea _peDescArea;
+		
+		/* In order to Log */
+		private static Logger loggerPE = LogManager.getLogger(PersoEventPanel.class.getName());
+		
+		public PersoEventPanel(PersoEvent persoEvent) {
+			super();
+			_pe = persoEvent;
+			buildGUI();
+			
+			// Observe Perso (set) et PersoEvent (set)
+			_pe.addObserver(this);
+			_pe._perso.addObserver(this);
+		}
+		void buildGUI() {
+			MigLayout persLayout = new MigLayout(
+					"debug, hidemode 3,flowy", // Layout Constraints
+					"[grow,fill]", // Column constraints
+					""); // Row constraints);
+			this.setLayout(persLayout);
+			
+			_persoName = new JLabel(_pe._perso.getName());
+			this.add(_persoName);
+			
+			_peDescArea = new JTextArea(_pe.getDesc());
+			_peDescArea.setLineWrap(true);
+			_peDescArea.setWrapStyleWord(true);
+			_peDescArea.getDocument().addDocumentListener(new MyTextAreaListener(_peDescArea, _pe));
+			this.add(_peDescArea);
+		}
+		@Override
+		public void update(Observable o, Object arg) {
+			// Log
+			loggerPE.debug(_pe._perso.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
+			
+			// Observe un Perso
+			if (o.getClass() == Perso.class) {
+				// only "set" message
+				if (arg.equals("set")) {
+					this.setName(_pe._perso.getName());
+					_persoName.setName(_pe._perso.getName());
+					this.revalidate();
+					this.repaint();
+				}
+			}
+			// Observe a PersoEvent
+			else if (o.getClass() == Event.PersoEvent.class) {
+				// only "desc" message
+				if (arg.equals("desc")) {
+					_peDescArea.setText(_pe.getDesc());
+					this.revalidate();
+					this.repaint();
+				}
+			}
+		}
+		
+		
+	}
 	
 	// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
 	@SuppressWarnings("serial")
@@ -303,7 +441,7 @@ public class JPersoEventList implements Observer {
 	/**
 	 * Listen for changes and update PersoEvent.
 	 */
-	class MyTextAreaListener implements DocumentListener {
+	static class MyTextAreaListener implements DocumentListener {
 		JTextArea _area;
 		PersoEvent _pe;
 		

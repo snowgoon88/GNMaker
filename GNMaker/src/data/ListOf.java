@@ -94,11 +94,13 @@ public class ListOf<T extends IElement> extends Observable {
 	 * @return null ou le T précédemment associé à id.
 	 */
 	public T put(int id, T elem) {
+		logger.trace(id);
 		T res = _list.put(id, elem);
 		elem.setId(id);
-		if (id <= _nextId) {
+		if (id == _nextId) {
 			_nextId = id+1;
 		}
+		logger.debug(_nextId+"_add");
 		setChanged();
 		notifyObservers(_nextId+"_add");
 		
@@ -119,10 +121,20 @@ public class ListOf<T extends IElement> extends Observable {
 	}
 	/**
 	 * Renvoie un Array contenant tous les éléments de la liste.
+	 * TODO (sauf (-1,ElementNull)
 	 * @return
 	 */
 	public Object[] toArray() {
-		return _list.values().toArray();
+		Object[] res = new Object[_list.size()-1];
+		// index pour le tableau.
+		int index=0;
+		for (Entry<Integer, T> entry : _list.entrySet()) {
+			if( entry.getKey() >= 0) {
+				res[index] = entry.getValue();
+				index += 1;
+			}
+		}
+		return res;
 	}
 	
 	/**
