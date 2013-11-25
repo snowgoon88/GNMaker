@@ -94,15 +94,15 @@ public class ListOf<T extends IElement> extends Observable {
 	 * @return null ou le T précédemment associé à id.
 	 */
 	public T put(int id, T elem) {
-		logger.trace(id);
+		logger.trace("put="+id+" with _nextId="+_nextId);
 		T res = _list.put(id, elem);
 		elem.setId(id);
-		if (id == _nextId) {
+		if (id >= _nextId) {
 			_nextId = id+1;
 		}
-		logger.debug(_nextId+"_add");
+		logger.debug(id+"_add");
 		setChanged();
-		notifyObservers(_nextId+"_add");
+		notifyObservers(id+"_add");
 		
 		return res;
 	}

@@ -1,3 +1,4 @@
 * GUI et JPersoEventList (inspiration from PersoListV ??)
-** Affiche aussi les PersoEvent "null" ("...") => Non !!!
-*** Quand ajoute perso, ça merde (2 fois Erika) => Trace ??
+=> A vérifier.
+* Commencer à tester git+java
+* Faire une branche "Démo"
