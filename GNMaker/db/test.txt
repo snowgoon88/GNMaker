@@ -2,5 +2,5 @@ Ceci est un fichier test.
 Alain
 
 <block>
- B2
+ B3
 </block>
