@@ -124,7 +124,7 @@ public class TestGit
 		    	System.out.println("Conflicts in file " + path);
 		    	for (int i = 0; i < c.length; ++i) {
 		    		System.out.println("  Conflict #" + i);
-		    		for (int j = 0; j < (c[i].length) - 1; ++j) {
+		    		for (int j = 0; j < (c[i].length); ++j) {
 		    			if (c[i][j] >= 0)
 		    				System.out.println("    Chunk for "
 		    						+ mergeRes.getMergedCommits()[j] + " starts on line #"
