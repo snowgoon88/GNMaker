@@ -2,7 +2,7 @@ Ceci est un fichier test.
 Alain
 
 <block>
- B3
+ B4
 </block>
 <block>
  A1
