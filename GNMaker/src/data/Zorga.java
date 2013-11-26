@@ -19,7 +19,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class Zorga extends Observable implements IElement {
 	
-	static public Zorga zorgaNull = new Zorga("---"); 
+	static public Zorga zorgaNull = new Zorga("---");
+	
 	
 	/** Nom */
 	String _name;
@@ -27,6 +28,8 @@ public class Zorga extends Observable implements IElement {
 	int _id = -1;
 	/** has been modified ? */
 	boolean _fgModified;
+	/** status */
+	State _status;
 	
 	/* In order to Log */
 	private static Logger logger = LogManager.getLogger(Zorga.class.getName());
@@ -37,6 +40,7 @@ public class Zorga extends Observable implements IElement {
 	public Zorga(String name) {
 		_name = name;
 		_fgModified = false;
+		_status = State.BASIC;
 	}
 
 	/**
@@ -61,7 +65,7 @@ public class Zorga extends Observable implements IElement {
 	 * @return String
 	 */
 	public String sDump() {
-		return getName()+"("+getId()+")";
+		return getName()+"("+getId()+", "+getStatus()+")";
 	}
 	
 
@@ -89,6 +93,25 @@ public class Zorga extends Observable implements IElement {
 		logger.debug(getName()+" del");
 		setChanged();
 		notifyObservers("del");
+	}
+
+	@Override
+	public void updateWith(IElement other) {
+		Zorga z = (Zorga) other;
+		// Update si 'name' est différent.
+		if ( !z.getName().equals(getName()) ) {
+			setName(z.getName());
+			setStatus(State.UPDATED);
+		}
+	}
+	
+	@Override
+	public State getStatus() {
+		return _status;
+	}
+	@Override
+	public void setStatus(State status) {
+		_status = status;
 	}
 	
 

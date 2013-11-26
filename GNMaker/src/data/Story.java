@@ -83,6 +83,15 @@ public class Story extends Observable {
 	}
 	
 	/** 
+	 * Màj si other est différent de current. Màj le status.
+	 * 
+	 * @param other
+	 */
+	public void updateWith( Story other ) {
+		_zorgaList.updateWith( other._zorgaList );
+	}
+	
+	/** 
 	 * Dump all Story as a String.
 	 * @return String
 	 */

@@ -23,7 +23,14 @@ Il fait nuit noire.
 Des nuages noirs camouflent la lune, on ne voit rien.</desc>
 
 ** maintenir 2 fichiers => master et local. 2 gité ? => pb pour local, sauf si local est personalisé
+*** pull master
+*** si nouveau master est différent de ancien master ? => stocker ancien master 
+=> story.updateWith(newestStory)
+*** modifie éventuellement local 
+*** tant que local modifié ? => notion de même commit et tout géré.
+*** copie local en master
+*** push master
 
 ** Utilisation <version></version>
 ** Champ avec version locale (premier) et version remote (second). On ne peut que modifier la version locale.
-* Faire une branche "Démo"
+* Faire une branche "Démo"	
