@@ -80,6 +80,12 @@ public class Event extends Observable implements Observer {
 //		setChanged();
 //		notifyObservers(pe);
 	}
+	public void addPerso( Perso pers, boolean status, VersionText desc) {
+		logger.trace("adding : "+pers.sDump());
+		PersoEvent pe = new PersoEvent( pers, status, desc);
+
+		_listPE.put( pe.getId(), pe);
+	}
 	/**
 	 * Remove a Perso.
 	 * 
@@ -203,7 +209,7 @@ public class Event extends Observable implements Observer {
 	public static class PersoEvent extends Observable implements IElement {
 		public Perso _perso;
 		public boolean _status;
-		String _desc;
+		VersionText _desc;
 		/** PersoEvent Null */
 		public static PersoEvent persoEventNull = new PersoEvent(Perso.persoNull, true, "---");
 		
@@ -215,22 +221,32 @@ public class Event extends Observable implements Observer {
 		 * @param _status
 		 * @param _desc
 		 */
-		public PersoEvent(Perso perso, boolean _status, String _desc) {
+		public PersoEvent(Perso perso, boolean _status, String desc) {
 			this._perso = perso;
 			this._status = _status;
-			this._desc = _desc;
+			this._desc = new VersionText(desc);
 		}
-		/**
-		 * @return the _desc
-		 */
-		public String getDesc() {
+		/** Creation avec VersionText */
+		public PersoEvent(Perso perso, boolean status, VersionText desc) {
+			this._perso = perso;
+			this._status = status;
+			this._desc = desc;
+		}
+//		/**
+//		 * @return the _desc
+//		 */
+//		public String getDesc() {
+//			return _desc;
+//		}
+		public VersionText getDesc() {
 			return _desc;
 		}
 		/**
-		 * @param desc the _desc to set
+		 * Description without conflict
+		 * @param desc A string to ver._local
 		 */
 		public void setDesc(String desc) {
-			this._desc = desc;
+			this._desc = new VersionText(desc);
 			
 			loggerPE.debug("desc");
 			setChanged();
@@ -271,7 +287,7 @@ public class Event extends Observable implements Observer {
 		public String sDump() {
 			StringBuffer str = new StringBuffer();
 			str.append( "PersoEvent with perso_id="+_perso.getId()+" ("+_status+") ");
-			str.append( _desc+"\n");
+			str.append( _desc.sDump());
 			return str.toString();
 		}
 	}

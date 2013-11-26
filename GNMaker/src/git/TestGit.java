@@ -5,6 +5,11 @@ package git;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,6 +45,15 @@ import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.treewalk.FileTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import data.Story;
+import data.converter.PersoConverter;
+import data.converter.StoryConverter;
+import data.converter.VersionTextConverter;
+import data.converter.ZorgaConverter;
  
  
 public class TestGit
@@ -91,60 +105,60 @@ public class TestGit
 	boolean testPull() {
 		System.out.println("***** PULL *****");
 		File gitWorkDir = new File("/home/dutech/Projets/GIT/GNTest");
-	    try {
+		try {
 			Git git = Git.open(gitWorkDir);
 			Repository repo = git.getRepository();
-		    System.out.println("REP-------------------\n"+repo.toString());
-		    
-		    PullCommand pull = git.pull();
-		    System.out.println("pull.Rep : "+pull.getRepository());
-		    PullResult pullRes = pull.call();
-		    System.out.println("fetchFrom ="+pullRes.getFetchedFrom());
-		    FetchResult fetchRes = pullRes.getFetchResult();
-		    System.out.println("fetchResu ="+fetchRes.getMessages());
-		    MergeResult mergeRes = pullRes.getMergeResult();
-		    System.out.println("mergeStatus : "+mergeRes.getMergeStatus().name());
-		    ObjectId[] mergeCommits = mergeRes.getMergedCommits();
-		    for (ObjectId objectId : mergeCommits) {
+			System.out.println("REP-------------------\n"+repo.toString());
+
+			PullCommand pull = git.pull();
+			System.out.println("pull.Rep : "+pull.getRepository());
+			PullResult pullRes = pull.call();
+			System.out.println("fetchFrom ="+pullRes.getFetchedFrom());
+			FetchResult fetchRes = pullRes.getFetchResult();
+			System.out.println("fetchResu ="+fetchRes.getMessages());
+			MergeResult mergeRes = pullRes.getMergeResult();
+			System.out.println("mergeStatus : "+mergeRes.getMergeStatus().name());
+			ObjectId[] mergeCommits = mergeRes.getMergedCommits();
+			for (ObjectId objectId : mergeCommits) {
 				System.out.println("mergeCommit : " +objectId.getName());
 			}
-		    
-		    Map<String,ResolveMerger.MergeFailureReason> mergeFail = mergeRes.getFailingPaths();
-		    if (mergeFail == null) {
-		    	System.out.println("No merge failed");
-		    }
-		    else {
-		    	for (Entry<String, MergeFailureReason> entry : mergeFail.entrySet()) {
-		    		System.out.println("Fail : "+entry.getKey()+" => "+entry.getValue());
-		    	}
-		    }
-		    Map<String,int[][]> mergeConflict = mergeRes.getConflicts();
-		    if (mergeConflict == null) {
-		    	System.out.println("No conflict");
-		    }
-		    else {
-		    	for (String path : mergeConflict.keySet()) {
-		    		int[][] c = mergeConflict.get(path);
-		    		System.out.println("Conflicts in file " + path);
-		    		for (int i = 0; i < c.length; ++i) {
-		    			System.out.println("  Conflict #" + i);
-		    			for (int j = 0; j < (c[i].length-1); ++j) {
-		    				if (c[i][j] >= 0)
-		    					System.out.println("    Chunk for "
-		    							+ mergeRes.getMergedCommits()[j] + " starts on line #"
-		    							+ c[i][j]);
-		    			}
-		    			System.out.println("    Last chunk starts on line #"+c[i][c[i].length-1]);
-		    		}
-		    	}
-		    }
-		    //System.out.println("rebaseRes ="+pullRes.getRebaseResult());
-		    
-		    
-	    } catch (IOException e) {
+
+			Map<String,ResolveMerger.MergeFailureReason> mergeFail = mergeRes.getFailingPaths();
+			if (mergeFail == null) {
+				System.out.println("No merge failed");
+			}
+			else {
+				for (Entry<String, MergeFailureReason> entry : mergeFail.entrySet()) {
+					System.out.println("Fail : "+entry.getKey()+" => "+entry.getValue());
+				}
+			}
+			Map<String,int[][]> mergeConflict = mergeRes.getConflicts();
+			if (mergeConflict == null) {
+				System.out.println("No conflict");
+			}
+			else {
+				for (String path : mergeConflict.keySet()) {
+					int[][] c = mergeConflict.get(path);
+					System.out.println("Conflicts in file " + path);
+					for (int i = 0; i < c.length; ++i) {
+						System.out.println("  Conflict #" + i);
+						for (int j = 0; j < (c[i].length-1); ++j) {
+							if (c[i][j] >= 0)
+								System.out.println("    Chunk for "
+										+ mergeRes.getMergedCommits()[j] + " starts on line #"
+										+ c[i][j]);
+						}
+						System.out.println("    Last chunk starts on line #"+c[i][c[i].length-1]);
+					}
+				}
+			}
+			//System.out.println("rebaseRes ="+pullRes.getRebaseResult());
+
+
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-	    } catch (WrongRepositoryStateException e) {
+		} catch (WrongRepositoryStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvalidConfigurationException e) {
@@ -172,16 +186,54 @@ public class TestGit
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
+
 		return true;
-	}  
+	}
+
+	void testGestionConflict(String[] args) {
+		// Story
+		XStream xStream = new XStream(new DomDriver());
+		xStream.registerConverter(new StoryConverter());
+		xStream.registerConverter(new PersoConverter());
+		xStream.registerConverter(new ZorgaConverter());
+		xStream.registerConverter(new VersionTextConverter());
+		xStream.alias("story", Story.class);
+		
+		
+		Path path = Paths.get("tmp/story_git.xml");
+		Charset charset = StandardCharsets.UTF_8;
+
+		String content;
+		try {
+			// Pourrait ajouter des block <version></version>
+			content = new String(Files.readAllBytes(path), charset);
+			content = content.replaceAll("<<<<<<<.*", "<version id=\"local\">");
+			content = content.replaceAll("=======.*", "</version>\n<version id=\"remote\">");
+			content = content.replaceAll(">>>>>>>.*", "</version>");
+			Files.write(path, content.getBytes(charset));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+		File storyFile = new File("tmp/story_git.xml");
+		Story story = (Story) xStream.fromXML( storyFile );
+		System.out.println("** Story from XML **");
+		System.out.println(story.sDump());
+
+		
+		
+	}
+
 	
 	
   public static void main(String[] args) throws Exception
   {
 	  TestGit app = new TestGit();
-	  app.testPush(); // Push from GNMaker
-	  app.testPull(); // Pull into GNTest
+//	  app.testPush(); // Push from GNMaker
+//	  app.testPull(); // Pull into GNTest
+	  app.testGestionConflict(args);
   }
   
   
