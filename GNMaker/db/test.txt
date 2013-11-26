@@ -7,3 +7,6 @@ Alain
 <block>
  A4
 </block>
+<block>
+ C1
+</block>
