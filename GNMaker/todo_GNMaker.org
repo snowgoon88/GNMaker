@@ -4,6 +4,26 @@
 ** Quand conflit, remplacer <<<<<<< et >>>>>>> par des autres symboles avant de lire le fichier
 puis repérer les différents version d'un même BLOCK et les afficher !!!
 ** En fait, il faut retrouver le bloc incréminé car xstream affiche tout 'en ligne', et sans passer à la ligne
+      <status>false</status>
+<<<<<<< HEAD
+      <desc>Dans le but de destabiliser CHEF Korolev, Botlinko sabote le système de guidage d&apos;un fusée. Mais le nouvel ergol est trop instable et la fusée explose.
+=======
+      <desc>Dans le but de destabiliser BBBB Korolev, Botlinko sabote le système de guidage d&apos;un fusée. Mais le nouvel ergol est trop instable et la fusée explose.
+>>>>>>> 6ceb3ad3b44c297984313dd45e44cc29bc7f7d40
+Le bilan est de 120 morts.</desc>
+
+ <desc>Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.
+
+<<<<<<< HEAD
+Il fait bien nuit.
+=======
+Il fait nuit noire.
+>>>>>>> 6ceb3ad3b44c297984313dd45e44cc29bc7f7d40
+
+Des nuages noirs camouflent la lune, on ne voit rien.</desc>
+
+** maintenir 2 fichiers => master et local. 2 gité ? => pb pour local, sauf si local est personalisé
+
 ** Utilisation <version></version>
 ** Champ avec version locale (premier) et version remote (second). On ne peut que modifier la version locale.
 * Faire une branche "Démo"

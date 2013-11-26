@@ -22,7 +22,11 @@
     <body>V. Botlinko fait exploser une fusée intentionnellement : 120 morts</body>
     <perso__event id="0">
       <status>false</status>
+<<<<<<< HEAD
       <desc>Dans le but de destabiliser CHEF Korolev, Botlinko sabote le système de guidage d&apos;un fusée. Mais le nouvel ergol est trop instable et la fusée explose.
+=======
+      <desc>Dans le but de destabiliser BBBB Korolev, Botlinko sabote le système de guidage d&apos;un fusée. Mais le nouvel ergol est trop instable et la fusée explose.
+>>>>>>> 6ceb3ad3b44c297984313dd45e44cc29bc7f7d40
 Le bilan est de 120 morts.</desc>
     </perso__event>
     <perso__event id="1">
@@ -37,7 +41,11 @@ Le bilan est de 120 morts.</desc>
       <status>false</status>
       <desc>Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.
 
+<<<<<<< HEAD
 Il fait bien nuit.
+=======
+Il fait nuit noire.
+>>>>>>> 6ceb3ad3b44c297984313dd45e44cc29bc7f7d40
 
 Des nuages noirs camouflent la lune, on ne voit rien.</desc>
     </perso__event>
