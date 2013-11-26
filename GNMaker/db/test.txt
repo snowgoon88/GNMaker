@@ -4,3 +4,6 @@ Alain
 <block>
  B3
 </block>
+<block>
+ A1
+</block>
