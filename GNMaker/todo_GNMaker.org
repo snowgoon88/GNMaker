@@ -1,4 +1,9 @@
 * GUI et JPersoEventList (inspiration from PersoListV ??)
 => A vérifier.
 * Commencer à tester git+java
+** Quand conflit, remplacer <<<<<<< et >>>>>>> par des autres symboles avant de lire le fichier
+puis repérer les différents version d'un même BLOCK et les afficher !!!
+** En fait, il faut retrouver le bloc incréminé car xstream affiche tout 'en ligne', et sans passer à la ligne
+** Utilisation <version></version>
+** Champ avec version locale (premier) et version remote (second). On ne peut que modifier la version locale.
 * Faire une branche "Démo"

@@ -376,7 +376,7 @@ public class JPersoEventList implements Observer {
 			_persoName = new JLabel(_pe._perso.getName());
 			this.add(_persoName);
 			
-			_peDescArea = new JTextArea(_pe.getDesc());
+			_peDescArea = new JTextArea(_pe.getDesc().getLocal() );
 			_peDescArea.setLineWrap(true);
 			_peDescArea.setWrapStyleWord(true);
 			_peDescArea.getDocument().addDocumentListener(new MyTextAreaListener(_peDescArea, _pe));
@@ -401,7 +401,7 @@ public class JPersoEventList implements Observer {
 			else if (o.getClass() == Event.PersoEvent.class) {
 				// only "desc" message
 				if (arg.equals("desc")) {
-					_peDescArea.setText(_pe.getDesc());
+					_peDescArea.setText(_pe.getDesc().getLocal());
 					this.revalidate();
 					this.repaint();
 				}

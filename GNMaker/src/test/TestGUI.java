@@ -243,7 +243,7 @@ public class TestGUI {
         xStream.registerConverter(new ZorgaConverter());
         xStream.alias("story", Story.class);
         
-        File storyFile = new File("tmp/story_test.xml");
+        File storyFile = new File("tmp/story_git.xml");
 		Story story = (Story) xStream.fromXML( storyFile );
 		System.out.println("** Story from XML **");
         System.out.println(story.sDump());
