@@ -5,10 +5,10 @@ Alain
  B4
 </block>
 <block>
- A6
+ A7
 </block>
 <block>
- C1
+ C1A
 </block>
 <block>
  D1
