@@ -5,10 +5,18 @@ Alain
  B4
 </block>
 <block>
+<<<<<<< HEAD
  A7
+=======
+ B6
+>>>>>>> branch 'git' of git@github.com:snowgoon88/GNMaker.git
 </block>
 <block>
+<<<<<<< HEAD
  C1A
+=======
+ C2
+>>>>>>> branch 'git' of git@github.com:snowgoon88/GNMaker.git
 </block>
 <block>
  D1
