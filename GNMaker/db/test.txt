@@ -5,7 +5,7 @@ Alain
  B4
 </block>
 <block>
- A4
+ B4
 </block>
 <block>
  C1

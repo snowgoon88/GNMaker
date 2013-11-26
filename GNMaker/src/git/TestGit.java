@@ -111,7 +111,7 @@ public class TestGit
 		    
 		    Map<String,ResolveMerger.MergeFailureReason> mergeFail = mergeRes.getFailingPaths();
 		    if (mergeFail == null) {
-		    	System.out.println("No conflict");
+		    	System.out.println("No merge failed");
 		    }
 		    else {
 		    	for (Entry<String, MergeFailureReason> entry : mergeFail.entrySet()) {
@@ -119,16 +119,21 @@ public class TestGit
 		    	}
 		    }
 		    Map<String,int[][]> mergeConflict = mergeRes.getConflicts();
-		    for (String path : mergeConflict.keySet()) {
-		    	int[][] c = mergeConflict.get(path);
-		    	System.out.println("Conflicts in file " + path);
-		    	for (int i = 0; i < c.length; ++i) {
-		    		System.out.println("  Conflict #" + i);
-		    		for (int j = 0; j < (c[i].length); ++j) {
-		    			if (c[i][j] >= 0)
-		    				System.out.println("    Chunk for "
-		    						+ mergeRes.getMergedCommits()[j] + " starts on line #"
-		    						+ c[i][j]);
+		    if (mergeConflict == null) {
+		    	System.out.println("No conflict");
+		    }
+		    else {
+		    	for (String path : mergeConflict.keySet()) {
+		    		int[][] c = mergeConflict.get(path);
+		    		System.out.println("Conflicts in file " + path);
+		    		for (int i = 0; i < c.length; ++i) {
+		    			System.out.println("  Conflict #" + i);
+		    			for (int j = 0; j < (c[i].length); ++j) {
+		    				if (c[i][j] >= 0)
+		    					System.out.println("    Chunk for "
+		    							+ mergeRes.getMergedCommits()[j] + " starts on line #"
+		    							+ c[i][j]);
+		    			}
 		    		}
 		    	}
 		    }
