@@ -10,3 +10,6 @@ Alain
 <block>
  C1
 </block>
+<block>
+ D1
+</block>
