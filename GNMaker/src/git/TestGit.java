@@ -113,8 +113,10 @@ public class TestGit
 		    if (mergeFail == null) {
 		    	System.out.println("No conflict");
 		    }
-		    for (Entry<String, MergeFailureReason> entry : mergeFail.entrySet()) {
-		    	System.out.println("Fail : "+entry.getKey()+" => "+entry.getValue());
+		    else {
+		    	for (Entry<String, MergeFailureReason> entry : mergeFail.entrySet()) {
+		    		System.out.println("Fail : "+entry.getKey()+" => "+entry.getValue());
+		    	}
 		    }
 		    Map<String,int[][]> mergeConflict = mergeRes.getConflicts();
 		    for (String path : mergeConflict.keySet()) {
