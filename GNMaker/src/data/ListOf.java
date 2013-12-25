@@ -115,37 +115,6 @@ public class ListOf<T extends IElement> extends Observable {
 		return _list.get(index);
 	}
 	
-	/** 
-	 * 'other' est considéré plus récent que 'this'.
-	 * 
-	 * @param other
-	 */
-	public void updateWith( ListOf<T> other ) {
-		// Pour chaque élément de other, si plus récent => UPDATED (ou créé).
-		for (Entry<Integer, T> entry : other.entrySet()) {
-			int otherKey = entry.getKey();
-			// Il se peut que 'this' n'ait pas cette 'key'
-			T current = get(otherKey);
-			if (current == null) {
-				// Crée un nouveau
-				entry.getValue().setStatus(State.UPDATED);
-				put( otherKey, entry.getValue());
-			}
-			else {
-				get(otherKey).updateWith(entry.getValue());
-			}
-		}
-		// Chaque élément de this qui n'est plus là : DELETED
-		for (Entry<Integer, T> entry : entrySet()) {
-			int key = entry.getKey();
-			T exist = other.get(key);
-			if (exist == null) {
-				entry.getValue().setStatus(State.DELETED);
-			}
-		}
-		
-	}
-	
 	/**
 	 * Renvoie un Set avec l'ensemble des données de la liste.
 	 * @return
