@@ -9,16 +9,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Un Zorga a un nom (_name)
+ * Un Zorga a un nom (_name).<br>
  * 
  * Notify Observers:
+ * <ul>
  * <li>set</li>
  * <li>del</li>
+ * </ul>
  * 
  * @author snowgoon88@gmail.com
  */
 public class Zorga extends Observable implements IElement {
 	
+	/** Null Element (for ListOf) */
 	static public Zorga zorgaNull = new Zorga("---"); 
 	
 	/** Nom */
@@ -28,7 +31,7 @@ public class Zorga extends Observable implements IElement {
 	/** has been modified ? */
 	boolean _fgModified;
 	
-	/* In order to Log */
+	/** In order to Log */
 	private static Logger logger = LogManager.getLogger(Zorga.class.getName());
 	
 	/**

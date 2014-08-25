@@ -11,13 +11,18 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Un Perso c'est:
+ * <ul>
  * <li>un nom : _name</li>
  * <li>un joueur : _player </li>
  * <li>un zorga : Zorgas+id => Observer de Zorgas</li>
+ * </ul>
+ * <br>
  * 
  * Notify Observers:
+ * <ul>
  * <li>set</li>
  * <li>del</li>
+ * </ul>
  * 
  * @author nowgoon88@gmail.com
  */
@@ -44,8 +49,7 @@ public class Perso extends Observable implements Observer, IElement {
 	 * Creation
 	 * @param name Nom du Personnage
 	 * @param player Nom du Joueur
-	 * @param zorgaList Liste de Zorga
-	 * @param id du Zorga dans la Liste
+	 * @param zorga le Zorga du Perso
 	 */
 	public Perso(String name, String player, Zorga zorga) {
 		this._name = name;

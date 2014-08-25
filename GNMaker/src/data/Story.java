@@ -8,18 +8,23 @@ import java.util.Observable;
 
 /**
  * A Story is made of:
+ * <ul>
  * <li>List of Zorga</li>
  * <li>List of Perso</li>
  * <li>List of Event</li>
+ * </ul>
  * 
  * Add Event
  * Remove Event
  * Dump All
  * 
  * Notify Observers:
+ * <ul>
  * <li>Event : when added</li>
  * <li>"removed"</li>
  * <li>'' when setName</li>
+ * </ul>
+ * 
  * SHOULD be armonized with other Observable
  * 
  * @author snowgoon88@gmail.com.
@@ -104,7 +109,7 @@ public class Story extends Observable {
 		return _name;
 	}
 	/**
-	 * @param _name the _name to set
+	 * @param name the _name to set
 	 */
 	public void setName(String name) {
 		

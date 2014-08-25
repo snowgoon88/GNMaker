@@ -296,7 +296,11 @@ public class TestGUI {
 					
 				}
 			});
-		} catch (InvocationTargetException | InterruptedException e) {
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} 
+		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		

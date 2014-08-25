@@ -113,7 +113,11 @@ public class TestTextArea {
 					
 				}
 			});
-		} catch (InvocationTargetException | InterruptedException e) {
+		}
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		

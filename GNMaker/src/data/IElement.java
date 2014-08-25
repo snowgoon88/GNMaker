@@ -4,8 +4,9 @@
 package data;
 
 /**
+ * Interface for Elements in a ListOf. => must have id.
+ * 
  * @author snowgoon88@gmail.com
- *
  */
 public interface IElement {
 	

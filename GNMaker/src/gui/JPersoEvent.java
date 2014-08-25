@@ -52,7 +52,7 @@ public class JPersoEvent extends JButton implements Observer {
 	/**
 	 * Création avec un PersoEvent
 	 * @param evt
-	 * @param perso
+	 * @param persoEvent
 	 */
 	public JPersoEvent(Event evt, Event.PersoEvent persoEvent) {
 		super();

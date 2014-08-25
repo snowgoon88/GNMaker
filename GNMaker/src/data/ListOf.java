@@ -14,11 +14,13 @@ import org.apache.logging.log4j.Logger;
 /**
  * Maintient une HashMap<Integer,T> de T.
  * Contient tjs un couple (-1,ElementNull)
+ * <br>
  * 
  * Notify Observers:
+ * <ul>
  * <li>id_add</li>
  * <li>id_dell</li>
- * 
+ * </ul>
  * 
  * @author snowgoon88@gmail.com
  */
@@ -114,7 +116,7 @@ public class ListOf<T extends IElement> extends Observable {
 	}
 	/**
 	 * Renvoie un Set avec l'ensemble des données de la liste.
-	 * @return
+	 * @return _list.entrySet()
 	 */
 	public Set<Entry<Integer, T>> entrySet() {
 		return _list.entrySet();
@@ -122,7 +124,7 @@ public class ListOf<T extends IElement> extends Observable {
 	/**
 	 * Renvoie un Array contenant tous les éléments de la liste.
 	 * TODO (sauf (-1,ElementNull)
-	 * @return
+	 * @return Object[] array
 	 */
 	public Object[] toArray() {
 		Object[] res = new Object[_list.size()-1];

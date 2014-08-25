@@ -93,6 +93,13 @@ public class TestBasic {
 			System.exit(0);
 		}
 	}
+	/**
+	 * Test effectués en vérifiant cohérence id, présence élément nul.
+	 * <li> Ajoute Fab</li>
+	 * <li> Ajoute Alain</li>
+	 * <li> Remove Fab</li>
+	 * <li> Ajoute Un, Deux et Trois. Puis clear()</li>
+	 */
 	boolean testZorga(String[] args) {
 		boolean res = true;
 		ListOf<Zorga> zorgas = new ListOf<Zorga>(Zorga.zorgaNull);
@@ -114,7 +121,7 @@ public class TestBasic {
 			return res;
 		}
 		
-		// Ajoute Fab
+		// Ajoute Alain
 		res = res && (zorgas.add(new Zorga("Alain")) >= 0);
 		if (res==false) {
 			System.err.println("testZorga : Cannot add Alain");
@@ -168,13 +175,19 @@ public class TestBasic {
 		return res;
 	}
 	
-	
+	/**
+	 * Test effectué en vérifiant que le lien Zorga/Perso est cohérent, et que les id sont ok.
+	 * <li> ListOf<Zorga> avec Alain</li>
+	 * <li> ListOf<Perso> avec Valeri BOTLINKO pour Alain</li>
+	 */
 	boolean testPerso(String[] args) {
 		boolean res = true;
+		// Liste de Zorga avec Alain et, par défaut, zorgaNull).
 		ListOf<Zorga> zorgas = new ListOf<Zorga>(Zorga.zorgaNull);
 		Zorga zorgAlain = new Zorga("Alain");
 		zorgas.add( new Zorga("Alain"));
 		
+		// Liste de Perso avec Valeri Botlinko pour Alain
 		ListOf<Perso> persos = new ListOf<Perso>(Perso.persoNull);
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
 		persos.add(perso1);
@@ -203,8 +216,21 @@ public class TestBasic {
 		return res;
 	}
 	
-
-	// Save and Load, then compare.
+	/**
+	 * Test création d'une Story, Save, puis Load, puis Compare.
+	 * La story est créée avec 
+	 * <li>ListOf<Zorga> : Alain</li>
+	 * <li>ListOf<Perso> : V Botlinko (Alain), B Erinska (Alain)</li>
+	 * <li>Evenements:<ul>
+	 *     <li> Catastrophe Nedelin (Botlinko, Erinska)</li>
+	 *     <li> Visite impromtue (Erinska)</li>
+	 * </ul></li>
+	 * Test
+	 * <li>print to dump</li>
+	 * <li>Save to File("tmp/story.xml")</li>
+	 * <li>Read from File("tmp/story.xml")</li>
+	 * <li>Test si même info</li>
+	 */
 	boolean testStoryXML(String[] args) {
 		Story story = new Story();
 		Zorga zorgAlain = new Zorga("Alain");
@@ -315,6 +341,16 @@ public class TestBasic {
 		}
 		return res;
 	}
+	
+	/**
+	 * Test Story avec association Perso/Zorga.
+	 * La story est créée avec 
+	 * <li>ListOf<Zorga> : Alain, Fab</li>
+	 * <li>ListOf<Perso> : V Botlinko (Alain), B Erinska (Fab)</li>
+	 *
+	 * Test
+	 * <li> Remove Fab : plus d'orga pour Erinska</li>
+	 */
 	boolean testStoryWithDelete(String[] args ) {
 		Story story = new Story();
 		Zorga zorgAlain = new Zorga("Alain");
@@ -350,6 +386,21 @@ public class TestBasic {
 		}
 		return res;
 	}
+	
+	/**
+	 * Test Story avec association Perso/Zorga.
+	 * La story est créée avec 
+	 * <li>ListOf<Zorga> : Alain, Fab</li>
+	 * <li>ListOf<Perso> : V Botlinko (Alain), B Erinska (Fab)</li>
+	 * <li>Evenements:<ul>
+	 *     <li> Event1 : Catastrophe Nedelin (Botlinko, Erinska)</li>
+	 *     <li> Event2 : Visite impromtue (Erinska)</li>
+	 * </ul></li>
+	 *
+	 * Test
+	 * <li> Remove Botlinko : il ne reste que Erinska dans Event1</li>
+	 * <li> Event2 pas affecté/li>
+	 */
 	boolean testStoryWithDeleteInEvent(String[] args) {
 		Story story = new Story();
 		Zorga zorgAlain = new Zorga("Alain");

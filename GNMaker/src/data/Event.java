@@ -245,7 +245,7 @@ public class Event extends Observable implements Observer {
 			return _status;
 		}
 		/**
-		 * @param _status the _status to set
+		 * @param status the _status to set
 		 */
 		public void setStatus(boolean status) {
 			this._status = status;

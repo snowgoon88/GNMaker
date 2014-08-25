@@ -48,7 +48,7 @@ public class ZorgaListV extends JPanel implements Observer {
 	private static Logger logger = LogManager.getLogger(ZorgaListV.class.getName());
 	
 	/**
-	 * @param _zorgaList
+	 * @param zorgas
 	 */
 	public ZorgaListV(ListOf<Zorga> zorgas) {
 		super();

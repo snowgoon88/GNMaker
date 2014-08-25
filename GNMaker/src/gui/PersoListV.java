@@ -55,7 +55,8 @@ public class PersoListV extends JPanel implements Observer {
 	
 	/**
 	 * Creation avec un ListOf<Perso> comme Modèle.
-	 * @param _persoList
+	 * @param persoList une liste de Perso
+	 * @param zorgaList une liste de Zorga
 	 */
 	public PersoListV(ListOf<Perso> persoList, ListOf<Zorga> zorgaList) {
 		super();
@@ -186,9 +187,6 @@ public class PersoListV extends JPanel implements Observer {
 		 * TODO Mais qui doit aussi observer Perso (si change de Zorga)
 		 */
 		class ZorgaCombo extends JComboBox<Object> implements Observer {
-			/**
-			 * @param _zorgaList
-			 */
 			/* In order to Log */
 			private Logger logger = LogManager.getLogger(ZorgaCombo.class.getName());
 			
