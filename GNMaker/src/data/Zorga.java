@@ -66,7 +66,6 @@ public class Zorga extends Observable implements IElement {
 	public String sDump() {
 		return getName()+"("+getId()+")";
 	}
-	
 
 
 	/* (non-Javadoc)

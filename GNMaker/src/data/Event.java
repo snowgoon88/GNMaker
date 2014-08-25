@@ -1,8 +1,5 @@
 package data;
 
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
@@ -12,11 +9,14 @@ import org.apache.logging.log4j.Logger;
 
 
 /**
- * Un événement composé de :
+ * Un Event estcomposé de :
+ * <ul>
  * <li>String: Un Titre</li>
  * <li>??? : Une Date</li>
  * <li>String: Un Body</li>
- * <li>HashMap(Perso) : une liste de PersoxPointDeVuexBoolean (ok, todo) (</li>
+ * <li>ListOf<PersoEvent> : les perso liés à l'Event.</li>
+ * </ul>
+ * <br>
  * 
  * Notify Observers:
  * <li>Perso : when added</li>
@@ -35,13 +35,10 @@ public class Event extends Observable implements Observer {
 	String _body;
 	/** Date de l'événement */
 	// Date _date;
-	/** Liste de Perso impliqués : Le boolean indique si l'événement a été pris en compte
-	 * pour le perso : ok=true, todo=false.
-	 */
-//	public HashMap<Perso,PersoEvent> _persoMap;
+	/** Liste de Perso impliqués. */
 	public ListOf<PersoEvent> _listPE;
 	
-	/* In order to Log */
+	/** In order to Log */
 	private static Logger logger = LogManager.getLogger(Perso.class.getName());
 	
 	
@@ -54,7 +51,6 @@ public class Event extends Observable implements Observer {
 		_story = story;
 		this._title = _title;
 		this._body = _body;
-//		_persoMap = new HashMap<Perso,PersoEvent>();
 		_listPE = new ListOf<Event.PersoEvent>(PersoEvent.persoEventNull);
 		
 		_story._persoList.addObserver(this);
@@ -64,7 +60,6 @@ public class Event extends Observable implements Observer {
 	 * Add a Perso, by default with "status"=false.
 	 * 
 	 * @param pers Perso to add
-	 * @toObserver : new PersoEvent.
 	 */
 	public void addPerso( Perso pers) {
 		addPerso( pers, false, "-");
@@ -72,57 +67,17 @@ public class Event extends Observable implements Observer {
 	public void addPerso( Perso pers, boolean status, String desc) {
 		logger.trace("adding : "+pers.sDump());
 		PersoEvent pe = new PersoEvent( pers, status, desc);
-//		_persoMap.put( pers, pe);
 		_listPE.put( pe.getId(), pe);
 		
-//		// Notify Observers
-//		logger.debug(getTitle()+" PERSO");
-//		setChanged();
-//		notifyObservers(pe);
 	}
 	/**
-	 * Remove a Perso.
+	 * Remove a Perso (si le Perso n'existe pas, rien n'est removed).
 	 * 
 	 * @param pers to remove
-	 * @toObserver : "removed"
 	 */
 	public void removePerso( Perso pers ) {
-//		if (_persoMap.containsKey(pers)) {
-//			_persoMap.remove(pers);
-//			
-//			// Notify Observers
-//			logger.debug(getTitle()+" removed");
-//			setChanged();
-//			notifyObservers("removed");
-//		}
 		_listPE.remove(pers.getId());
 	}
-//	/** 
-//	 * Change 'status (todo/ok) of Perso. Add if not exists.
-//	 * @param pers Perso to change
-//	 * @param status false(todo) or true (ok).
-//	 */
-//	public void setStatusPerso( Perso pers, boolean status ) {
-//		PersoEvent data = _persoMap.get(pers);
-//		data._status = status;
-//		
-//		// Notify Observers
-//		logger.debug(getTitle()+" - ");
-//		setChanged();
-//		notifyObservers();
-//	}
-//	/**
-//	 * Get the status of the Perso
-//	 * @param pers
-//	 * @return true (ok) or false (todo or no status)
-//	 */
-//	public Boolean getStatusPerso( Perso pers ) {
-//		if (_persoMap.containsKey(pers)) {
-//			return _persoMap.get(pers)._status;
-//		}
-//		return false;
-//	}
-	
 	
 	/**
 	 * @return the _title
@@ -163,20 +118,14 @@ public class Event extends Observable implements Observer {
 		str.append( "Event : "+_title+"\n");
 		str.append( _body+"\n");
 		str.append( _listPE.sDump());
-//		for (Map.Entry<Perso, PersoEvent> e : _persoMap.entrySet()) {
-//			if (e.getValue()._status==false) {
-//				str.append( "\n-"+e.getKey().sDump()+" => ");
-//			}
-//			else {
-//				str.append( "\n+"+e.getKey().sDump()+" => ");
-//			}
-//			str.append(e.getValue()._desc);
-//		}
 		str.append( "\n" );
 		return str.toString();
 	}
 	
 	@Override
+	/**
+	 * Si 'arg' est 'id_del', this.removePerso(Perso avec cet id').
+	 */
 	public void update(Observable o, Object arg) {
 		// Log
 		logger.debug(getTitle()+" o is a "+o.getClass().getName()+ " arg="+arg);
@@ -197,8 +146,10 @@ public class Event extends Observable implements Observer {
 	
 	/**
 	 * Les données liant Perso à Event.
+	 * <ul>
 	 * <li> _status : à jour ou pas</li>
 	 * <li> _desc : la description de l'évt du pt de vue du Perso.</li>
+	 * </ul>
 	 */
 	public static class PersoEvent extends Observable implements IElement {
 		public Perso _perso;
@@ -207,7 +158,7 @@ public class Event extends Observable implements Observer {
 		/** PersoEvent Null */
 		public static PersoEvent persoEventNull = new PersoEvent(Perso.persoNull, true, "---");
 		
-		/* In order to Log */
+		/** In order to Log */
 		private static Logger loggerPE = LogManager.getLogger(PersoEvent.class.getName());
 		
 		
