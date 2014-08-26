@@ -147,8 +147,6 @@ public class ZorgaListV extends JPanel implements Observer {
 	 * <li>'set' : met à jour _nameField</li>
 	 * </ul> 
 	 *
-	 * @author alain
-	 *
 	 */
 	class ZorgaPanel extends JPanel implements Observer {
 		/** Zorga comme Model */

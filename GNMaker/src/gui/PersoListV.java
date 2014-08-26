@@ -133,6 +133,22 @@ public class PersoListV extends JPanel implements Observer {
 		}
 	}
 	
+	/**
+	 * Un PersoPanel observe un Perso.<br>
+	 * 
+	 * <ul>
+	 * <li> JButton : DelAction</li>
+	 * <li> JTextField _nameField : _perso.getName(), change après ENTER</li>
+	 * <li> JTextField _playerField : _perso.getPlayer(), change après ENTER</li>
+	 * <li> ZorgaCombo : comboBox pour Zorga </li>
+	 * </ul>
+	 * 
+	 * Message traités :
+	 * <ul>
+	 * <li> 'set' : màj _nameField et _playerField.</li>
+	 * </ul>
+	 * 
+	 */
 	class PersoPanel extends JPanel implements Observer {
 		/** Perso comme Model */
 		Perso _perso;
