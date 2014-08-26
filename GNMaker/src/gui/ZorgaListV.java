@@ -31,7 +31,21 @@ import data.Zorga
 ;
 
 /**
- * Affiche tous les Zorgas comme une liste de DEL+JTextField pour les éditer.
+ * Affiche tous les Zorgas comme une liste de [DEL+JTextField] pour les éditer.
+ * 
+ * <ul>
+ * <li> JButton : NewZorgaAction</li>
+ * <li> JButton : DumpAllAction</li>
+ * <li> JButton : ClearAllAction</li>
+ * <li> MyPanel : liste verticale de ZorgaPanel</li>
+ * </ul>
+ * 
+ * Traite les messages suivants :
+ * <ul>
+ * <li> id_arg : ajoute le ZorgaPanel(Zorga(id)) à _listPanel</li>
+ * <li> id_del : delete le ZorgaPanel de Zorga(id)</li>
+ * </ul>
+ * 
  * bouton ADD, CLEAR, DUMP en haut ?
  * 
  * @author snowgoon88@gmail.com
@@ -120,6 +134,22 @@ public class ZorgaListV extends JPanel implements Observer {
 		}
 	}
 
+	/**
+	 * Un ZorgaPanel oberve un Zorga.<br>
+	 * 
+	 * <ul>
+	 * <li>JButton : DelAction</li>
+	 * <li>JTextField : change après ENTER</li>
+	 * </ul>
+	 * 
+	 * Message traités :
+	 * <ul>
+	 * <li>'set' : met à jour _nameField</li>
+	 * </ul> 
+	 *
+	 * @author alain
+	 *
+	 */
 	class ZorgaPanel extends JPanel implements Observer {
 		/** Zorga comme Model */
 		Zorga _zorga;
@@ -192,7 +222,6 @@ public class ZorgaListV extends JPanel implements Observer {
 		}
 	}
 
-	
 	
 	
 	/**
