@@ -28,8 +28,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class Perso extends Observable implements Observer, IElement {
 	
-	static public Perso persoNull = new Perso("---", "---", Zorga.zorgaNull);
-	
 	/** Id du Perso */
 	int _id = -1;
 	/** Nom du Perso */

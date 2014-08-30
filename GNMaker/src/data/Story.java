@@ -53,7 +53,7 @@ public class Story extends Observable {
 		_name = "A Story with no Name";
 		_story = new ArrayList<Event>();
 		_zorgaList = new ListOf<Zorga>(Zorga.zorgaNull);
-		_persoList = new ListOf<Perso>(Perso.persoNull);
+		_persoList = new ListOf<Perso>();
 		_fgModified = false;
 	}
 

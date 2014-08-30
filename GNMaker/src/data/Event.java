@@ -62,7 +62,7 @@ public class Event extends Observable implements IElement, Observer {
 		_story = story;
 		this._title = _title;
 		this._body = _body;
-		_listPE = new ListOf<Event.PersoEvent>(PersoEvent.persoEventNull);
+		_listPE = new ListOf<Event.PersoEvent>();
 		
 		_story._persoList.addObserver(this);
 	}
@@ -185,8 +185,6 @@ public class Event extends Observable implements IElement, Observer {
 		public Perso _perso;
 		public boolean _status;
 		String _desc;
-		/** PersoEvent Null */
-		public static PersoEvent persoEventNull = new PersoEvent(Perso.persoNull, true, "---");
 		
 		/** In order to Log */
 		private static Logger loggerPE = LogManager.getLogger(PersoEvent.class.getName());

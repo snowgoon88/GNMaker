@@ -12,8 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Maintient une HashMap<Integer,T> de T.
- * Contient tjs un couple (-1,ElementNull)
+ * Maintient une HashMap<Integer,T> de T.<br>
+ * 
+ * Si un Element est associé à un index négatif (par exemple, (-1,ElementNull), 
+ * il n'est pas effacé par <code>clear()</code>.
  * <br>
  * 
  * Notify Observers:
@@ -40,6 +42,14 @@ public class ListOf<T extends IElement> extends Observable {
 	
 	/**
 	 * Création d'une liste vide.
+	 */
+	public ListOf() {
+		_list = new HashMap<Integer, T>();
+		_nextId = 0;
+		_fgModified = false;
+	}
+	/**
+	 * Création d'une liste vide avec un elemNull.
 	 */
 	public ListOf(T elemNull) {
 		_elemNull = elemNull;
@@ -122,8 +132,8 @@ public class ListOf<T extends IElement> extends Observable {
 		return _list.entrySet();
 	}
 	/**
-	 * Renvoie un Array contenant tous les éléments de la liste.
-	 * TODO (sauf (-1,ElementNull)
+	 * Renvoie un Array contenant tous les éléments de la liste 
+	 * dont les indices sont >= 0.
 	 * @return Object[] array
 	 */
 	public Object[] toArray() {
@@ -140,7 +150,7 @@ public class ListOf<T extends IElement> extends Observable {
 	}
 	
 	/**
-	 * Vide la liste (sauf l'élément '-1') et prévient les Observers pour chaque T détruit.
+	 * Vide la liste (sauf l'élément avec indice négatif) et prévient les Observers pour chaque T détruit.
 	 * @see java.util.List#clear()
 	 * @toObserver : id_del
 	 */
