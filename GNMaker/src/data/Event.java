@@ -19,16 +19,27 @@ import org.apache.logging.log4j.Logger;
  * <br>
  * 
  * Notify Observers:
+ * <ul>
+ * <li>set_title</li>
+ * <li>set_body</li>
+ * </ul>
+ * 
+ * Anciens notification:
+ * <ul>
  * <li>Perso : when added</li>
  * <li>"removed"</li>
  * <li>'' when setStatusChanged</li>
+ * </ul>
  * SHOULD armonize with other Observable
  * 
  * @author snowgoon88@gmail.com
  */
-public class Event extends Observable implements Observer {
+public class Event extends Observable implements IElement, Observer {
+		
 	/** Appartient à une Story */
 	public Story _story;
+	/** Id de l'Event */
+	int _id = -1;
 	/** Titre de l'événement */
 	String _title;
 	/** Corps de l'événement */
@@ -90,6 +101,10 @@ public class Event extends Observable implements Observer {
 	 */
 	public void setTitle(String title) {
 		this._title = title;
+		
+		logger.debug(getTitle()+" set_title");
+		setChanged();
+		notifyObservers("set_title");
 	}
 
 	/**
@@ -104,9 +119,9 @@ public class Event extends Observable implements Observer {
 	public void setBody(String body) {
 		this._body = body;
 		
-		logger.debug("body");
+		logger.debug(getTitle()+" set_body");
 		setChanged();
-		notifyObservers("body");
+		notifyObservers("set_body");
 	}
 
 	/** 
@@ -115,7 +130,7 @@ public class Event extends Observable implements Observer {
 	 */
 	public String sDump() {
 		StringBuffer str = new StringBuffer();
-		str.append( "Event : "+_title+"\n");
+		str.append( "Event : "+_title+" ("+getId()+")"+"\n");
 		str.append( _body+"\n");
 		str.append( _listPE.sDump());
 		str.append( "\n" );
@@ -141,7 +156,22 @@ public class Event extends Observable implements Observer {
 		if (command.equals("del")) {
 			removePerso(_story._persoList.get(id));
 		}
+	}
+	@Override
+	public int getId() {
+		return _id;
+	}
 
+	@Override
+	public void setId(int id) {
+		_id = id;
+	}
+
+	@Override
+	public void elementRemoved() {
+		logger.debug(getTitle()+" del");
+		setChanged();
+		notifyObservers("del");
 	}
 	
 	/**
