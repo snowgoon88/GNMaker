@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
  * <ul>
  * <li>un nom : _name</li>
  * <li>un joueur : _player </li>
- * <li>un zorga : Zorgas+id => Observer de Zorgas</li>
+ * <li>un zorga : Zorgas => Persi est Observer de Zorga</li>
  * </ul>
  * <br>
  * 
@@ -28,8 +28,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class Perso extends Observable implements Observer, IElement {
 	
-	static public Perso persoNull = new Perso("---", "---", Zorga.zorgaNull);
-	
 	/** Id du Perso */
 	int _id = -1;
 	/** Nom du Perso */
@@ -42,7 +40,7 @@ public class Perso extends Observable implements Observer, IElement {
 	/** Perso has been modified ? */
 	boolean _fgModified;
 
-	/* In order to Log */
+	/** In order to Log */
 	private static Logger logger = LogManager.getLogger(Perso.class.getName());
 	
 	/**
@@ -56,7 +54,7 @@ public class Perso extends Observable implements Observer, IElement {
 		this._player = player;
 		this._zorga = zorga;
 		
-		// Listen to Zorgas
+		// Listen to Zorga
 		_zorga.addObserver(this);
 	}
 	
@@ -138,13 +136,15 @@ public class Perso extends Observable implements Observer, IElement {
 
 	/**
 	 * Observe Zorgas.
+	 * 
+	 * Si le Zorga est 'del', alors _zorga devient zorgaNull.
 	 */
 	@Override
 	public void update(Observable o, Object arg) {	
 		// Log
 		logger.debug(getName()+" "+_zorga.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
 	
-		// Observe un Zorga
+		// Observe son Zorga
 		if (arg.equals("del")) {
 			// Zorga devient zorgaNull
 			setZorga(Zorga.zorgaNull);

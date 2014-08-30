@@ -188,7 +188,7 @@ public class TestBasic {
 		zorgas.add( new Zorga("Alain"));
 		
 		// Liste de Perso avec Valeri Botlinko pour Alain
-		ListOf<Perso> persos = new ListOf<Perso>(Perso.persoNull);
+		ListOf<Perso> persos = new ListOf<Perso>();
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
 		persos.add(perso1);
 		System.out.println(persos.sDump());
@@ -430,7 +430,7 @@ public class TestBasic {
 		// Delete perso1, should affect Events
 		story._persoList.remove(perso1.getId());
 		// Only 1 perso in evt1
-		boolean res = (evt1._listPE.entrySet().size() == 2); // 1 + nullPersoEvent
+		boolean res = (evt1._listPE.entrySet().size() == 1); // 1 PersoEvent
 		if (res == false) {
 			System.err.println("Pb with perso1 deleted in Event1 : still 2 perso");
 			System.err.println("evt1 ="+evt1.sDump());
@@ -444,7 +444,7 @@ public class TestBasic {
 			return res;
 		}
 		// evt2 not touched
-		res = (evt2._listPE.entrySet().size() == 2); // 1 + nullPersoEvent
+		res = (evt2._listPE.entrySet().size() == 1); // 1 PersoEvent
 		if (res == false) {
 			System.err.println("Pb with perso1 deleted in Event2 : not 1 perso");
 			System.err.println("evt2 ="+evt1.sDump());

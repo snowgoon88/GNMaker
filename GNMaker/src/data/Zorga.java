@@ -66,7 +66,6 @@ public class Zorga extends Observable implements IElement, Comparable<Zorga> {
 	public String sDump() {
 		return getName()+"("+getId()+")";
 	}
-	
 
 
 	/* (non-Javadoc)

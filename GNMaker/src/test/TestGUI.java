@@ -128,8 +128,18 @@ public class TestGUI {
 		}
 	}
 	
-	// viewer de ListOf<Zorga>
 	@SuppressWarnings("unused")
+	
+	/** Viewer de ListOf<Zorga>. Avec Alain et Fab.<br>
+	 * 
+	 * Permet de vérifier que GUI permet de :
+	 * <ul>
+	 * <li>Ajout d'un Zorga (bien appuyer sur Enter pour changer nom</li>
+	 * <li>Del d'un Zorga.</li>
+	 * <li>Modifier le nom d'un Zorga</li>
+	 * <li>Effacer tous les Zorgas</li>
+	 * </ul>
+	 */
 	boolean testZorgaV(String[] args) {
 		ListOf<Zorga> zorgaList = new ListOf<Zorga>(Zorga.zorgaNull);
 		
@@ -144,7 +154,17 @@ public class TestGUI {
 		System.out.println("End of testZorgaV");
 		return res;
 	}
-	// viewer de ListOf<Perso> et ListOf<Zorga>
+	/** Viewer de ListOf<Perso> et ListOf<Zorga>.<br>
+	 * 
+	 * Permet de vérifier pour les Perso :
+	 * <ul>
+	 * <li>Ajout/Del d'un Perso</li>
+	 * <li>Modif du Zorga</li>
+	 * <li>Effacer tous les Perso</li>
+	 * </ul>
+	 * 
+	 * @todo largeur du champ 'selecteur de Zorga'
+	 */
 	boolean testPersoListV(String[] args) {
 		ListOf<Zorga> zorgaList = new ListOf<Zorga>(Zorga.zorgaNull);
 		Zorga zorgAlain = new Zorga("Alain");

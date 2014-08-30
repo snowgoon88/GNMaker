@@ -18,6 +18,7 @@ import java.util.Observable;
  * Remove Event
  * Dump All
  * 
+ * TODO Revoir le syst. de notification (Observer directelemt _story par exemple)
  * Notify Observers:
  * <ul>
  * <li>Event : when added</li>
@@ -34,7 +35,8 @@ public class Story extends Observable {
 	/** Name of the Story */
 	String _name;
 	/** Story is a list of Event */
-	public ArrayList<Event> _story;
+	//DEL public ArrayList<Event> _story;
+	public ListOf<Event> _story;
 	/** Story is about a list of People */
 	public ListOf<Perso> _persoList;
 	/** Story is made by a List of Zorga */
@@ -51,25 +53,26 @@ public class Story extends Observable {
 	 */
 	public Story() {
 		_name = "A Story with no Name";
-		_story = new ArrayList<Event>();
+		//DEL _story = new ArrayList<Event>();
+		_story = new ListOf<Event>();
 		_zorgaList = new ListOf<Zorga>(Zorga.zorgaNull);
-		_persoList = new ListOf<Perso>(Perso.persoNull);
+		_persoList = new ListOf<Perso>();
 		_fgModified = false;
 	}
 
 	/**
 	 * Ajout d'un Event à cette Story.
 	 * @param evt
-	 * @return result of ArrayList.add (should be true).
+	 * @return true if succes
 	 * @toObserver : new Event
 	 */
 	public boolean add(Event evt) {
-		boolean res=_story.add(evt);
+		int res=_story.add(evt);
 		_fgModified = true;
 		
 		setChanged();
 		notifyObservers(evt);
-		return res;
+		return res >= 0;
 	}
 	/**
 	 * Enlever un Event à cette Story.
@@ -78,13 +81,13 @@ public class Story extends Observable {
 	 * @toObserver : String "removed".
 	 */
 	public boolean remove(Event evt) {
-		boolean res=_story.remove(evt);
-		if (res) {
+		Event res=_story.remove(evt.getId());
+		if (res != null) {
 			_fgModified = true;
 			setChanged();
 			notifyObservers("removed");
 		}
-		return res;
+		return res != null;
 	}
 	
 	/** 
@@ -96,9 +99,10 @@ public class Story extends Observable {
 		str.append( "Story : "+_name+"\n");
 		str.append( "Zorgas : "+_zorgaList.sDump()+"\n");
 		str.append( "Persos : "+ _persoList.sDump()+ "\n");
-		for (Event e : _story) {
-			str.append( e.sDump()+"\n");
-		}
+		str.append( "Story : " + _story.sDump() + "\n");
+//		for (Event e : _story) {
+//			str.append( e.sDump()+"\n");
+//		}
 		return str.toString();
 	}
 	
