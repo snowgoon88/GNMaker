@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
  * 
  * @author snowgoon88@gmail.com
  */
-public class Zorga extends Observable implements IElement {
+public class Zorga extends Observable implements IElement, Comparable<Zorga> {
 	
 	/** Null Element (for ListOf) */
 	static public Zorga zorgaNull = new Zorga("---"); 
@@ -94,5 +94,11 @@ public class Zorga extends Observable implements IElement {
 		notifyObservers("del");
 	}
 	
+	/**
+	 * Implements Comparable
+	 */
+	public int compareTo(Zorga o) {
+		return this.getName().compareTo(o.getName());
+	}
 
 }

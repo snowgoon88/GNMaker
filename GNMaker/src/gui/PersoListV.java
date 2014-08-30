@@ -10,6 +10,7 @@ import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
@@ -26,7 +27,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.miginfocom.swing.MigLayout;
-
 import data.ListOf;
 import data.Perso;
 import data.Zorga;
@@ -201,16 +201,35 @@ public class PersoListV extends JPanel implements Observer {
 		/**
 		 * Une JComboBox qui observe Zorgas.
 		 * TODO Mais qui doit aussi observer Perso (si change de Zorga)
+		 * 
+		 * TODO Faire fonction qui recrée la CombBox en triant
+		 * TODO appelée aussi quand un Zorga est 'set', pas seulement 'id-add'
+		 * TODO Pb quand 'id_del' => pas le bon Zorga qui est mis (devrait être zorgaNull)!!!
 		 */
 		class ZorgaCombo extends JComboBox<Object> implements Observer {
-			/* In order to Log */
+			/** In order to Log */
 			private Logger logger = LogManager.getLogger(ZorgaCombo.class.getName());
 			
 			public ZorgaCombo() {
 				super();
 				logger.trace("for "+_perso.getName());
-				for (Entry<Integer,Zorga> item : _zorgaList.entrySet()) {
-					this.addItem(item.getValue());
+				// Trier la liste des Zorga par leur nom
+				Zorga[] zorgaArray = _zorgaList.toArray(new Zorga[0]);
+				
+				System.out.println("AVANT");
+				for (Zorga zorga : zorgaArray) {
+					System.out.println(zorga.sDump());
+				}
+				
+				Arrays.sort(zorgaArray);
+				System.out.println("SORTED");
+				for (Zorga zorga : zorgaArray) {
+					System.out.println(zorga.sDump());
+				}
+				
+				for (Zorga zorga : zorgaArray) {
+					this.addItem( zorga );
+					zorga.addObserver(this);
 				}
 				this.setSelectedItem(_perso.getZorga());
 				
@@ -237,7 +256,26 @@ public class PersoListV extends JPanel implements Observer {
 						String command = sTok.nextToken();
 						// "add" -> un nouvel item dans ComboBox.
 						if (command.equals("add")) {
-							this.addItem( _zorgaList.get(id));
+							//this.addItem( _zorgaList.get(id));
+							Zorga selectedZorga = (Zorga) this.getSelectedItem();
+							// efface 
+							this.removeAllItems();
+							Zorga[] zorgaArray = _zorgaList.toArray(new Zorga[0]);
+							System.out.println("AVANT");
+							for (Zorga zorga : zorgaArray) {
+								System.out.println(zorga.sDump());
+							}
+							
+							Arrays.sort(zorgaArray);
+							System.out.println("SORTED");
+							for (Zorga zorga : zorgaArray) {
+								System.out.println(zorga.sDump());
+							}
+							for (Zorga zorga : zorgaArray) {
+								this.addItem( zorga );
+							}
+							//this.setSelectedItem(selectedZorga);
+							this.setSelectedItem(_perso.getZorga());
 						}
 						// "del" => détruit l'objet et modifie la sélection.
 						else if (command.equals("del")) {

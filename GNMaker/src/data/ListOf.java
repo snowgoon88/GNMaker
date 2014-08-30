@@ -3,6 +3,7 @@
  */
 package data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Set;
@@ -126,17 +127,19 @@ public class ListOf<T extends IElement> extends Observable {
 	 * TODO (sauf (-1,ElementNull)
 	 * @return Object[] array
 	 */
-	public Object[] toArray() {
-		Object[] res = new Object[_list.size()-1];
+	//public Object[] toArray() {
+	public T[] toArray(T[] arrayT) {
+		ArrayList<T> res = new ArrayList<T>();
+		//T[] res = new T[_list.size()];
 		// index pour le tableau.
 		int index=0;
 		for (Entry<Integer, T> entry : _list.entrySet()) {
-			if( entry.getKey() >= 0) {
-				res[index] = entry.getValue();
+			//if( entry.getKey() >= 0) {
+				res.add(entry.getValue());
 				index += 1;
-			}
+			//}
 		}
-		return res;
+		return res.toArray(arrayT);
 	}
 	
 	/**
@@ -165,6 +168,9 @@ public class ListOf<T extends IElement> extends Observable {
 				_list.remove(index);
 			}
 		}
+	}
+	public int size() {
+		return _list.size();
 	}
 	
 	/**
