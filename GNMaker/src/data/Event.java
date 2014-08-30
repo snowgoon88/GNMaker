@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 
 /**
- * Un Event estcomposé de :
+ * Un Event est composé de :
  * <ul>
  * <li>String: Un Titre</li>
  * <li>??? : Une Date</li>
@@ -22,15 +22,9 @@ import org.apache.logging.log4j.Logger;
  * <ul>
  * <li>set_title</li>
  * <li>set_body</li>
+ * <li>del</li>
+ * <li>(@see _listePE envoie aussi des notifications)</li>
  * </ul>
- * 
- * Anciens notification:
- * <ul>
- * <li>Perso : when added</li>
- * <li>"removed"</li>
- * <li>'' when setStatusChanged</li>
- * </ul>
- * SHOULD armonize with other Observable
  * 
  * @author snowgoon88@gmail.com
  */
@@ -180,6 +174,13 @@ public class Event extends Observable implements IElement, Observer {
 	 * <li> _status : à jour ou pas</li>
 	 * <li> _desc : la description de l'évt du pt de vue du Perso.</li>
 	 * </ul>
+	 * <br>
+	 * 
+	 * Notify Observers:
+	 * <ul>
+	 * <li>set_desc</li>
+	 * <li>set_status</li>
+	 * </ul>
 	 */
 	public static class PersoEvent extends Observable implements IElement {
 		public Perso _perso;
@@ -211,11 +212,10 @@ public class Event extends Observable implements IElement, Observer {
 		public void setDesc(String desc) {
 			this._desc = desc;
 			
-			loggerPE.debug("desc");
+			loggerPE.debug(getId()+"set_desc");
 			setChanged();
-			notifyObservers("desc");
+			notifyObservers("set_desc");
 		}
-		
 		
 		/**
 		 * @return the _status
@@ -229,10 +229,11 @@ public class Event extends Observable implements IElement, Observer {
 		public void setStatus(boolean status) {
 			this._status = status;
 			
-			loggerPE.debug("status");
+			loggerPE.debug(getId()+"set_status");
 			setChanged();
-			notifyObservers("status");
+			notifyObservers("set_status");
 		}
+		
 		@Override
 		public int getId() {
 			return _perso.getId();

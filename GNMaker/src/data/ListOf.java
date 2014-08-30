@@ -58,6 +58,15 @@ public class ListOf<T extends IElement> extends Observable {
 		_nextId = 0;
 		_fgModified = false;
 	}
+	
+	/**
+	 * Taille de la liste
+	 * @return _list.size()
+	 */
+	public int size() {
+		return _list.size();
+	}
+	
 	/**
 	 * Ajoute un T à la liste et prévient les Observers.
 	 * Vérifie que le T n'est pas déjà dans la liste.
