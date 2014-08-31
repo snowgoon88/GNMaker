@@ -159,6 +159,7 @@ public class TestGUI {
 	 * Permet de vérifier pour les Perso :
 	 * <ul>
 	 * <li>Ajout/Del d'un Perso</li>
+	 * <li>Ajout/Del d'un Zorga</li>
 	 * <li>Modif du Zorga</li>
 	 * <li>Effacer tous les Perso</li>
 	 * </ul>
@@ -170,7 +171,7 @@ public class TestGUI {
 		Zorga zorgAlain = new Zorga("Alain");
 		zorgaList.add(zorgAlain);
 		
-		ListOf<Perso> persoList = new ListOf<Perso>(Perso.persoNull);
+		ListOf<Perso> persoList = new ListOf<Perso>();
 		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
 		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgAlain);
 		persoList.add(perso1);

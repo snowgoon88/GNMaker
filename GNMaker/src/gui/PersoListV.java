@@ -156,6 +156,7 @@ public class PersoListV extends JPanel implements Observer {
 		/** GUI element à mettre à jour */
 		JTextField _nameField;
 		JTextField _playerField;
+		ZorgaCombo _zorgaCombo;
 		
 		public PersoPanel(int persId, Perso pers) {
 			super();
@@ -180,9 +181,8 @@ public class PersoListV extends JPanel implements Observer {
 			_playerField.addActionListener(new SetPlayerActionListener(_playerField));
 			this.add(_playerField);
 			
-			ZorgaCombo zorgaCombo = new ZorgaCombo();
-			//zorgaCombo.getSelectedItem();
-			this.add(zorgaCombo);
+			_zorgaCombo = new ZorgaCombo();
+			this.add(_zorgaCombo);
 		}
 		
 		@Override
@@ -195,97 +195,124 @@ public class PersoListV extends JPanel implements Observer {
 			if (command.equals("set")) {
 				_nameField = new JTextField(_perso.getName());
 				_playerField = new JTextField(_perso.getPlayer());
+				_zorgaCombo.setSelectedItem(_perso.getZorga());
 			}
 			
 		}
 		/**
 		 * Une JComboBox qui observe Zorgas.
-		 * TODO Mais qui doit aussi observer Perso (si change de Zorga)
-		 * 
-		 * TODO Faire fonction qui recrée la CombBox en triant
-		 * TODO appelée aussi quand un Zorga est 'set', pas seulement 'id-add'
-		 * TODO Pb quand 'id_del' => pas le bon Zorga qui est mis (devrait être zorgaNull)!!!
 		 */
 		class ZorgaCombo extends JComboBox<Object> implements Observer {
 			/** In order to Log */
 			private Logger logger = LogManager.getLogger(ZorgaCombo.class.getName());
+			/** Listen for selection */
+			SelectionActionListener _selectActionListener = null;
 			
 			public ZorgaCombo() {
 				super();
 				logger.trace("for "+_perso.getName());
-				// Trier la liste des Zorga par leur nom
+				
+				this.buildSortedList();
+				
+				_selectActionListener = new SelectionActionListener();
+				this.addActionListener(_selectActionListener);
+				
+				_zorgaList.addObserver(this);
+			}
+			/** Build List of selectable items of ComboBox, listen to all Zorga */
+			protected void buildSortedList() {
+				// Get and sort Entries
+				this.removeAllItems();
 				Zorga[] zorgaArray = _zorgaList.toArray(new Zorga[0]);
-				
-				System.out.println("AVANT");
-				for (Zorga zorga : zorgaArray) {
-					System.out.println(zorga.sDump());
-				}
-				
 				Arrays.sort(zorgaArray);
-				System.out.println("SORTED");
-				for (Zorga zorga : zorgaArray) {
-					System.out.println(zorga.sDump());
-				}
-				
 				for (Zorga zorga : zorgaArray) {
 					this.addItem( zorga );
 					zorga.addObserver(this);
 				}
 				this.setSelectedItem(_perso.getZorga());
-				
-				addActionListener( new ActionListener() {
-					
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						logger.trace("for "+_perso.getName()+" "+e.paramString());
-						@SuppressWarnings({ "unchecked" })
-						Object zorga = ((JComboBox<Object>) e.getSource()).getSelectedItem();
-						_perso.setZorga((Zorga) zorga);
-					}
-				});
-				_zorgaList.addObserver(this);
+			}
+			/** Rebuild List of selectable items of ComboBox */
+			protected void rebuildSortedList() {
+				// Get and sort Entries
+				this.removeAllItems();
+				Zorga[] zorgaArray = _zorgaList.toArray(new Zorga[0]);
+				Arrays.sort(zorgaArray);
+				for (Zorga zorga : zorgaArray) {
+					this.addItem( zorga );
+				}
+				this.setSelectedItem(_perso.getZorga());
 			}
 			@Override
 			public void update(Observable o, Object arg) {
-				// Observe une ListOf<Zorga>
+				// Observe une ListOf<Zorga> ou un Zorga
 				logger.debug("for "+_perso.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
-				if (arg != null) {
-					if (arg instanceof String) {
-						StringTokenizer sTok = new StringTokenizer((String)arg, "_");
-						int id = Integer.parseInt(sTok.nextToken());
-						String command = sTok.nextToken();
-						// "add" -> un nouvel item dans ComboBox.
-						if (command.equals("add")) {
-							//this.addItem( _zorgaList.get(id));
-							Zorga selectedZorga = (Zorga) this.getSelectedItem();
-							// efface 
-							this.removeAllItems();
-							Zorga[] zorgaArray = _zorgaList.toArray(new Zorga[0]);
-							System.out.println("AVANT");
-							for (Zorga zorga : zorgaArray) {
-								System.out.println(zorga.sDump());
+				if (o instanceof Zorga) {
+					if (arg != null) {
+						if (arg instanceof String ) {
+							String command = (String)arg;
+							if (command == "set") {
+								// Disable ActionListener
+								_selectActionListener._isEnabled = false;
+								// Rebuild list of selection
+								this.buildSortedList();
+								// Enable ActionListener
+								_selectActionListener._isEnabled = true;
 							}
-							
-							Arrays.sort(zorgaArray);
-							System.out.println("SORTED");
-							for (Zorga zorga : zorgaArray) {
-								System.out.println(zorga.sDump());
-							}
-							for (Zorga zorga : zorgaArray) {
-								this.addItem( zorga );
-							}
-							//this.setSelectedItem(selectedZorga);
-							this.setSelectedItem(_perso.getZorga());
+							this.revalidate();
+							this.repaint();
 						}
-						// "del" => détruit l'objet et modifie la sélection.
-						else if (command.equals("del")) {
-							this.removeItem(_zorgaList.get(id));
-							this.setSelectedItem( _perso.getZorga());
-						}
-						// TODO "set" - modifier l'item concerné si cela vient de Zorga
-						this.revalidate();
-						this.repaint();
 					}
+				}
+				else if (o instanceof ListOf<?>) {
+					if (arg != null) {
+						if (arg instanceof String) {
+							StringTokenizer sTok = new StringTokenizer((String)arg, "_");
+							int id = Integer.parseInt(sTok.nextToken());
+							String command = sTok.nextToken();
+							// "add" -> un nouvel item dans ComboBox.
+							if (command.equals("add")) {
+								// Disable ActionListener
+								_selectActionListener._isEnabled = false;
+								// Rebuild list of selection
+								this.buildSortedList();
+								// Listen to this new Zorga
+								_zorgaList.get(id).addObserver(this);
+								// Enable ActionListener
+								_selectActionListener._isEnabled = true;
+							}
+							// "del" => détruit l'objet et modifie la sélection.
+							else if (command.equals("del")) {
+								// Disable ActionListener
+								_selectActionListener._isEnabled = false;
+								// Remove Item
+								this.removeItem(_zorgaList.get(id));
+								this.setSelectedItem( _perso.getZorga());
+								// Enable ActionListener
+								_selectActionListener._isEnabled = true;
+							}
+							this.revalidate();
+							this.repaint();
+						}
+					}
+				}
+			}
+		}
+		/**
+		 * ActionListener qui change le Zorga d'un Perso.
+		 * Il faut pouvoir le "déconnecter" le temps de ré-organiser le JComboBox.
+		 * @author dutech
+		 *
+		 */
+		class SelectionActionListener implements ActionListener {
+			/** is Enabled ? */
+			public boolean _isEnabled = true;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (_isEnabled) {
+					logger.trace("for "+_perso.getName()+" Param:"+e.paramString()+" Src:"+e.getSource());
+					@SuppressWarnings({ "unchecked" })
+					Zorga zorga = (Zorga) ((JComboBox<Object>) e.getSource()).getSelectedItem();
+					_perso.setZorga(zorga);
 				}
 			}
 		}

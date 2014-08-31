@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  * Maintient une HashMap<Integer,T> de T.<br>
  * 
  * Si un Element est associé à un index négatif (par exemple, (-1,ElementNull), 
- * il n'est pas effacé par <code>clear()</code>.
+ * il n'est pas effacé par <code>clear()</code> et reste dans la liste.
  * <br>
  * 
  * Notify Observers:
@@ -149,13 +149,10 @@ public class ListOf<T extends IElement> extends Observable {
 	//public Object[] toArray() {
 	public T[] toArray(T[] arrayT) {
 		ArrayList<T> res = new ArrayList<T>();
-		//T[] res = new T[_list.size()];
-		// index pour le tableau.
-		int index=0;
+
 		for (Entry<Integer, T> entry : _list.entrySet()) {
 			//if( entry.getKey() >= 0) {
 				res.add(entry.getValue());
-				index += 1;
 			//}
 		}
 		return res.toArray(arrayT);
@@ -187,9 +184,6 @@ public class ListOf<T extends IElement> extends Observable {
 				_list.remove(index);
 			}
 		}
-	}
-	public int size() {
-		return _list.size();
 	}
 	
 	/**

@@ -113,9 +113,16 @@ public class Perso extends Observable implements Observer, IElement {
 		return _zorga;
 	}
 	public void setZorga(Zorga zorga) {
+		// N'écoute plus ancien Zorga
+		_zorga.deleteObserver(this);
+		
 		_zorga = zorga;
 		setChanged();
 		notifyObservers("set");
+		
+		// Ecoute nouvel Orga
+		_zorga.addObserver(this);
+		
 		_fgModified = true;
 	}
 	/**
