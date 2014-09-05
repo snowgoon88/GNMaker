@@ -28,14 +28,27 @@ import data.Event;
 import data.Perso;
 
 /**
- * Essai à base de JButton
+ * Affiche un PersoEvent (principalement un Perso) en utilisant un JButton
+ * <ul>
  * <li>Button1 (Gauche) : change état (status)</li>
- * <li>Button3 (Droit) : popupMenu</li>
+ * <li>Button3 (Droit) : popupMenu _popup</li>
+ * <ul>
+ * <li>Change Etat</li>
+ * <li>RemovePersoAction()</li>
+ * <li>Info</li>
+ * </ul>
+ * </ul>
+ * 
+ * Traite les messages suivants :
+ * <ul>
+ * <li> Perso.set : update _name et _popup</li>
+ * <li> PersoEvent.status : update() </li>
+ * </ul>
  * 
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class JPersoEvent extends JButton implements Observer {
+public class PersoEventV extends JButton implements Observer {
 	// Observes a PersoEvent, and thus a Perso
 	public Event.PersoEvent _pe;
 	// Need to know the Event to remove PersoEvent.
@@ -45,7 +58,7 @@ public class JPersoEvent extends JButton implements Observer {
 	ImageIcon _iconRemove = GraphicHelper.createImageIcon(this,"user-group-delete.png", "");
 	
 	/* In order to Log */
-	private static Logger logger = LogManager.getLogger(JPersoEvent.class.getName());
+	private static Logger logger = LogManager.getLogger(PersoEventV.class.getName());
 	
 	public AbstractAction _leftClickAction = null;
 	
@@ -54,7 +67,7 @@ public class JPersoEvent extends JButton implements Observer {
 	 * @param evt
 	 * @param persoEvent
 	 */
-	public JPersoEvent(Event evt, Event.PersoEvent persoEvent) {
+	public PersoEventV(Event evt, Event.PersoEvent persoEvent) {
 		super();
 		_evt = evt;
 		_pe = persoEvent;

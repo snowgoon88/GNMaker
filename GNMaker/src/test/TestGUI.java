@@ -4,6 +4,7 @@
 package test;
 
 import gui.JStory;
+import gui.PersoEventV;
 import gui.PersoListV;
 import gui.StoryC;
 import gui.ZorgaListV;
@@ -22,6 +23,7 @@ import javax.swing.SwingUtilities;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import data.Event;
 import data.ListOf;
 import data.Perso;
 import data.Story;
@@ -45,32 +47,33 @@ public class TestGUI {
 		int nbPassed = 0;
 		
 		// -------
-		nbTest++;
-		res = testZorgaV(args);
-		if (res) {
-			System.out.println("testZorgaV >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testZorgaV >> " + res);
-		}
-		// -------
-		nbTest++;
-		res = testPersoListV(args);
-		if (res) {
-			System.out.println("testPersoListV >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testPersoListV >> " + res);
-		}
-//		// -------
 //		nbTest++;
-//		res = testJEventPerso(args);
+//		res = testZorgaV(args);
 //		if (res) {
-//			System.out.println("testJEventPerso >> " + res);
+//			System.out.println("testZorgaV >> " + res);
 //			nbPassed++;
 //		} else {
-//			System.err.println("testJEventPerso >> " + res);
+//			System.err.println("testZorgaV >> " + res);
 //		}
+//		// -------
+//		nbTest++;
+//		res = testPersoListV(args);
+//		if (res) {
+//			System.out.println("testPersoListV >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testPersoListV >> " + res);
+//		}
+		
+		// -------
+		nbTest++;
+		res = testPersoEventV(args);
+		if (res) {
+			System.out.println("testJEventPerso >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testJEventPerso >> " + res);
+		}
 //		// -------
 //		nbTest++;
 //		res = testJEvent(args);
@@ -188,25 +191,33 @@ public class TestGUI {
 	}
 	
 	
-//	// Afficher Perso : Bouton Nom
-//	//               click gauche => switch status
-//	//               click droit => popup avec delete (+ confirm) ou change status
-//	//               et info.
-//	boolean testJPersoEvent(String[] args) {
-//		Zorgas zorgas = new Zorgas();
-//		int idAlain = zorgas.add("Alain");
-//		
-//		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-//		
-//		Event evt1 = new Event(null,
-//				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-//		
-//		JPersoEvent comp = new JPersoEvent(perso1, evt1);
-//
-//		boolean res =  testComponent("Basic JEventPerso", comp);
-//		System.out.println("End of testJEventPerso");
-//		return res;
-//	}
+	// Afficher Perso : Bouton Nom
+	//               click gauche => switch status
+	//               click droit => popup avec delete (+ confirm) ou change status
+	//               et info.
+	boolean testPersoEventV(String[] args) {
+		Story story = new Story();
+		Zorga zorgAlain = new Zorga("Alain");
+		story._zorgaList.add(zorgAlain);
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgAlain);
+		story._persoList.add(perso1);
+		story._persoList.add(perso2);
+		Event evt1 = new Event(story,
+				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		evt1.addPerso(perso1);
+//		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+		evt1._listPE.get(perso1.getId()).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+		evt1.addPerso(perso2);
+		story.add(evt1);
+		
+		PersoEventV comp = new PersoEventV(evt1, evt1._listPE.get(0));
+
+		boolean res =  testComponent("Basic JEventPerso", comp);
+		System.out.println("End of testJEventPerso");
+		return res;
+	}
 //	boolean testJPersoEventList(String[] args) {
 //		Zorgas zorgas = new Zorgas();
 //		int idAlain = zorgas.add("Alain");

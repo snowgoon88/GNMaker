@@ -134,7 +134,7 @@ public class JPersoEventList implements Observer {
 		
 		for (Entry<Integer, Event.PersoEvent> entry : _evt._listPE.entrySet()) {
 			if (entry.getKey() >= 0) {
-				JPersoEvent persoBtn = new JPersoEvent(_evt, entry.getValue());
+				PersoEventV persoBtn = new PersoEventV(_evt, entry.getValue());
 				_persoPanel.add( persoBtn );
 
 				PersoEventPanel pePanel = new PersoEventPanel(entry.getValue());
@@ -186,7 +186,7 @@ public class JPersoEventList implements Observer {
 				// "add" -> un nouveau JPersoEvent et PersoEventPanel.
 				if (command.equals("add")) {
 					PersoEvent pe = _evt._listPE.get(id);
-					JPersoEvent persoBtn = new JPersoEvent(_evt, pe);
+					PersoEventV persoBtn = new PersoEventV(_evt, pe);
 					_persoPanel.add( persoBtn );
 					
 					PersoEventPanel pePanel = new PersoEventPanel(pe);
@@ -203,7 +203,7 @@ public class JPersoEventList implements Observer {
 				else if (command.equals("del")){
 					// Efface JPersoEvent
 					for (int i = 0; i < _persoPanel.getComponentCount(); i++) {
-						JPersoEvent persoBtn = (JPersoEvent) _persoPanel.getComponent(i);
+						PersoEventV persoBtn = (PersoEventV) _persoPanel.getComponent(i);
 						if (persoBtn._pe.getId() == id) {
 							_persoPanel.remove(i);
 						}
