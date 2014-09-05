@@ -102,14 +102,14 @@ public class TestGUI {
 //			System.err.println("testJPersoEventList >> " + res);
 //		}
 		// -------
-		nbTest++;
-		res = testApplication(args);
-		if (res) {
-			System.out.println("testApplication >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testApplication >> " + res);
-		}
+//		nbTest++;
+//		res = testApplication(args);
+//		if (res) {
+//			System.out.println("testApplication >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testApplication >> " + res);
+//		}
 //		// -------
 //		nbTest++;
 //		res = testComboBox(args);

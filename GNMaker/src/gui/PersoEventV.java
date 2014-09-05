@@ -5,7 +5,6 @@ package gui;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Observable;
@@ -28,9 +27,10 @@ import data.Event;
 import data.Perso;
 
 /**
- * Affiche un PersoEvent (principalement un Perso) en utilisant un JButton
+ * Affiche un PersoEvent (principalement un Perso) en utilisant un JButton.
+ * La couleur du JButton dépend PersoEvent.getStatus() (true=>vert, false=>rouge).
  * <ul>
- * <li>Button1 (Gauche) : change état (status)</li>
+ * <li>Button1 (Gauche) : _leftClickAction si pas null</li>
  * <li>Button3 (Droit) : popupMenu _popup</li>
  * <ul>
  * <li>Change Etat</li>
@@ -41,8 +41,8 @@ import data.Perso;
  * 
  * Traite les messages suivants :
  * <ul>
- * <li> Perso.set : update _name et _popup</li>
- * <li> PersoEvent.status : update() </li>
+ * <li> Perso.set : update _name et _popup.update()</li>
+ * <li> PersoEvent.set_status : update() </li>
  * </ul>
  * 
  * @author snowgoon88@gmail.com
@@ -71,6 +71,7 @@ public class PersoEventV extends JButton implements Observer {
 		super();
 		_evt = evt;
 		_pe = persoEvent;
+		_leftClickAction = new SwitchStatusAction();
 		
 		buildGUI();
 		// Observes a PersoEvent, and thus a Perso
@@ -107,18 +108,14 @@ public class PersoEventV extends JButton implements Observer {
 		}
 		this.revalidate();
 	}
-	/** 
-	 * Action pour changer l'état (status) du PersoEvent.
-	 */
-	void switchStateAction() {
-		_pe.setStatus(!_pe.getStatus());
-		update();
-	}
 	
 	/**
 	 * MyMouseListener differentiate buttons.
-	 * BUTTON1 : switch PersoEvent status
-	 * BUTTON3 : PopupMenu
+	 * <ul>
+	 * <li>BUTTON1 : _leftClickAction si pas null</li>
+	 * <li>BUTTON2 : rien</li>
+	 * <li>BUTTON3 : PopupMenu</li>
+	 * </ul>
 	 */
 	class MyMouseListener extends MouseAdapter {
 
@@ -130,11 +127,9 @@ public class PersoEventV extends JButton implements Observer {
 			super.mouseClicked(e);
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				System.out.println("JPersoEvent : Button 1");
-				// Switch status
-				//switchStateAction();
+				// use _leftClickAction if any
 				if (_leftClickAction != null ) {
-					// Create ActionEvent and activate
-					_leftClickAction.actionPerformed(new ActionEvent(e.getSource(), 0, "JPersoEvent"));
+					_leftClickAction.actionPerformed(new ActionEvent(e.getSource(), 0, "PersoEventV"));
 				}
 			}
 			else if (e.getButton() == MouseEvent.BUTTON2) {
@@ -143,6 +138,7 @@ public class PersoEventV extends JButton implements Observer {
 			else if (e.getButton() == MouseEvent.BUTTON3) {
 				System.out.println("JPersoEvent : Button 3");
 				_popup.show(e.getComponent(), e.getX(), e.getY());
+				System.out.println(_pe.sDump());
 			}
 		}
 	}
@@ -156,12 +152,7 @@ public class PersoEventV extends JButton implements Observer {
 			JMenuItem item;
 			// Switch status
 			_switchItem = new JMenuItem("Change état");
-			_switchItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					switchStateAction();
-				}
-			});
+			_switchItem.addActionListener(_leftClickAction);
 			add(_switchItem);
 			// Delete 
 			item = new JMenuItem(new RemovePersoAction());
@@ -173,6 +164,9 @@ public class PersoEventV extends JButton implements Observer {
 			_statusItem = new JMenuItem("-");
 			add(_statusItem);
 		}
+		/**
+		 * Met à jour les infos sur le Perso.
+		 */
 		public void update() {
 			if (_pe._perso != null) {
 				_statusItem.setText(_pe._perso.sDump());
@@ -199,6 +193,17 @@ public class PersoEventV extends JButton implements Observer {
 			_evt.removePerso(_pe._perso);
 		}
 	}
+	public class SwitchStatusAction extends AbstractAction {
+		public SwitchStatusAction() {
+			super("Switch status");
+			putValue(SHORT_DESCRIPTION, "Change le status du Perso de l'événement");
+			putValue(MNEMONIC_KEY, null);
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_pe.setStatus(!_pe.getStatus());
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {
@@ -206,7 +211,7 @@ public class PersoEventV extends JButton implements Observer {
 		logger.debug(_pe._perso.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
 		
 		// Observe un Perso
-		if (o.getClass() == Perso.class) {
+		if (o instanceof Perso) {
 			// only "set" message
 			if (arg.equals("set")) {
 				this.setName(_pe._perso.getName());
@@ -214,9 +219,9 @@ public class PersoEventV extends JButton implements Observer {
 			}
 		}
 		// Observe a PersoEvent
-		else if (o.getClass() == Event.PersoEvent.class) {
+		else if (o instanceof Event.PersoEvent) {
 			// only "status" message
-			if (arg.equals("status")) {
+			if (arg.equals("set_status")) {
 				update();
 			}
 		}
