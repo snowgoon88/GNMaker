@@ -4,31 +4,42 @@
 package gui;
 
 
+import gui.PersoListV.PersoPanel;
+
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.miginfocom.swing.MigLayout;
 
 import data.Event;
+import data.Perso;
 import data.Story;
 
 /**
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class JStory extends JPanel implements Scrollable, Observer {
+public class StoryV extends JPanel implements Scrollable, Observer {
 	/** Un Story comme Model */
 	Story _story;
+	
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(StoryV.class.getName());
+
 	
 	/**
 	 * Création avec une Story comme Model.
 	 */
-	public JStory(Story story) {
+	public StoryV(Story story) {
 		//super(); // new Panel
 		_story = story;
 
@@ -47,20 +58,19 @@ public class JStory extends JPanel implements Scrollable, Observer {
 		this.setLayout(compLayout);
 		
 		// Liste des Event
-		for (Event evt : _story._story) {
-			this.add( new EventV(evt));
+		for (Entry<Integer, Event> entry : _story._story.entrySet()) {
+			if (entry.getKey() >= 0) {
+				this.add( new EventV(entry.getValue()));
+			}
 		}
 	}
 
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg != null ) {
-			System.out.println("### JStory.Observable : arg is a "+arg.getClass().getName());
-		}
-		else {
-			System.out.println("### JStory.Observable : arg is null");
-		}
+		// Log
+		logger.debug("o is a "+o.getClass().getName()+ " arg="+arg);
+		
 		// Ajout => arg est un Event qui a été ajouté.
 		if (arg instanceof Event) {
 			this.add( new EventV( (Event)arg ));
@@ -73,7 +83,9 @@ public class JStory extends JPanel implements Scrollable, Observer {
 				// Find removed one.
 				for (int i = 0; i < this.getComponentCount(); i++) {
 					EventV comp = (EventV) this.getComponent(i);
-					if (_story._story.contains(comp._evt) == false ) {
+					int id_event = comp._evt.getId();
+					if (_story._story.indexOf( comp._evt) == id_event ) {
+					//if (_story._story.contains(comp._evt) == false ) {
 						System.out.println("REMOVE "+i+" "+comp._evt.getTitle());
 						this.remove(i);
 						

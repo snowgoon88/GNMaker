@@ -4,7 +4,7 @@
 package test;
 
 import gui.EventV;
-import gui.JStory;
+import gui.StoryV;
 import gui.PersoEventListV;
 import gui.PersoEventV;
 import gui.PersoListV;
@@ -110,14 +110,14 @@ public class TestGUI {
 
 		
 		// -------
-//		nbTest++;
-//		res = testApplication(args);
-//		if (res) {
-//			System.out.println("testApplication >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testApplication >> " + res);
-//		}
+		nbTest++;
+		res = testApplication(args);
+		if (res) {
+			System.out.println("testApplication >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testApplication >> " + res);
+		}
 		
 //		// -------
 //		nbTest++;
@@ -327,10 +327,11 @@ public class TestGUI {
         
 		// Main Panel
 		JPanel mainP = new JPanel( new BorderLayout());
-		JStory comp = new JStory(story);
+		StoryV comp = new StoryV(story);
 		story.addObserver(comp);
         JScrollPane storyScroll = new JScrollPane(comp);
         mainP.add( storyScroll, BorderLayout.CENTER);
+        
         StoryC storyControler = new StoryC(story, storyFile);
         mainP.add( storyControler._component, BorderLayout.NORTH);
         tabbedPane.addTab("Intrigue", mainP);
