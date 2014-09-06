@@ -220,9 +220,11 @@ public class PersoEventListV implements Observer {
 				else if (command.equals("del")){
 					// Efface JPersoEvent
 					for (int i = 0; i < _persoPanel.getComponentCount(); i++) {
-						PersoEventV persoBtn = (PersoEventV) _persoPanel.getComponent(i);
-						if (persoBtn._pe.getId() == id) {
-							_persoPanel.remove(i);
+						if( _persoPanel.getComponent(i) instanceof PersoEventV) {
+							PersoEventV persoBtn = (PersoEventV) _persoPanel.getComponent(i);
+							if (persoBtn._pe.getId() == id) {
+								_persoPanel.remove(i);
+							}
 						}
 					}
 					// Efface PersoEventPanel

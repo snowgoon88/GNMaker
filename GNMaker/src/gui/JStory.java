@@ -48,7 +48,7 @@ public class JStory extends JPanel implements Scrollable, Observer {
 		
 		// Liste des Event
 		for (Event evt : _story._story) {
-			this.add( new JEvent(evt));
+			this.add( new EventV(evt));
 		}
 	}
 
@@ -63,7 +63,7 @@ public class JStory extends JPanel implements Scrollable, Observer {
 		}
 		// Ajout => arg est un Event qui a été ajouté.
 		if (arg instanceof Event) {
-			this.add( new JEvent( (Event)arg ));
+			this.add( new EventV( (Event)arg ));
 			this.revalidate();
 		}
 		else if (arg instanceof String) {
@@ -72,7 +72,7 @@ public class JStory extends JPanel implements Scrollable, Observer {
 				System.out.println("Find the one to remove");
 				// Find removed one.
 				for (int i = 0; i < this.getComponentCount(); i++) {
-					JEvent comp = (JEvent) this.getComponent(i);
+					EventV comp = (EventV) this.getComponent(i);
 					if (_story._story.contains(comp._evt) == false ) {
 						System.out.println("REMOVE "+i+" "+comp._evt.getTitle());
 						this.remove(i);

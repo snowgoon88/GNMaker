@@ -37,13 +37,28 @@ import data.Story;
 
 /**
  * Display an Event qui peut être "expanded". On s'appuie sur MigLayout.
- * <li>bouton pour expander + JTextField pour le titre</li>
- * <li>JPersoEventList pour les différents Perso  x Event</li>
+ * 
+ * Composé de:
+ * <ul>
+ * <li> _expanderBtn : JButton pour expander</li>
+ * <li> deux JButton intern : ajouter un PersoEvent, Enlever ce Event</li>
+ * <li> _title : JTextField pour le titre</li>
+ * <li> _body : JTextArea pour le body </li>
+ * <li> _persoList : PersoEventListV pour les différents Perso  x Event</li>
+ * </ul>
+ * 
+ * Traite les messages suivants :
+ * <ul>
+ * <li> Event.set_title : maj _title => Ne marche pas</li>
+ * <li> Event.set_body : maj _body => Ne marche pas </li>
+ * </ul>
+ * 
+ * @todo _body peut pas être édité.
  * 
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class JEvent extends JPanel implements Observer {
+public class EventV extends JPanel implements Observer {
 	/** Un Event comme Model */
 	public Event _evt;
 	
@@ -61,7 +76,7 @@ public class JEvent extends JPanel implements Observer {
 	PersoEventListV _persoList;
 	
 	/* In order to Log */
-	private static Logger logger = LogManager.getLogger(JEvent.class.getName());
+	private static Logger logger = LogManager.getLogger(EventV.class.getName());
 	
 	/** Est-ce que le JEven est expanded ? */
 	boolean _expandFlag;
@@ -69,7 +84,7 @@ public class JEvent extends JPanel implements Observer {
 	/**
 	 * Création avec un Event comme Model
 	 */
-	public JEvent( Event evt ) {
+	public EventV( Event evt ) {
 		super(); // new JPanel
 		_evt = evt;
 		_expandFlag = true;
@@ -121,17 +136,17 @@ public class JEvent extends JPanel implements Observer {
 		_title.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-//				System.out.println("DOCUMENT REMOVE _title : "+e.toString());
-				_evt.setTitle(_title.getText());
+				System.out.println("DOCUMENT REMOVE _title : "+e.toString());
+				//_evt.setTitle(_title.getText());
 			}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-//				System.out.println("DOCUMENT INSERT _title : "+e.toString());
-				_evt.setTitle(_title.getText());
+				System.out.println("DOCUMENT INSERT _title : "+e.toString());
+				//_evt.setTitle(_title.getText());
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-//				System.out.println("DOCUMENT CHANGED _title : "+e.toString());
+				System.out.println("DOCUMENT CHANGED _title : "+e.toString());
 				// When properties change
 			}
 		});
@@ -143,17 +158,17 @@ public class JEvent extends JPanel implements Observer {
 		_body.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-//				System.out.println("DOCUMENT REMOVE _body : "+e.toString());
-				_evt.setBody(_body.getText());
+				System.out.println("DOCUMENT REMOVE _body : "+e.toString());
+				//_evt.setBody(_body.getText());
 			}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-//				System.out.println("DOCUMENT INSERT _body : "+e.toString());
-				_evt.setBody(_body.getText());
+				System.out.println("DOCUMENT INSERT _body : "+e.toString());
+//				_evt.setBody(_body.getText());
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-//				System.out.println("DOCUMENT CHANGED _body : "+e.toString());
+				System.out.println("DOCUMENT CHANGED _body : "+e.toString());
 				// When properties change
 			}
 		});
@@ -191,9 +206,20 @@ public class JEvent extends JPanel implements Observer {
 		// Log
 		logger.debug(_evt.getTitle()+" o is a "+o.getClass().getName()+ " arg="+arg);
 		
-		// Event wit msg="body"
-		_body.setText(_evt.getBody());
-		update(); // What is Visible ?
+		// Observe un Event
+		if (o instanceof Event) {
+			// "set_title" message
+			if (arg.equals("set_title")) {
+				// Ne marche pas
+				_title.setText( _evt.getTitle());
+			}
+			// "set_body" message
+			else if (arg.equals("set_body")) {
+				// Ne marche pas
+				_body.setText(_evt.getBody());
+				//update(); // What is Visible ?
+			}
+		}
 	}
 	/**
 	 * Action pour expander.
@@ -221,10 +247,12 @@ public class JEvent extends JPanel implements Observer {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			// An Array ot perso
+			Perso[] persoArray = _story._persoList.toArray(new Perso[0]);
 			Perso choice = (Perso) JOptionPane.showInputDialog(_comp, 
 					"Choisissez un Personnage à ajouter",
 					"Ajout Perso", JOptionPane.PLAIN_MESSAGE, null,
-					_story._persoList.toArray(), null);
+					persoArray, null);
 			if (choice != null ) {
 				System.out.println("Choice is a "+choice.getClass().getName());
 				System.out.println("Choice : "+choice.toString());

@@ -3,6 +3,7 @@
  */
 package test;
 
+import gui.EventV;
 import gui.JStory;
 import gui.PersoEventListV;
 import gui.PersoEventV;
@@ -79,13 +80,24 @@ public class TestGUI {
 		
 		// -------
 //		nbTest++;
-//		res = testJEvent(args);
+//		res = testPersoEventListV(args);
 //		if (res) {
-//			System.out.println("testJEvent >> " + res);
+//			System.out.println("testPersoEventListV >> " + res);
 //			nbPassed++;
 //		} else {
-//			System.err.println("testJEvent >> " + res);
+//			System.err.println("testPersoEventListV >> " + res);
 //		}
+		
+		// -------
+		nbTest++;
+		res = testEventV(args);
+		if (res) {
+			System.out.println("testJEvent >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testJEvent >> " + res);
+		}
+		
 //		// -------
 //		nbTest++;
 //		res = testExpand(args);
@@ -96,15 +108,7 @@ public class TestGUI {
 //			System.err.println("testExpand >> " + res);
 //		}
 
-		// -------
-		nbTest++;
-		res = testPersoEventListV(args);
-		if (res) {
-			System.out.println("testPersoEventListV >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testPersoEventListV >> " + res);
-		}
+		
 		// -------
 //		nbTest++;
 //		res = testApplication(args);
@@ -266,24 +270,29 @@ public class TestGUI {
 //	// Titre
 //	// Corps
 //	// Liste <Perso>*
-//	boolean testJEvent(String[] args) {
-//		Zorgas zorgas = new Zorgas();
-//		int idAlain = zorgas.add("Alain");
-//		
-//		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-//		
-//		Event evt1 = new Event(null,
-//				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-//		evt1.addPerso(perso1);
-//		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
-//		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
-//		evt1.addPerso(perso2);
-//		JEvent comp = new JEvent( evt1);
-//		
-//		boolean res =  testComponent("JEvent", comp);
-//		System.out.println("End of testJEvent");
-//		return res;
-//	}
+	boolean testEventV(String[] args) {
+		Story story = new Story();
+		Zorga zorgAlain = new Zorga("Alain");
+		story._zorgaList.add(zorgAlain);
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgAlain);
+		story._persoList.add(perso1);
+		story._persoList.add(perso2);
+		Event evt1 = new Event(story,
+				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		evt1.addPerso(perso1);
+		evt1._listPE.get(perso1.getId()).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+		evt1.addPerso(perso2);
+		story.add(evt1);
+		
+		EventV evtV = new EventV(evt1);
+		
+		
+		boolean res =  testComponent("JEvent", evtV);
+		System.out.println("End of testJEvent");
+		return res;
+	}
 //	boolean testExpand(String[] args) {
 //		Expandable truc = new Expandable();
 //		truc.buildMIG();
