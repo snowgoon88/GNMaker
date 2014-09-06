@@ -4,8 +4,6 @@
 package gui;
 
 
-import gui.ZorgaListV.ZorgaPanel;
-
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
@@ -36,11 +34,23 @@ import net.miginfocom.swing.MigLayout;
 
 import data.Event;
 import data.Event.PersoEvent;
-import data.ListOf;
 import data.Perso;
 
 /**
- * Un JPanel pour lister les différents PersoEvent. Viewer de (MVC).
+ * Un JPanel pour lister les différents PersoEvent. Viewer de (MVC).<br>
+ * 
+ * Est composé de :
+ * <ul>
+ * <li> JBouton pour expand/reduce</li>
+ * <li> _persoPanel (HBox) de PersoEventV où _leftClick fait expand/reduce de la desc associée</li>
+ * <li> _descPanel (VBox) de desc (TextArea) </li>
+ * </ul>
+ * 
+ * Traite les messages suivants :
+ * <ul>
+ * <li> ListOf<PersoEvent>.id_add : ajoute dans _persoPanel et _descPanel </li>
+ * <li> ListOf<PersoEvent>.id_del : enlève de _persoPanel et _descPanel </li>
+ * </ul>
  * 
  * Display
  * Add a new PersoEvent
@@ -48,10 +58,12 @@ import data.Perso;
  * Expand a PersoEvent (LeftClick on JPersoEvent)
  * Expand All
  * 
+ * @todo Les textes des TextArea ne sont pas sauvé dans le modèle !!
+ * 
  * @author snowgoon88@gmail.com
  */
-public class JPersoEventList implements Observer {
-	/** Un ListOf<PersoEvent> comme Model */
+public class PersoEventListV implements Observer {
+	/** Un ListOf<PersoEvent> d'un Event comme Model */
 	Event _evt;
 	
 	/** JPanel comme Component */
@@ -78,13 +90,13 @@ public class JPersoEventList implements Observer {
 	boolean _allDescVisible = true;
 	
 	/* In order to Log */
-	private static Logger logger = LogManager.getLogger(JPersoEventList.class.getName());
+	private static Logger logger = LogManager.getLogger(PersoEventListV.class.getName());
 
 	/**
 	 * Création avec un Event comme modèle (MVC).
 	 * @param _evt
 	 */
-	public JPersoEventList(Event _evt) {
+	public PersoEventListV(Event _evt) {
 		this._evt = _evt;
 		buildGUI();
 		
@@ -115,6 +127,7 @@ public class JPersoEventList implements Observer {
 //		_persoPanel.setLayout(persoLayout);
 		_persoPanel = new MyPanel(persoLayout);
 		_expandAllBtn = new JButton();
+		// Action interne : expand/reduce toutes les descriptions.
 		_expandAllBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -137,12 +150,15 @@ public class JPersoEventList implements Observer {
 				PersoEventV persoBtn = new PersoEventV(_evt, entry.getValue());
 				_persoPanel.add( persoBtn );
 
-				PersoEventPanel pePanel = new PersoEventPanel(entry.getValue());
+				PersoEventDescPanel pePanel = new PersoEventDescPanel(entry.getValue());
 				_descPanel.add( pePanel );
 
-				// Attache la bonne action 
+				// Attache action 'ExpandDesc'
+				// WARNING : le fait de modifier directement _leftClickAction peut
+				//           faire que des Observables ne soient pas écouté, par exemple.
 				persoBtn._leftClickAction = new ExpandDescAction("Détaille", null,
-						"Détaille "+entry.getValue()._perso.getName(),
+						//"Détaille "+entry.getValue()._perso.getName(),
+						"Détaille ce personnage pour l'événement",
 						null, pePanel);
 			}
 		}
@@ -189,12 +205,13 @@ public class JPersoEventList implements Observer {
 					PersoEventV persoBtn = new PersoEventV(_evt, pe);
 					_persoPanel.add( persoBtn );
 					
-					PersoEventPanel pePanel = new PersoEventPanel(pe);
+					PersoEventDescPanel pePanel = new PersoEventDescPanel(pe);
 					_descPanel.add( pePanel );
 					
 					// Attache la bonne action 
 					persoBtn._leftClickAction = new ExpandDescAction("Détaille", null,
-							"Détaille "+pe._perso.getName(),
+							//"Détaille "+pe._perso.getName(),
+							"Détaille ce personnage pour l'événement",
 							null, pePanel);
 					_component.revalidate();
 					_component.repaint();
@@ -210,7 +227,7 @@ public class JPersoEventList implements Observer {
 					}
 					// Efface PersoEventPanel
 					for (int i = 0; i < _descPanel.getComponentCount(); i++) {
-						PersoEventPanel pePanel = (PersoEventPanel) _descPanel.getComponent(i);
+						PersoEventDescPanel pePanel = (PersoEventDescPanel) _descPanel.getComponent(i);
 						if (pePanel._pe.getId() == id) {
 							_descPanel.remove(i);
 						}
@@ -306,7 +323,7 @@ public class JPersoEventList implements Observer {
 		}
 		// Change tous visible ou invisibles
 		for (int i = 0; i < _descPanel.getComponentCount(); i++) {
-			PersoEventPanel pePanel = (PersoEventPanel) _descPanel.getComponent(i);
+			PersoEventDescPanel pePanel = (PersoEventDescPanel) _descPanel.getComponent(i);
 			pePanel.setVisible(_allDescVisible);
 		}
 		
@@ -319,33 +336,48 @@ public class JPersoEventList implements Observer {
 		_component.revalidate();
 	}
 	
+//	@SuppressWarnings("serial")
+//	class PersoLabel extends JLabel implements Observer {
+//		Perso _pers;
+//		/**
+//		 * Label avec un Texte
+//		 * @param text
+//		 */
+//		public PersoLabel(String text, Perso pers) {
+//			super(text);
+//			_pers = pers;
+//			_pers.addObserver(this);
+//		}
+//
+//		/**
+//		 * Listen to Perso
+//		 */
+//		@Override
+//		public void update(Observable o, Object arg) {
+//			String command = (String) arg;
+//			if (command.equals("set")) {
+//				this.setText(this._pers.sDump());
+//			}
+//		}
+//		
+//	}
 	@SuppressWarnings("serial")
-	class PersoLabel extends JLabel implements Observer {
-		Perso _pers;
-		/**
-		 * Label avec un Texte
-		 * @param text
-		 */
-		public PersoLabel(String text, Perso pers) {
-			super(text);
-			_pers = pers;
-			_pers.addObserver(this);
-		}
-
-		/**
-		 * Listen to Perso
-		 */
-		@Override
-		public void update(Observable o, Object arg) {
-			String command = (String) arg;
-			if (command.equals("set")) {
-				this.setText(this._pers.sDump());
-			}
-		}
-		
-	}
-	@SuppressWarnings("serial")
-	static class PersoEventPanel extends JPanel implements Observer {
+	/**
+	 * Viewer interne pour la description d'un PersoEvent.<br>
+	 * 
+	 * Se compose de :
+	 * <ul>
+	 * <li> _persoName (JLabel) pour le nom du perso.</li>
+	 * <li> _peDescArea (JTextArea) pour la description du PersoEvent </li>
+	 * </ul>
+	 *
+	 * Traite les messages suivants :
+	 * <ul>
+	 * <li> Perso.set : modif _persoName</li>
+	 * <li> PersoEvent.set_desc : update _peDescArea </li>
+	 * </ul>
+	 */
+	static class PersoEventDescPanel extends JPanel implements Observer {
 		/** Model */
 		PersoEvent _pe;
 		
@@ -355,9 +387,9 @@ public class JPersoEventList implements Observer {
 		JTextArea _peDescArea;
 		
 		/* In order to Log */
-		private static Logger loggerPE = LogManager.getLogger(PersoEventPanel.class.getName());
+		private static Logger loggerPE = LogManager.getLogger(PersoEventDescPanel.class.getName());
 		
-		public PersoEventPanel(PersoEvent persoEvent) {
+		public PersoEventDescPanel(PersoEvent persoEvent) {
 			super();
 			_pe = persoEvent;
 			buildGUI();
@@ -388,7 +420,7 @@ public class JPersoEventList implements Observer {
 			loggerPE.debug(_pe._perso.getName()+" o is a "+o.getClass().getName()+ " arg="+arg);
 			
 			// Observe un Perso
-			if (o.getClass() == Perso.class) {
+			if (o instanceof Perso) {
 				// only "set" message
 				if (arg.equals("set")) {
 					this.setName(_pe._perso.getName());
@@ -398,9 +430,9 @@ public class JPersoEventList implements Observer {
 				}
 			}
 			// Observe a PersoEvent
-			else if (o.getClass() == Event.PersoEvent.class) {
+			else if (o instanceof Event.PersoEvent) {
 				// only "desc" message
-				if (arg.equals("desc")) {
+				if (arg.equals("set_desc")) {
 					_peDescArea.setText(_pe.getDesc());
 					this.revalidate();
 					this.repaint();
@@ -439,7 +471,8 @@ public class JPersoEventList implements Observer {
 	}
 	
 	/**
-	 * Listen for changes and update PersoEvent.
+	 * Listen for changes dans un PersoEventDescPanel._peDescArea
+	 * et appelle PersoEvent.setDesc().
 	 */
 	static class MyTextAreaListener implements DocumentListener {
 		JTextArea _area;
@@ -453,12 +486,12 @@ public class JPersoEventList implements Observer {
 		@Override
 		public void removeUpdate(DocumentEvent e) {
 //			System.out.println("DOCUMENT REMOVE _title : "+e.toString());
-			_pe.setDesc(_area.getText());
+			//_pe.setDesc(_area.getText());
 		}
 		@Override
 		public void insertUpdate(DocumentEvent e) {
 //			System.out.println("DOCUMENT INSERT _title : "+e.toString());
-			_pe.setDesc(_area.getText());
+			//_pe.setDesc(_area.getText());
 		}
 		@Override
 		public void changedUpdate(DocumentEvent e) {

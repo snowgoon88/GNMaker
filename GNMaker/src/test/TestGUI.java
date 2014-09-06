@@ -4,6 +4,7 @@
 package test;
 
 import gui.JStory;
+import gui.PersoEventListV;
 import gui.PersoEventV;
 import gui.PersoListV;
 import gui.StoryC;
@@ -55,7 +56,8 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testZorgaV >> " + res);
 //		}
-//		// -------
+		
+		// -------
 //		nbTest++;
 //		res = testPersoListV(args);
 //		if (res) {
@@ -66,15 +68,16 @@ public class TestGUI {
 //		}
 		
 		// -------
-		nbTest++;
-		res = testPersoEventV(args);
-		if (res) {
-			System.out.println("testJEventPerso >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testJEventPerso >> " + res);
-		}
-//		// -------
+//		nbTest++;
+//		res = testPersoEventV(args);
+//		if (res) {
+//			System.out.println("testJEventPerso >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testJEventPerso >> " + res);
+//		}
+		
+		// -------
 //		nbTest++;
 //		res = testJEvent(args);
 //		if (res) {
@@ -92,15 +95,16 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testExpand >> " + res);
 //		}
-//		// -------
-//		nbTest++;
-//		res = testJPersoEventList(args);
-//		if (res) {
-//			System.out.println("testJPersoEventList >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testJPersoEventList >> " + res);
-//		}
+
+		// -------
+		nbTest++;
+		res = testPersoEventListV(args);
+		if (res) {
+			System.out.println("testPersoEventListV >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testPersoEventListV >> " + res);
+		}
 		// -------
 //		nbTest++;
 //		res = testApplication(args);
@@ -191,10 +195,16 @@ public class TestGUI {
 	}
 	
 	
-	// Afficher Perso : Bouton Nom
-	//               click gauche => switch status
-	//               click droit => popup avec delete (+ confirm) ou change status
-	//               et info.
+	/**
+	 * Viewer de PersoEvent.<br>
+	 * 
+	 * Permet de vérifier pour les PersoEvent :
+	 * <ul>
+	 * <li> Couleur du bouton en fonction du status </li>
+	 * <li> Menu Popup avec info et changement de status </li>
+	 * <li> MAIS : peut pas voir si réactif aux changement sur Perso._name par exemple </li>
+	 * </ul>
+	 */
 	boolean testPersoEventV(String[] args) {
 		Story story = new Story();
 		Zorga zorgAlain = new Zorga("Alain");
@@ -207,36 +217,51 @@ public class TestGUI {
 		Event evt1 = new Event(story,
 				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
 		evt1.addPerso(perso1);
-//		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
 		evt1._listPE.get(perso1.getId()).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
 		evt1.addPerso(perso2);
 		story.add(evt1);
 		
 		PersoEventV comp = new PersoEventV(evt1, evt1._listPE.get(0));
 
-		boolean res =  testComponent("Basic JEventPerso", comp);
-		System.out.println("End of testJEventPerso");
+		boolean res =  testComponent("Basic PersoEventV", comp);
+		System.out.println("End of testPersoEventV");
 		return res;
 	}
-//	boolean testJPersoEventList(String[] args) {
-//		Zorgas zorgas = new Zorgas();
-//		int idAlain = zorgas.add("Alain");
-//		
-//		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgas, idAlain);
-//		
-//		Event evt1 = new Event(null,
-//				"Catastrop Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
-//		evt1.addPerso(perso1);
-//		evt1._persoMap.get(perso1).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
-//		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgas, idAlain);
-//		evt1.addPerso(perso2);
-//		
-//		JPersoEventList persoList = new JPersoEventList( evt1 );
-//		
-//		boolean res = testComponent( "TestJPersoEventList", persoList._component);
-//		System.out.println("End of TestJPersoEventList");
-//		return res;
-//	}
+	/**
+	 * Viewer de PersoEventList.
+	 * 
+	 * Permet de vérifier :
+	 * <ul> 
+	 * <li>Expand/Reduce de tous les PersoEvent</li>
+	 * <li>Expand/Reduce des descriptions des PersoEvent</li>
+	 * <li> MAIS : peut pas voir si réactif aux changement sur Perso._name par exemple </li>
+	 * </ul>
+	 * 
+	 * @todo MAIS permet pas de répercuter changement de TextArea dans Model. (Task ds Pense-Bête)
+	 */
+	boolean testPersoEventListV(String[] args) {
+		Story story = new Story();
+		Zorga zorgAlain = new Zorga("Alain");
+		story._zorgaList.add(zorgAlain);
+		
+		Perso perso1 = new Perso("Valeri BOTLINKO", "Laurent D", zorgAlain);
+		Perso perso2 = new Perso("Barbera ERINSKA", "Fanny M", zorgAlain);
+		story._persoList.add(perso1);
+		story._persoList.add(perso2);
+		Event evt1 = new Event(story,
+				"Catastrophe Nedelin", "V. Botlinko fait exploser une fusée intentionnellement : 120 morts");
+		evt1.addPerso(perso1);
+		evt1._listPE.get(perso1.getId()).setDesc("Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d'un fusée. Mais le nouvel ergol est trop instable et la fusée explose.\nLe bilan est de 120 morts.");
+		evt1.addPerso(perso2);
+		story.add(evt1);
+		
+		PersoEventListV persoList = new PersoEventListV( evt1 );
+		
+		boolean res = testComponent( "TestPersoEventListV", persoList._component);
+		System.out.println("End of TestPersoEventListV");
+		return res;
+	}
+	
 //	// Afficher Event in GUI
 //	// Titre
 //	// Corps

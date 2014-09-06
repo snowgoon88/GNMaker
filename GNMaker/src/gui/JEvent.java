@@ -58,7 +58,7 @@ public class JEvent extends JPanel implements Observer {
 	JButton _expanderBtn;
 	JTextField _title;
 	JTextArea _body;
-	JPersoEventList _persoList;
+	PersoEventListV _persoList;
 	
 	/* In order to Log */
 	private static Logger logger = LogManager.getLogger(JEvent.class.getName());
@@ -159,7 +159,7 @@ public class JEvent extends JPanel implements Observer {
 		});
 		this.add( _body,
 				"cell 0 1, gapx 2*indent, wmin 10");
-		_persoList = new JPersoEventList(_evt);
+		_persoList = new PersoEventListV(_evt);
 		this.add( _persoList._component,
 				"cell 0 2");
 		
