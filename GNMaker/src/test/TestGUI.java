@@ -89,14 +89,14 @@ public class TestGUI {
 //		}
 		
 		// -------
-		nbTest++;
-		res = testEventV(args);
-		if (res) {
-			System.out.println("testJEvent >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testJEvent >> " + res);
-		}
+//		nbTest++;
+//		res = testEventV(args);
+//		if (res) {
+//			System.out.println("testJEvent >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testJEvent >> " + res);
+//		}
 		
 //		// -------
 //		nbTest++;
@@ -118,6 +118,7 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testApplication >> " + res);
 //		}
+		
 //		// -------
 //		nbTest++;
 //		res = testComboBox(args);
@@ -266,10 +267,16 @@ public class TestGUI {
 		return res;
 	}
 	
-//	// Afficher Event in GUI
-//	// Titre
-//	// Corps
-//	// Liste <Perso>*
+	/**
+	 * Viewer de Event
+	 * 
+	 * Permet de tester :
+	 * <ul>
+	 * <li> Expand/Reduce Event</li>
+	 * <li> Ajouter/Enlever un PersoEvent</li>
+	 * <li> Changement, DANS LE GUI, des textes </li>
+	 * </ul>
+	 */
 	boolean testEventV(String[] args) {
 		Story story = new Story();
 		Zorga zorgAlain = new Zorga("Alain");
