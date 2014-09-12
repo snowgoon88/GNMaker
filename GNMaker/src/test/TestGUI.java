@@ -4,7 +4,7 @@
 package test;
 
 import gui.EventV;
-import gui.StoryV;
+import gui.EventListV;
 import gui.PersoEventListV;
 import gui.PersoEventV;
 import gui.PersoListV;
@@ -327,7 +327,7 @@ public class TestGUI {
         
 		// Main Panel
 		JPanel mainP = new JPanel( new BorderLayout());
-		StoryV comp = new StoryV(story);
+		EventListV comp = new EventListV(story._story);
 		story.addObserver(comp);
         JScrollPane storyScroll = new JScrollPane(comp);
         mainP.add( storyScroll, BorderLayout.CENTER);
