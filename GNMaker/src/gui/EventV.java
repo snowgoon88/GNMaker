@@ -4,6 +4,9 @@
 package gui;
 
 
+import gui.ZorgaListV.MyPanel;
+
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
@@ -99,11 +102,13 @@ public class EventV extends JPanel implements Observer {
 	 * Crée les différents éléments SWING en utilisant un MigLayout
 	 */
 	void buildGUI() {
+		this.setLayout(new BorderLayout());
+		
 		MigLayout compLayout = new MigLayout(
 				"debug, hidemode 3", // Layout Constraints
 				"[grow,fill]", // Column constraints
 				""); // Row constraints);
-		this.setLayout(compLayout);
+		_component = new MyPanel(compLayout);
 		
 		
 		// Default expander
@@ -114,15 +119,15 @@ public class EventV extends JPanel implements Observer {
 				expandAction();
 			}
 		});
-		this.add(_expanderBtn);
+		_component.add(_expanderBtn);
 		// Add Perso
 		JButton addBtn = new JButton(new AddPersoAction(_evt._story, this));
 		addBtn.setText("");
-		this.add(addBtn,
+		_component.add(addBtn,
 				"cell 0 0, grow 0");
 		// Remove
 		JButton removeBtn = new JButton(new RemoveEventAction(_evt));
-		this.add(removeBtn,
+		_component.add(removeBtn,
 				"cell 0 0, grow 0");
 		
 		_title = new JTextField( _evt.getTitle() );
@@ -150,7 +155,7 @@ public class EventV extends JPanel implements Observer {
 				// When properties change
 			}
 		});
-		this.add( _title,
+		_component.add( _title,
 				"cell 0 0, grow 100"); // go to next line after this
 		_body = new JTextArea(_evt.getBody());
 		_body.setLineWrap(true);
@@ -172,10 +177,10 @@ public class EventV extends JPanel implements Observer {
 				// When properties change
 			}
 		});
-		this.add( _body,
+		_component.add( _body,
 				"cell 0 1, gapx 2*indent, wmin 10");
 		_persoList = new PersoEventListV(_evt);
-		this.add( _persoList._component,
+		_component.add( _persoList._component,
 				"cell 0 2");
 		
 		update();

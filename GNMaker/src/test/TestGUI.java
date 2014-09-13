@@ -79,24 +79,24 @@ public class TestGUI {
 //		}
 		
 		// -------
-//		nbTest++;
-//		res = testPersoEventListV(args);
-//		if (res) {
-//			System.out.println("testPersoEventListV >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testPersoEventListV >> " + res);
-//		}
+		nbTest++;
+		res = testPersoEventListV(args);
+		if (res) {
+			System.out.println("testPersoEventListV >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testPersoEventListV >> " + res);
+		}
 		
 		// -------
-//		nbTest++;
-//		res = testEventV(args);
-//		if (res) {
-//			System.out.println("testJEvent >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testJEvent >> " + res);
-//		}
+		nbTest++;
+		res = testEventV(args);
+		if (res) {
+			System.out.println("testEventV >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testEventV >> " + res);
+		}
 		
 //		// -------
 //		nbTest++;
@@ -296,7 +296,7 @@ public class TestGUI {
 		EventV evtV = new EventV(evt1);
 		
 		
-		boolean res =  testComponent("JEvent", evtV);
+		boolean res =  testComponent("EventV", evtV._component);
 		System.out.println("End of testJEvent");
 		return res;
 	}

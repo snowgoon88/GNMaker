@@ -86,7 +86,7 @@ public class PersoListV extends JPanel implements Observer {
 				"debug, hidemode 3,flowy", // Layout Constraints
 				"[grow,fill]", // Column constraints
 				""); // Row constraints);
-		_listPanel = new MyPanel(persoLayout);
+		_listPanel = new MigPanel(persoLayout);
 		this.add(_listPanel, BorderLayout.CENTER);
 		
 		for (Entry<Integer, Perso> entry : _persoList.entrySet()) {
@@ -149,7 +149,7 @@ public class PersoListV extends JPanel implements Observer {
 	 * </ul>
 	 * 
 	 */
-	class PersoPanel extends JPanel implements Observer {
+	class PersoPanel extends MigPanel implements Observer {
 		/** Perso comme Model */
 		Perso _perso;
 		

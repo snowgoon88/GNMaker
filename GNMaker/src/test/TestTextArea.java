@@ -3,6 +3,8 @@
  */
 package test;
 
+import gui.MigPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -31,6 +33,9 @@ import net.miginfocom.swing.MigLayout;
 				             "grow, fill"); // Row constraints); => grow both
  * 7) mais dans un scrollable, ça ne rétrécit plus.				             
  * 
+ * MAIS l'important est de donner une taille minimale "wmin" sinon la taille
+ * minimale est recalculée et cela ne rétrécit plus !
+ * 
  * @author snowgoon88@gmail.com
  */
 public class TestTextArea {
@@ -55,12 +60,13 @@ public class TestTextArea {
 		
 		// Ne grossit que les colonnes marquées grow.
 		// Les contraintes dans le add() ne concerne que les élements d'une même Cellule. !!!!
+		_main = new MigPanel();
 		MigLayout migLayout = new MigLayout(
 				"debug", // Layout Constraints
 				"[][grow,fill][]", // Column constraints
 				""); // Row constraints);
-		//_main.setLayout(migLayout);
-		_main = new MyPanel(migLayout);
+		_main.setLayout(migLayout);
+		//_main = new MyPanel(migLayout);
 		
 		_area1 = new JTextArea("Pour voir ce que ça donne sur des grandes lignes.");
 		_area1.setWrapStyleWord(true);
@@ -73,6 +79,7 @@ public class TestTextArea {
 		_main.add(avantLab1, "");
 		//_main.add(area1Panel,    "wmin 100");
 		_main.add(_area1,    "wmin 100");
+		//_main.add( _area1 );
 		_main.add(apresLab1, "wrap");
 		
 		_area2 = new JTextArea("Pour voir");
@@ -84,6 +91,7 @@ public class TestTextArea {
 		_main.add(avantLab2, "");
 		//_main.add(area2Panel,    "wmin 100");
 		_main.add(_area2,    "wmin 100");
+		//_main.add(_area2);
 		_main.add(apresLab2, "");
 		
 		_scrollMain = new JScrollPane(_main);

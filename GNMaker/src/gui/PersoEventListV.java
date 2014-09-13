@@ -115,7 +115,7 @@ public class PersoEventListV implements Observer {
 				"debug,hidemode 3,flowy", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
-		_component = new MyPanel(compLayout);
+		_component = new MigPanel(compLayout);
 //		_component.setLayout(compLayout);
 		
 		// Liste des JPerso
@@ -125,7 +125,7 @@ public class PersoEventListV implements Observer {
 				"2*indent", // Column constraints
 				""); // Row constraints);
 //		_persoPanel.setLayout(persoLayout);
-		_persoPanel = new MyPanel(persoLayout);
+		_persoPanel = new MigPanel(persoLayout);
 		_expandAllBtn = new JButton();
 		// Action interne : expand/reduce toutes les descriptions.
 		_expandAllBtn.addActionListener(new ActionListener() {
@@ -143,7 +143,7 @@ public class PersoEventListV implements Observer {
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
 		//_descPanel.setLayout(descLayout);
-		_descPanel = new MyPanel(descLayout);
+		_descPanel = new MigPanel(descLayout);
 		
 		for (Entry<Integer, Event.PersoEvent> entry : _evt._listPE.entrySet()) {
 			if (entry.getKey() >= 0) {
@@ -379,7 +379,7 @@ public class PersoEventListV implements Observer {
 	 * <li> PersoEvent.set_desc : update _peDescArea </li>
 	 * </ul>
 	 */
-	static class PersoEventDescPanel extends JPanel implements Observer {
+	static class PersoEventDescPanel extends MigPanel implements Observer {
 		/** Model */
 		PersoEvent _pe;
 		
@@ -401,6 +401,7 @@ public class PersoEventListV implements Observer {
 			_pe._perso.addObserver(this);
 		}
 		void buildGUI() {
+			
 			MigLayout persLayout = new MigLayout(
 					"debug, hidemode 3,flowy", // Layout Constraints
 					"[grow,fill]", // Column constraints
@@ -414,7 +415,9 @@ public class PersoEventListV implements Observer {
 			_peDescArea.setLineWrap(true);
 			_peDescArea.setWrapStyleWord(true);
 			_peDescArea.getDocument().addDocumentListener(new MyTextAreaListener(_peDescArea, _pe));
-			this.add(_peDescArea);
+			
+			// "wmin 100" est important, sinon ne rétrécit pas.
+			this.add(_peDescArea, "wmin 100");
 		}
 		@Override
 		public void update(Observable o, Object arg) {
@@ -452,6 +455,9 @@ public class PersoEventListV implements Observer {
 	 */
 	static class MyPanel extends JPanel implements Scrollable
 	{
+		MyPanel() {
+			super();
+		}
 		MyPanel(LayoutManager layout) {
 			super(layout);
 		}
