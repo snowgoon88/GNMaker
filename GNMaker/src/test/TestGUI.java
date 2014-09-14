@@ -79,24 +79,24 @@ public class TestGUI {
 //		}
 		
 		// -------
-		nbTest++;
-		res = testPersoEventListV(args);
-		if (res) {
-			System.out.println("testPersoEventListV >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testPersoEventListV >> " + res);
-		}
+//		nbTest++;
+//		res = testPersoEventListV(args);
+//		if (res) {
+//			System.out.println("testPersoEventListV >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testPersoEventListV >> " + res);
+//		}
 		
 		// -------
-		nbTest++;
-		res = testEventV(args);
-		if (res) {
-			System.out.println("testEventV >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testEventV >> " + res);
-		}
+//		nbTest++;
+//		res = testEventV(args);
+//		if (res) {
+//			System.out.println("testEventV >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testEventV >> " + res);
+//		}
 		
 //		// -------
 //		nbTest++;
@@ -296,7 +296,7 @@ public class TestGUI {
 		EventV evtV = new EventV(evt1);
 		
 		
-		boolean res =  testComponent("EventV", evtV._component);
+		boolean res =  testComponent("EventV", evtV);
 		System.out.println("End of testJEvent");
 		return res;
 	}
@@ -328,7 +328,7 @@ public class TestGUI {
 		// Main Panel
 		JPanel mainP = new JPanel( new BorderLayout());
 		EventListV comp = new EventListV(story._story);
-		story.addObserver(comp);
+		//story.addObserver(comp);
         JScrollPane storyScroll = new JScrollPane(comp);
         mainP.add( storyScroll, BorderLayout.CENTER);
         

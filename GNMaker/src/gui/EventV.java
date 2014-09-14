@@ -61,12 +61,12 @@ import data.Story;
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class EventV extends JPanel implements Observer {
+public class EventV extends MigPanel implements Observer {
 	/** Un Event comme Model */
 	public Event _evt;
 	
-	/** JPanel comme Component */
-	public JPanel _component;
+//	/** JPanel comme Component */
+//	public JPanel _component;
 	
 	/** Class for helping in designing GUI */
 	ImageIcon _iconClosed = GraphicHelper.createImageIcon(this,"book-closed_32x32.png", "");
@@ -102,13 +102,14 @@ public class EventV extends JPanel implements Observer {
 	 * Crée les différents éléments SWING en utilisant un MigLayout
 	 */
 	void buildGUI() {
-		this.setLayout(new BorderLayout());
+//		this.setLayout(new BorderLayout());
 		
 		MigLayout compLayout = new MigLayout(
 				"debug, hidemode 3", // Layout Constraints
 				"[grow,fill]", // Column constraints
 				""); // Row constraints);
-		_component = new MyPanel(compLayout);
+		this.setLayout(compLayout);
+//		_component = new MyPanel(compLayout);
 		
 		
 		// Default expander
@@ -119,15 +120,15 @@ public class EventV extends JPanel implements Observer {
 				expandAction();
 			}
 		});
-		_component.add(_expanderBtn);
+		this.add(_expanderBtn);
 		// Add Perso
 		JButton addBtn = new JButton(new AddPersoAction(_evt._story, this));
 		addBtn.setText("");
-		_component.add(addBtn,
+		this.add(addBtn,
 				"cell 0 0, grow 0");
 		// Remove
 		JButton removeBtn = new JButton(new RemoveEventAction(_evt));
-		_component.add(removeBtn,
+		this.add(removeBtn,
 				"cell 0 0, grow 0");
 		
 		_title = new JTextField( _evt.getTitle() );
@@ -155,7 +156,7 @@ public class EventV extends JPanel implements Observer {
 				// When properties change
 			}
 		});
-		_component.add( _title,
+		this.add( _title,
 				"cell 0 0, grow 100"); // go to next line after this
 		_body = new JTextArea(_evt.getBody());
 		_body.setLineWrap(true);
@@ -177,10 +178,10 @@ public class EventV extends JPanel implements Observer {
 				// When properties change
 			}
 		});
-		_component.add( _body,
+		this.add( _body,
 				"cell 0 1, gapx 2*indent, wmin 10");
 		_persoList = new PersoEventListV(_evt);
-		_component.add( _persoList._component,
+		this.add( _persoList._component,
 				"cell 0 2");
 		
 		update();
