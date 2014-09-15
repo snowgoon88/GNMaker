@@ -4,13 +4,7 @@
 package gui;
 
 
-import gui.ZorgaListV.MyPanel;
-
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.LayoutManager;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
@@ -20,10 +14,8 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.Scrollable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -65,8 +57,6 @@ public class EventV extends MigPanel implements Observer {
 	/** Un Event comme Model */
 	public Event _evt;
 	
-//	/** JPanel comme Component */
-//	public JPanel _component;
 	
 	/** Class for helping in designing GUI */
 	ImageIcon _iconClosed = GraphicHelper.createImageIcon(this,"book-closed_32x32.png", "");
@@ -102,14 +92,12 @@ public class EventV extends MigPanel implements Observer {
 	 * Crée les différents éléments SWING en utilisant un MigLayout
 	 */
 	void buildGUI() {
-//		this.setLayout(new BorderLayout());
 		
 		MigLayout compLayout = new MigLayout(
 				"debug, hidemode 3", // Layout Constraints
 				"[grow,fill]", // Column constraints
 				""); // Row constraints);
 		this.setLayout(compLayout);
-//		_component = new MyPanel(compLayout);
 		
 		
 		// Default expander
@@ -293,31 +281,6 @@ public class EventV extends MigPanel implements Observer {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			_evt._story.remove(_evt);
-		}
-	}
-	// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
-	/**
-	 * L'idée est que le Panel ne soit pas Scrollable Horizontalement.
-	 */
-	static class MyPanel extends JPanel implements Scrollable
-	{
-		MyPanel(LayoutManager layout) {
-			super(layout);
-		}
-		public Dimension getPreferredScrollableViewportSize() {
-			return getPreferredSize();
-		}
-		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-			return 0;
-		}
-		public boolean getScrollableTracksViewportHeight() {
-			return false;
-		}
-		public boolean getScrollableTracksViewportWidth() {
-			return true;
-		}
-		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-			return 0;
 		}
 	}
 }

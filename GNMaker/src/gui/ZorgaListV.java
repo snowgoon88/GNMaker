@@ -5,9 +5,6 @@ package gui;
 
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.LayoutManager;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map.Entry;
@@ -19,7 +16,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.Scrollable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +52,7 @@ public class ZorgaListV extends JPanel implements Observer {
 	ListOf<Zorga> _zorgaList;
 	
 	/** Panel pour les Zorgas */
-	MyPanel _listPanel;
+	JPanel _listPanel;
 	
 	/* In order to Log */
 	private static Logger logger = LogManager.getLogger(ZorgaListV.class.getName());
@@ -88,7 +84,7 @@ public class ZorgaListV extends JPanel implements Observer {
 				"debug, hidemode 3,flowy", // Layout Constraints
 				"[grow,fill]", // Column constraints
 				""); // Row constraints);
-		_listPanel = new MyPanel(zorgasLayout);
+		_listPanel = new MigPanel(zorgasLayout);
 		this.add(_listPanel, BorderLayout.CENTER);
 		
 		// Add [ZorgaPanel], only for id >=0
@@ -272,32 +268,4 @@ public class ZorgaListV extends JPanel implements Observer {
 			_zorgaList.clear();
 		}
 	}
-	
-	
-	// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
-	/**
-	 * L'idée est que le Panel ne soit pas Scrollable Horizontalement.
-	 */
-	static class MyPanel extends JPanel implements Scrollable
-	{
-		MyPanel(LayoutManager layout) {
-			super(layout);
-		}
-		public Dimension getPreferredScrollableViewportSize() {
-			return getPreferredSize();
-		}
-		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-			return 0;
-		}
-		public boolean getScrollableTracksViewportHeight() {
-			return false;
-		}
-		public boolean getScrollableTracksViewportWidth() {
-			return true;
-		}
-		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-			return 0;
-		}
-	}
-
 }

@@ -3,10 +3,6 @@
  */
 package gui;
 
-
-import java.awt.Dimension;
-import java.awt.LayoutManager;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -21,7 +17,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.Scrollable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -110,21 +105,17 @@ public class PersoEventListV implements Observer {
 		_descArea = new ArrayList<JTextArea>();
 		
 		// Main Panel avec un MigLayout
-//		_component = new JPanel();
 		MigLayout compLayout = new MigLayout(
 				"debug,hidemode 3,flowy", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
 		_component = new MigPanel(compLayout);
-//		_component.setLayout(compLayout);
 		
 		// Liste des JPerso
-//		_persoPanel = new JPanel();
 		MigLayout persoLayout = new MigLayout(
 				"", // Layout Constraints
 				"2*indent", // Column constraints
 				""); // Row constraints);
-//		_persoPanel.setLayout(persoLayout);
 		_persoPanel = new MigPanel(persoLayout);
 		_expandAllBtn = new JButton();
 		// Action interne : expand/reduce toutes les descriptions.
@@ -137,12 +128,10 @@ public class PersoEventListV implements Observer {
 		_persoPanel.add(_expandAllBtn);
 		
 		// Description/Body pour chaque perso.
-		//_descPanel = new JPanel();
 		MigLayout descLayout = new MigLayout(
 				"hidemode 3,flowy", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
-		//_descPanel.setLayout(descLayout);
 		_descPanel = new MigPanel(descLayout);
 		
 		for (Entry<Integer, Event.PersoEvent> entry : _evt._listPE.entrySet()) {
@@ -163,24 +152,6 @@ public class PersoEventListV implements Observer {
 			}
 		}
 		
-//		for (PersoEvent p : _evt._persoMap.values()) {
-//			JPersoEvent persoBtn = new JPersoEvent(p._perso, _evt);
-//			_persoPanel.add( persoBtn );
-//			PersoLabel nameLabel = new PersoLabel(p._perso.sDump(), p._perso);
-//			_nameLabel.add(nameLabel);
-//			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
-//			
-//			JTextArea descArea = new JTextArea(p.getDesc());
-//			descArea.setLineWrap(true);
-//			descArea.setWrapStyleWord(true);
-//			descArea.getDocument().addDocumentListener(new MyTextAreaListener(descArea, p));
-//			_descArea.add(descArea);
-//			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
-//			
-//			// Attache la bonne action 
-//			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, "Détaille "+p._perso.getName(),
-//					null, nameLabel, descArea);
-//		}
 		setAllDescVisible(true);
 		
 		_component.add(_persoPanel);
@@ -240,56 +211,7 @@ public class PersoEventListV implements Observer {
 			}
 		}
 	}
-		
-//		if (arg instanceof Event.PersoEvent) {
-//			PersoEvent pe = (PersoEvent) arg;
-//			
-//			JPersoEvent persoBtn = new JPersoEvent(pe._perso, _evt);
-//			_persoPanel.add( persoBtn );
-//			
-//			PersoLabel nameLabel = new PersoLabel(pe._perso.sDump(), pe._perso);
-//			_nameLabel.add(nameLabel);
-//			_descPanel.add(nameLabel, "wrap"); // next est sur une autre ligne
-//			
-//			JTextArea descArea = new JTextArea(pe.getDesc());
-//			descArea.setLineWrap(true);
-//			descArea.setWrapStyleWord(true);
-//			descArea.getDocument().addDocumentListener(new MyTextAreaListener(descArea, pe));
-//			_descArea.add(descArea);
-//			_descPanel.add(descArea, "wrap, wmin 10"); // prend place, prochain sur autre ligne
-//			
-//			// Attache la bonne action 
-//			persoBtn._leftClickAction = new ExpandDescAction("Détaille", null, 
-//					"Détaille "+pe._perso.getName(), null,
-//					nameLabel, descArea);
-//			_component.revalidate();
-//		}
-//		else if (arg instanceof String) {
-//			String command = (String) arg;
-//			if (command.equals("removed")) {
-//				// Peut-être pas propre car je fais l'hypothèse que les
-//				// JPersoEvent et les élements de _nameLabel et _descArea
-//				// sont stockés dans le même ordre.
-//				for (int i = 1; i < _persoPanel.getComponentCount(); i++) {
-//					JPersoEvent jpe = (JPersoEvent) _persoPanel.getComponent(i);
-//					if (_evt._persoMap.containsKey(jpe._perso) == false ) {
-//						_persoPanel.remove(jpe);
-//						_nameLabel.remove(i-1);
-//						_descArea.remove(i-1);
-//
-//						// Enlever 2 fois du _descPanel
-//						_descPanel.remove( 2*(i-1));
-//						_descPanel.remove( 2*(i-1));
-//						
-//						_component.revalidate();
-//						return;
-//					}
-//				}
-//			}
-//		}
-//	}
 	
-
 	@SuppressWarnings("serial")
 	/**
 	 * Change l'état visible du descriptif d'un PersoEvent (label+desc).
@@ -338,31 +260,6 @@ public class PersoEventListV implements Observer {
 		_component.revalidate();
 	}
 	
-//	@SuppressWarnings("serial")
-//	class PersoLabel extends JLabel implements Observer {
-//		Perso _pers;
-//		/**
-//		 * Label avec un Texte
-//		 * @param text
-//		 */
-//		public PersoLabel(String text, Perso pers) {
-//			super(text);
-//			_pers = pers;
-//			_pers.addObserver(this);
-//		}
-//
-//		/**
-//		 * Listen to Perso
-//		 */
-//		@Override
-//		public void update(Observable o, Object arg) {
-//			String command = (String) arg;
-//			if (command.equals("set")) {
-//				this.setText(this._pers.sDump());
-//			}
-//		}
-//		
-//	}
 	@SuppressWarnings("serial")
 	/**
 	 * Viewer interne pour la description d'un PersoEvent.<br>
@@ -446,36 +343,6 @@ public class PersoEventListV implements Observer {
 		}
 		
 		
-	}
-	
-	// http://stackoverflow.com/questions/2475787/miglayout-jtextarea-is-not-shrinking-when-used-with-linewrap-true
-	@SuppressWarnings("serial")
-	/**
-	 * L'idée est que le Panel ne soit pas Scrollable Horizontalement.
-	 */
-	static class MyPanel extends JPanel implements Scrollable
-	{
-		MyPanel() {
-			super();
-		}
-		MyPanel(LayoutManager layout) {
-			super(layout);
-		}
-		public Dimension getPreferredScrollableViewportSize() {
-			return getPreferredSize();
-		}
-		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-			return 0;
-		}
-		public boolean getScrollableTracksViewportHeight() {
-			return false;
-		}
-		public boolean getScrollableTracksViewportWidth() {
-			return true;
-		}
-		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-			return 0;
-		}
 	}
 	
 	/**
