@@ -214,7 +214,7 @@ public class PersoEventV extends JButton implements Observer {
 		if (o instanceof Perso) {
 			// only "set" message
 			if (arg.equals("set")) {
-				this.setName(_pe._perso.getName());
+				this.setText(_pe._perso.getName());
 				_popup.update();
 			}
 		}

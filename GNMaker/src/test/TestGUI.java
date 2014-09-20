@@ -337,10 +337,12 @@ public class TestGUI {
         tabbedPane.addTab("Intrigue", mainP);
         
         PersoListV persoP = new PersoListV(story._persoList, story._zorgaList);
-        tabbedPane.addTab("Perso", persoP);
+        JScrollPane persoScroll = new JScrollPane(persoP);
+        tabbedPane.addTab("Perso", persoScroll);
         
         ZorgaListV zorgaP = new ZorgaListV(story._zorgaList);
-        tabbedPane.addTab("Zorga", zorgaP);
+        JScrollPane zorgaScroll = new JScrollPane(zorgaP);
+        tabbedPane.addTab("Zorga", zorgaScroll);
         
         boolean res =  testComponent("GNMaker", tabbedPane);
 		System.out.println("End of testApplication");

@@ -325,8 +325,7 @@ public class PersoEventListV implements Observer {
 			if (o instanceof Perso) {
 				// only "set" message
 				if (arg.equals("set")) {
-					this.setName(_pe._perso.getName());
-					_persoName.setName(_pe._perso.getName());
+					_persoName.setText(_pe._perso.getName());
 					this.revalidate();
 					this.repaint();
 				}
