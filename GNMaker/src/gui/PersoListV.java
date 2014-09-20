@@ -79,7 +79,7 @@ public class PersoListV extends MigPanel implements Observer {
 		btnPanel.add( clearBtn );
 		
 		MigLayout persoLayout = new MigLayout(
-				"debug, hidemode 3,flowy", // Layout Constraints
+				"hidemode 3,flowy", // Layout Constraints
 				"[grow,fill]", // Column constraints
 				""); // Row constraints);
 		_listPanel = new MigPanel(persoLayout);

@@ -62,7 +62,7 @@ public class EventListV extends MigPanel implements Observer {
 	void buildGUI() {
 		
 		MigLayout eventLayout = new MigLayout(
-				"debug,flowy, hidemode 3", // Layout Constraints
+				"flowy, hidemode 3", // Layout Constraints
 				"[grow,fill]", // Column constraints
 				""); // Row constraints);
 		this.setLayout( eventLayout );

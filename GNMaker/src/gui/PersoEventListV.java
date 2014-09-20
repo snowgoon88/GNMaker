@@ -106,7 +106,7 @@ public class PersoEventListV implements Observer {
 		
 		// Main Panel avec un MigLayout
 		MigLayout compLayout = new MigLayout(
-				"debug,hidemode 3,flowy", // Layout Constraints
+				"hidemode 3,flowy", // Layout Constraints
 				"2*indent[grow,fill]", // Column constraints
 				""); // Row constraints);
 		_component = new MigPanel(compLayout);
@@ -300,7 +300,7 @@ public class PersoEventListV implements Observer {
 		void buildGUI() {
 			
 			MigLayout persLayout = new MigLayout(
-					"debug, hidemode 3,flowy", // Layout Constraints
+					"hidemode 3,flowy", // Layout Constraints
 					"[grow,fill]", // Column constraints
 					""); // Row constraints);
 			this.setLayout(persLayout);

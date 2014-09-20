@@ -94,7 +94,7 @@ public class EventV extends MigPanel implements Observer {
 	void buildGUI() {
 		
 		MigLayout compLayout = new MigLayout(
-				"debug, hidemode 3", // Layout Constraints
+				"hidemode 3", // Layout Constraints
 				"[grow,fill]", // Column constraints
 				""); // Row constraints);
 		this.setLayout(compLayout);
