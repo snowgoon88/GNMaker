@@ -11,6 +11,8 @@ Se mettre dans la branche 'demo_0.01' et lancer src/demo/GNMaker
 Pour aider
 ----------
 
+Vous pouvez, au choix (mais non exclusif) :
+
 * demander à être contributeur et travailer avec git.
 * forker le projet et proposer des pullrequest
 * passer par gitub et poster des "issues"
