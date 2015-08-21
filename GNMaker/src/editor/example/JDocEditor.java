@@ -44,6 +44,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  *           Dump :, 
  *           Elements :, 
  *           XML : DocumentConverter pour faire de l'XML
+ * Ligne de notificatioun (JLabel) : écoute le Carret, position et sélection
+ *           par le biais de CaretListenerLabel.      
  * 
  * @todo : sauver et relire un document en XML ??
  *  =PB=>  écrit en HTML les accents et les cédilles.
@@ -194,7 +196,10 @@ public class JDocEditor extends JPanel {
         return actions.get(name);
     }
 	
-	//This listens for and reports caret movements.
+    /**
+     * Un JLabel qui écoute le Caret et qui donne sa positon
+     * et/ou sa sélection.
+     */
     protected class CaretListenerLabel extends JLabel
                                        implements CaretListener {
         public CaretListenerLabel(String label) {
@@ -268,7 +273,6 @@ public class JDocEditor extends JPanel {
 						_styledDoc.getText(elem.getStartOffset(), elem.getEndOffset()-elem.getStartOffset())+
 						"]");
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	}

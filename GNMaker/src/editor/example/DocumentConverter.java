@@ -77,7 +77,6 @@ public class DocumentConverter implements Converter {
 				System.out.println("LU ["+elem.getDocument().getText(elem.getStartOffset(), 
 						elem.getEndOffset()-elem.getStartOffset())+"]");
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			writer.endNode();
@@ -95,9 +94,8 @@ public class DocumentConverter implements Converter {
 	 * @see com.thoughtworks.xstream.converters.Converter#unmarshal(com.thoughtworks.xstream.io.HierarchicalStreamReader, com.thoughtworks.xstream.converters.UnmarshallingContext)
 	 */
 	@Override
-	public Object unmarshal(HierarchicalStreamReader arg0,
-			UnmarshallingContext arg1) {
-		// TODO Auto-generated method stub
+	public Object unmarshal(HierarchicalStreamReader reader,
+			UnmarshallingContext context) {
 		return null;
 	}
 
