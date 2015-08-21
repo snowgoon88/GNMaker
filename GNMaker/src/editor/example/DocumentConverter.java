@@ -74,6 +74,8 @@ public class DocumentConverter implements Converter {
 			try {
 				writer.setValue( elem.getDocument().getText(elem.getStartOffset(), 
 						elem.getEndOffset()-elem.getStartOffset()));
+				System.out.println("LU ["+elem.getDocument().getText(elem.getStartOffset(), 
+						elem.getEndOffset()-elem.getStartOffset())+"]");
 			} catch (BadLocationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -7,14 +7,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -28,7 +23,6 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.AbstractElement;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
@@ -40,22 +34,22 @@ import javax.swing.text.StyledDocument;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
-import data.Story;
-import data.converter.PersoConverter;
-import data.converter.StoryConverter;
-import data.converter.ZorgaConverter;
-
-import editor.example.TextComponentDemo.CaretListenerLabel;
-
 /**
  * Essai d'implémentation d'un Editeur WYSIWYG.
  * Inspiration de http://da2i.univ-lille1.fr/doc/tutorial-java/uiswing/components/generaltext.html
  * 
  * Le Caret du JTextPane est responsable du comportement de sélection.
  * 
+ * Boutons : Bold, Italique, 
+ *           Dump :, 
+ *           Elements :, 
+ *           XML : DocumentConverter pour faire de l'XML
+ * 
+ * @todo : sauver et relire un document en XML ??
+ *  =PB=>  écrit en HTML les accents et les cédilles.
+ *  ====>  vérifier dans le master normal
  * @todo : regarder quel classe de Document, et comment le Modèle (en arbre) évolue quand on ajoute des
  * choses...
- * @todo : sauver et relire un document en XML ??
  * 
  * @author snowgoon88@gmail.com
  */
@@ -111,12 +105,20 @@ public class JDocEditor extends JPanel {
         // Frame pour tous les Boutons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout( new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        // JButton pour Dumper en utilisant la fonction de Document
+        JButton dumpBtn = new JButton("Dump");
+        dumpBtn.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dumpModel();
+			}
+		});
         // JButton pour afficher les Elements
         JButton elementBtn = new JButton("Elements");
         elementBtn.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dumpModel();
+				dumpAllElements();
 			}
 		});
         // Button pour Bold
@@ -134,7 +136,8 @@ public class JDocEditor extends JPanel {
         //
         buttonPanel.add( strongBtn );
         buttonPanel.add( emBtn );
-        buttonPanel.add(  elementBtn );
+        buttonPanel.add( dumpBtn );
+        buttonPanel.add( elementBtn );
         buttonPanel.add( xmlBtn );
         //Add the components.
         add( buttonPanel, BorderLayout.PAGE_START);
@@ -235,19 +238,21 @@ public class JDocEditor extends JPanel {
             });
         }
     }
-
+    /** Dump Model en utilisant la méthode AbstractElement::dump */
     void dumpModel() {
     	Element root = _styledDoc.getDefaultRootElement();
     	System.out.println("*** DUMP ***");
     	if( root instanceof AbstractElement) {
     		((AbstractElement) root).dump(System.out, 0);
     	}
+    }
+    /** Dump Model en passant en revue tous les Elements -> dumpElements */
+    void dumpAllElements() {
+    	Element root = _styledDoc.getDefaultRootElement();
     	System.out.println("*** ROOT ***");
     	dumpElements(root);
     }
     void dumpElements(Element elem) {
-    	
-    	
     	System.out.println("Elem : "+elem.getName() + " with " + elem.getElementCount() + " childs");
     	System.out.println("=> "+elem.toString());
     	System.out.println("  class : "+elem.getClass().getCanonicalName());
@@ -274,6 +279,7 @@ public class JDocEditor extends JPanel {
 		}
     }
 	
+    /** Dump Model en utilisant un DocumentConverter */
     void dumpXML() {
     	System.out.println("** Document to XML **");
 		XStream xStream = new XStream(new DomDriver());
