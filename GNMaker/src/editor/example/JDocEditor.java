@@ -4,6 +4,7 @@
 package editor.example;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -27,12 +29,15 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.AbstractElement;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
@@ -60,7 +65,13 @@ import data.Story;
  *           par le biais de CaretListenerLabel.      
  * 
  * @todo : définir des styles nommés de paragraphes (Title, h1, h2, h3, body)
+ *   ==> QUE pour paragraphe (pas emphasis ou highlight !)
  * @todo : highlight ??
+ *   ==> pas d'action de base dans EditorKit
+ *   ==> essayer avec ChangeCharacterAttributes : ca marche
+ *   ==> pas détecter avec StyleConstants.isXXX
+ *   ==> mais peut être nommé avec un Style.
+ *   ==> A NE PAS PROPOSER ??
  * @todo : list avec niveau d'indentation
  * @todo : sauver et relire un document en XML ??
  *  ====>  écrit en HTML les accents et les cédilles, mais relit sans problème.
@@ -139,6 +150,21 @@ public class JDocEditor extends JPanel {
         JButton strongBtn = new JButton( getActionByName("font-bold"));
         // Button pour Italique
         JButton emBtn = new JButton( getActionByName("font-italic"));
+        // Button pour HighLight
+        JButton highBtn = new JButton( "High" );
+        highBtn.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SimpleAttributeSet highFace = new SimpleAttributeSet();
+				Style truc = _styledDoc.addStyle( "truc", null);
+				StyleConstants.setBackground(truc, Color.cyan);
+				StyleConstants.setBackground(highFace, Color.YELLOW);
+				_styledDoc.setCharacterAttributes(_textPane.getSelectionStart(),
+						_textPane.getSelectionEnd() - _textPane.getSelectionStart(),
+						truc, true);
+			}
+		});
         // Bouton pour XML
         JButton xmlBtn = new JButton("XML");
         xmlBtn.addActionListener( new ActionListener() {
@@ -172,9 +198,27 @@ public class JDocEditor extends JPanel {
 			}
 		});
         //
+        // JComboBox pour changer de style
+        String stylesList[]  = { "base", "title", "bold", "high" };	
+        //Create the combo box, select item at index 4 (index starts at 0.	
+        JComboBox<String> stylesCBox = new JComboBox<String>( stylesList );
+        stylesCBox.setSelectedIndex(0);
+        stylesCBox.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("unchecked")
+				JComboBox<String> cb = (JComboBox<String>) e.getSource();
+				_styledDoc.setLogicalStyle(_textPane.getCaretPosition(), 
+						_styledDoc.getStyle((String) cb.getSelectedItem()) );
+			}
+		});
+        //
         buttonPanel.add( newBtn );
         buttonPanel.add( strongBtn );
         buttonPanel.add( emBtn );
+        buttonPanel.add( highBtn );
+        buttonPanel.add( stylesCBox );
         buttonPanel.add( dumpBtn );
         buttonPanel.add( elementBtn );
         buttonPanel.add( xmlBtn );
@@ -207,16 +251,37 @@ public class JDocEditor extends JPanel {
         
         
         //SimpleAttributeSet[] attrs = initAttributes(initString.length);
-
+        createStyles();
+        _styledDoc.setLogicalStyle(0, _styledDoc.getStyle("base") );
         try {
             for (int i = 0; i < initString.length; i ++) {
-                _styledDoc.insertString(_styledDoc.getLength(), initString[i],
-                        attr[i]);
+//                _styledDoc.insertString(_styledDoc.getLength(), initString[i],
+//                        attr[i]);
+            	_styledDoc.insertString(_styledDoc.getLength(), initString[i], null);
             }
         } catch (BadLocationException ble) {
             System.err.println("Couldn't insert initial text.");
         }
+        
+        
     }
+	/** Create the various NamesStyles */
+	private void createStyles() {
+		// base
+		Style baseStyle = _styledDoc.addStyle( "base", null);
+		StyleConstants.setFontFamily( baseStyle, "SansSerif");
+		StyleConstants.setFontSize( baseStyle, 12);
+		// Title
+		Style titleStyle = _styledDoc.addStyle( "title", baseStyle);
+		StyleConstants.setFontSize( titleStyle, 22);
+		StyleConstants.setAlignment(titleStyle, StyleConstants.ALIGN_CENTER );
+		// bold
+		Style boldStyle = _styledDoc.addStyle( "bold", baseStyle);
+		StyleConstants.setBold(boldStyle, true);
+		// highlight
+		Style higlightStyle = _styledDoc.addStyle( "high", baseStyle);
+		StyleConstants.setBackground(higlightStyle, Color.yellow);
+	}
 	
 	//The following two methods allow us to find an
     //action provided by the editor kit by its name.
