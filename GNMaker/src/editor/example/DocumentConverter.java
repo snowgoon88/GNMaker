@@ -99,7 +99,35 @@ public class DocumentConverter implements Converter {
 		
 		DefaultStyledDocument doc = new DefaultStyledDocument();
 		
-		return null;
+		// section
+		System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
+		reader.moveDown();
+		System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
+		
+		// Pour chaque paragraphe
+		while (reader.hasMoreChildren()) {
+			reader.moveDown();
+			System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
+			
+			// Pour chaque content
+			while (reader.hasMoreChildren()) {
+				reader.moveDown();
+				System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
+				String text = reader.getValue();
+				try {
+					doc.insertString(doc.getLength(), text, null);
+				} catch (BadLocationException e) {
+					System.err.println("Couldn't insert loaded text.");
+					e.printStackTrace();
+				}
+				reader.moveUp();
+			}
+			
+			reader.moveUp();
+		}
+		reader.moveUp();
+		
+		return doc;
 	}
 
 }

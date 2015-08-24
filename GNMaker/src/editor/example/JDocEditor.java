@@ -39,6 +39,8 @@ import javax.swing.text.StyledDocument;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import data.Story;
+
 /**
  * Essai d'implémentation d'un Editeur WYSIWYG.
  * Inspiration de http://da2i.univ-lille1.fr/doc/tutorial-java/uiswing/components/generaltext.html
@@ -156,12 +158,23 @@ public class JDocEditor extends JPanel {
 			}
 		});
         //
+        // JButton pour relire
+        JButton loadBtn = new JButton( "Load" );
+        loadBtn.addActionListener( new ActionListener(	) {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loadXML();	
+			}
+		});
+        //
         buttonPanel.add( newBtn );
         buttonPanel.add( strongBtn );
         buttonPanel.add( emBtn );
         buttonPanel.add( dumpBtn );
         buttonPanel.add( elementBtn );
         buttonPanel.add( xmlBtn );
+        buttonPanel.add( loadBtn );
         //Add the components.
         add( buttonPanel, BorderLayout.PAGE_START);
         add(scrollPane, BorderLayout.CENTER);
@@ -322,5 +335,15 @@ public class JDocEditor extends JPanel {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+    }
+    /** Load Model en utilisant un DocumentConverter */
+    void loadXML() {
+    	System.out.println("** Document to XML **");
+		XStream xStream = new XStream(new DomDriver());
+		xStream.registerConverter(new DocumentConverter());
+        xStream.alias("doc", javax.swing.text.DefaultStyledDocument.class);
+        
+        _styledDoc = (StyledDocument) xStream.fromXML(new File("tmp/document.xml"));
+        _textPane.setStyledDocument(_styledDoc);
     }
 }
