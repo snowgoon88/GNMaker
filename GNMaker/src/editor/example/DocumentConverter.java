@@ -3,12 +3,11 @@
  */
 package editor.example;
 
-import java.util.Enumeration;
-
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -99,23 +98,56 @@ public class DocumentConverter implements Converter {
 		
 		DefaultStyledDocument doc = new DefaultStyledDocument();
 		
+		// Prépare quelques effet de police de caractère
+		AttributeSet attrs = doc.getCharacterElement(0).getAttributes();
+		
+		SimpleAttributeSet baseFace = new SimpleAttributeSet(attrs);
+		StyleConstants.setFontFamily( baseFace, "SansSerif");
+		StyleConstants.setFontSize( baseFace, 16);
+		
+		SimpleAttributeSet boldFace = new SimpleAttributeSet(baseFace);
+		StyleConstants.setBold(boldFace, true);
+		SimpleAttributeSet italicFace = new SimpleAttributeSet( baseFace );
+		StyleConstants.setItalic(italicFace, true);
+		SimpleAttributeSet boldItalicFace = new SimpleAttributeSet( baseFace );
+		StyleConstants.setBold(boldItalicFace, true);
+		StyleConstants.setItalic(boldItalicFace, true);
+		
 		// section
 		System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
 		reader.moveDown();
 		System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
 		
-		// Pour chaque paragraphe
+		// <paragraph>
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
 			System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
 			
-			// Pour chaque content
+			// <content>
 			while (reader.hasMoreChildren()) {
 				reader.moveDown();
 				System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
+				String face = reader.getAttribute( "charStyle" );
+			
 				String text = reader.getValue();
 				try {
-					doc.insertString(doc.getLength(), text, null);
+					if (face.compareTo("") == 0) {
+						doc.insertString(doc.getLength(), text, baseFace );
+					}
+					else if ( face.compareTo("italic_") == 0) {
+						doc.insertString(doc.getLength(), text, italicFace);
+					}
+					else if (face.compareTo("bold_") == 0 ) {
+						doc.insertString(doc.getLength(), text, boldFace);
+					}
+					else if (face.compareTo("bold_italic_") == 0) {
+						doc.insertString(doc.getLength(), text, boldItalicFace);
+					}
+					else {
+						System.out.println("content="+text);
+						System.out.println("face="+face);
+						doc.insertString(doc.getLength(), "NOT_RECOGNISED", null);
+					}
 				} catch (BadLocationException e) {
 					System.err.println("Couldn't insert loaded text.");
 					e.printStackTrace();

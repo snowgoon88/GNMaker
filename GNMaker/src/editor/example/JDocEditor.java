@@ -48,18 +48,22 @@ import data.Story;
  * 
  * Le Caret du JTextPane est responsable du comportement de sélection.
  * 
- * Boutons : Bold, Italique, 
- *           Dump :, 
- *           Elements :, 
- *           XML : DocumentConverter pour faire de l'XML
+ * Boutons : 
+ *  - New : efface le contenu du document
+ *  - Bold, Italique, 
+ *  - Dump : dump en utilisant la méthode de Elements, 
+ *  - Elements : dump tous les éléments des Elements du Document, 
+ *  - XML : DocumentConverter pour faire de l'XML et sauve dans tmp/document.xml
+ *  - Load : relis à partir de tmp/document.xml
+ *  
  * Ligne de notificatioun (JLabel) : écoute le Carret, position et sélection
  *           par le biais de CaretListenerLabel.      
  * 
+ * @todo : définir des styles nommés de paragraphes (Title, h1, h2, h3, body)
+ * @todo : highlight ??
+ * @todo : list avec niveau d'indentation
  * @todo : sauver et relire un document en XML ??
- *  =PB=>  écrit en HTML les accents et les cédilles.
- *  ====>  vérifier dans le master normal
- * @todo : regarder quel classe de Document, et comment le Modèle (en arbre) évolue quand on ajoute des
- * choses...
+ *  ====>  écrit en HTML les accents et les cédilles, mais relit sans problème.
  * 
  * @author snowgoon88@gmail.com
  */
