@@ -10,6 +10,10 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -23,6 +27,7 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.AbstractElement;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
@@ -37,6 +42,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 /**
  * Essai d'implémentation d'un Editeur WYSIWYG.
  * Inspiration de http://da2i.univ-lille1.fr/doc/tutorial-java/uiswing/components/generaltext.html
+ * Sur Elements http://www.comp.nus.edu.sg/~cs3283/ftp/Java/swingConnect/text/element_interface/element_interface.html#insertDefaultStyledDocument
  * 
  * Le Caret du JTextPane est responsable du comportement de sélection.
  * 
@@ -85,8 +91,8 @@ public class JDocEditor extends JPanel {
         _textPane.setMargin(new Insets(5,5,5,5));
         _styledDoc = _textPane.getStyledDocument();
         System.out.println("_styleDoc is a "+_styledDoc.getClass().getCanonicalName());
-//        if (styledDoc instanceof AbstractDocument) {
-//            doc = (AbstractDocument)styledDoc;
+//        if (_styledDoc instanceof AbstractDocument) {
+//            doc = (AbstractDocument) _styledDoc;
 //            doc.setDocumentFilter(new DocumentSizeFilter(MAX_CHARACTERS));
 //        } else {
 //            System.err.println("Text pane's document isn't an AbstractDocument!");
@@ -136,6 +142,21 @@ public class JDocEditor extends JPanel {
 			}
 		});
         //
+        // Button pour effacer
+        JButton newBtn = new JButton( "New" );
+        newBtn.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					_styledDoc.remove(0, _styledDoc.getLength());
+				} catch (BadLocationException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+        //
+        buttonPanel.add( newBtn );
         buttonPanel.add( strongBtn );
         buttonPanel.add( emBtn );
         buttonPanel.add( dumpBtn );
@@ -290,16 +311,16 @@ public class JDocEditor extends JPanel {
 		xStream.registerConverter(new DocumentConverter());
         xStream.alias("doc", javax.swing.text.DefaultStyledDocument.class);
         System.out.println(xStream.toXML(_styledDoc));
-//        
-//        File outfile = new File("tmp/story.xml");
-//        try {
-//			FileOutputStream writer = new FileOutputStream(outfile);
-//			xStream.toXML(story, writer);
-//			writer.close();
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
+        
+        File outfile = new File("tmp/document.xml");
+        try {
+			FileOutputStream writer = new FileOutputStream(outfile);
+			xStream.toXML(_styledDoc, writer);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
-    
 }

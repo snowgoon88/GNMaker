@@ -96,6 +96,9 @@ public class DocumentConverter implements Converter {
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
+		
+		DefaultStyledDocument doc = new DefaultStyledDocument();
+		
 		return null;
 	}
 
