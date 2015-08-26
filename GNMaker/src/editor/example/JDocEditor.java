@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -30,6 +31,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.AbstractElement;
 import javax.swing.text.AttributeSet;
@@ -40,11 +43,15 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import data.Story;
+import editor.example.TextComponentDemo.MyUndoableEditListener;
 
 /**
  * Essai d'implémentation d'un Editeur WYSIWYG.
@@ -72,7 +79,13 @@ import data.Story;
  *   ==> pas détecter avec StyleConstants.isXXX
  *   ==> mais peut être nommé avec un Style.
  *   ==> A NE PAS PROPOSER ??
+ *   ==> Faire comme Bold et Italic Action
  * @todo : list avec niveau d'indentation
+ * @todo : compacter et pretty/nettoyer un document
+ *   ==> merger les contenus qui ont le même characterAttrSet
+ * @todo : action undoables
+ *   ==> s'inspirer de TextComponentDemo
+ *   ==> Faire UNDO / REDO Action
  * @todo : sauver et relire un document en XML ??
  *  ====>  écrit en HTML les accents et les cédilles, mais relit sans problème.
  * 
@@ -85,6 +98,11 @@ public class JDocEditor extends JPanel {
 	StyledDocument _styledDoc;
 	// Toutes les actions définie dans le EditorKit
 	HashMap<Object, Action> actions;
+	
+	//undo helpers
+    UndoAction _undoAction;
+    RedoAction _redoAction;
+    UndoManager _undo = new UndoManager();
 	
 	String newline = "\n";
 	
@@ -126,6 +144,9 @@ public class JDocEditor extends JPanel {
                 new CaretListenerLabel("Caret Status");
         statusPane.add(caretListenerLabel);
         
+        // Create our own actions
+        _undoAction = new UndoAction();
+        _redoAction = new RedoAction();
         
         // Frame pour tous les Boutons
         JPanel buttonPanel = new JPanel();
@@ -213,12 +234,17 @@ public class JDocEditor extends JPanel {
 						_styledDoc.getStyle((String) cb.getSelectedItem()) );
 			}
 		});
+        // Undo / Redo
+        JButton undoBtn = new JButton( _undoAction );
+        JButton redoBtn = new JButton( _redoAction );
         //
         buttonPanel.add( newBtn );
         buttonPanel.add( strongBtn );
         buttonPanel.add( emBtn );
         buttonPanel.add( highBtn );
         buttonPanel.add( stylesCBox );
+        buttonPanel.add( undoBtn );
+        buttonPanel.add( redoBtn );
         buttonPanel.add( dumpBtn );
         buttonPanel.add( elementBtn );
         buttonPanel.add( xmlBtn );
@@ -230,9 +256,10 @@ public class JDocEditor extends JPanel {
         
         // Et écoute les événements
         _textPane.addCaretListener(caretListenerLabel);
+        _styledDoc.addUndoableEditListener(new MyUndoableEditListener());
 	}
 	
-	protected void initDocument() {
+	public void initDocument() {
         String initString[] =
                 { "Un exemple d'un gros paragraphe qui, je l'espère, va faire plusieurs lignes.",
                   "C'est pour tester le comportement par défaut du curseur, encore appelé 'Caret'.",
@@ -281,6 +308,9 @@ public class JDocEditor extends JPanel {
 		// highlight
 		Style higlightStyle = _styledDoc.addStyle( "high", baseStyle);
 		StyleConstants.setBackground(higlightStyle, Color.yellow);
+		
+		// StyleConstants.FirstLineIndent
+		// StyleConstants.LeftIndent;
 	}
 	
 	//The following two methods allow us to find an
@@ -299,6 +329,74 @@ public class JDocEditor extends JPanel {
         return actions.get(name);
     }
 	
+    /** Listens for actions that can be undone */
+    protected class MyUndoableEditListener
+    implements UndoableEditListener {
+    	public void undoableEditHappened(UndoableEditEvent e) {
+    		//Remember the edit and update the menus.
+    		_undo.addEdit(e.getEdit());
+    		_undoAction.updateUndoState();
+    		_redoAction.updateRedoState();
+    		System.out.println("_undo : "+ _undo.getPresentationName());
+    	}
+    }
+    
+    class UndoAction extends AbstractAction {
+        public UndoAction() {
+            super("Undo");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            try {
+                _undo.undo();
+            } catch (CannotUndoException ex) {
+                System.out.println("Unable to undo: " + ex);
+                ex.printStackTrace();
+            }
+            updateUndoState();
+            _redoAction.updateRedoState();
+        }
+
+        protected void updateUndoState() {
+            if (_undo.canUndo()) {
+                setEnabled(true);
+                putValue(Action.NAME, _undo.getUndoPresentationName());
+            } else {
+                setEnabled(false);
+                putValue(Action.NAME, "Undo");
+            }
+        }
+    }
+
+    class RedoAction extends AbstractAction {
+        public RedoAction() {
+            super("Redo");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            try {
+                _undo.redo();
+            } catch (CannotRedoException ex) {
+                System.out.println("Unable to redo: " + ex);
+                ex.printStackTrace();
+            }
+            updateRedoState();
+            _undoAction.updateUndoState();
+        }
+
+        protected void updateRedoState() {
+            if (_undo.canRedo()) {
+                setEnabled(true);
+                putValue(Action.NAME, _undo.getRedoPresentationName());
+            } else {
+                setEnabled(false);
+                putValue(Action.NAME, "Redo");
+            }
+        }
+    }
+    
     /**
      * Un JLabel qui écoute le Caret et qui donne sa positon
      * et/ou sa sélection.
