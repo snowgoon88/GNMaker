@@ -31,7 +31,7 @@ public class DocumentConverter implements Converter {
 	@Override
 	public boolean canConvert(Class arg0) {
 		// can only convert DefaultStyledDocument.
-		return arg0.equals(DefaultStyledDocument.class);
+		return arg0.equals(MyStyledDocument.class);
 	}
 
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ public class DocumentConverter implements Converter {
 	public void marshal(Object obj, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		
-		DefaultStyledDocument doc = (DefaultStyledDocument) obj;
+		MyStyledDocument doc = (MyStyledDocument) obj;
 		
 		// Start root
 		Element root = doc.getDefaultRootElement();
@@ -49,7 +49,7 @@ public class DocumentConverter implements Converter {
 		
 		// Chacun des Child
 		for (int i = 0; i < root.getElementCount(); i++) {
-			writeElement( root.getElement(i), writer, context);
+			writeElement( root.getElement(i), writer, context, doc);
 		}
 		
 		// End root
@@ -57,7 +57,8 @@ public class DocumentConverter implements Converter {
 	}
 	protected void writeElement( Element elem, 
 			HierarchicalStreamWriter writer,
-			MarshallingContext context) {
+			MarshallingContext context,
+			DefaultStyledDocument doc) {
 		// Si Leaf, on regarde si bold et/ou italic
 		if( elem.isLeaf() ) {
 			AttributeSet attr =  elem.getAttributes();
@@ -82,8 +83,13 @@ public class DocumentConverter implements Converter {
 		}
 		else {
 			writer.startNode( elem.getName() );
+			if( elem.getName().equalsIgnoreCase("paragraph") ) {
+				// style
+				writer.addAttribute("style",
+						doc.getLogicalStyle( elem.getStartOffset() ).getName());
+			}
 			for (int i = 0; i < elem.getElementCount(); i++) {
-				writeElement( elem.getElement(i), writer, context);
+				writeElement( elem.getElement(i), writer, context, doc);
 			}
 			writer.endNode();
 		}
@@ -96,7 +102,7 @@ public class DocumentConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 		
-		DefaultStyledDocument doc = new DefaultStyledDocument();
+		MyStyledDocument doc = new MyStyledDocument();
 		
 		// Prépare quelques effet de police de caractère
 		AttributeSet attrs = doc.getCharacterElement(0).getAttributes();
@@ -122,6 +128,9 @@ public class DocumentConverter implements Converter {
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
 			System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
+			
+			// Style du paragraphe
+//			 /// /// doc.setLogicalStyle(doc.getLength(), style);
 			
 			// <content>
 			while (reader.hasMoreChildren()) {

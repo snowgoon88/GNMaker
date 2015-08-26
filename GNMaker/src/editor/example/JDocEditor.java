@@ -71,6 +71,7 @@ import editor.example.TextComponentDemo.MyUndoableEditListener;
  * Ligne de notificatioun (JLabel) : écoute le Carret, position et sélection
  *           par le biais de CaretListenerLabel.      
  * 
+ * @todo : définir class MyStyledDocument avec styles et character format
  * @todo : définir des styles nommés de paragraphes (Title, h1, h2, h3, body)
  *   ==> QUE pour paragraphe (pas emphasis ou highlight !)
  * @todo : highlight ??
@@ -81,6 +82,9 @@ import editor.example.TextComponentDemo.MyUndoableEditListener;
  *   ==> A NE PAS PROPOSER ??
  *   ==> Faire comme Bold et Italic Action
  * @todo : list avec niveau d'indentation
+ *   ==> StyleConstants.leftMargin
+ *   ==> Comment ajouter un icon en début de ligne
+ *   ==> Niveau d'indentations
  * @todo : compacter et pretty/nettoyer un document
  *   ==> merger les contenus qui ont le même characterAttrSet
  * @todo : action undoables
@@ -95,7 +99,7 @@ import editor.example.TextComponentDemo.MyUndoableEditListener;
 public class JDocEditor extends JPanel {
 	
 	JTextPane _textPane;
-	StyledDocument _styledDoc;
+	MyStyledDocument _styledDoc;
 	// Toutes les actions définie dans le EditorKit
 	HashMap<Object, Action> actions;
 	
@@ -124,7 +128,9 @@ public class JDocEditor extends JPanel {
 		
         _textPane.setCaretPosition(0);
         _textPane.setMargin(new Insets(5,5,5,5));
-        _styledDoc = _textPane.getStyledDocument();
+        _styledDoc = new MyStyledDocument();
+        _textPane.setStyledDocument( _styledDoc );
+//        _styledDoc = _textPane.getStyledDocument();
         System.out.println("_styleDoc is a "+_styledDoc.getClass().getCanonicalName());
 //        if (_styledDoc instanceof AbstractDocument) {
 //            doc = (AbstractDocument) _styledDoc;
@@ -169,8 +175,10 @@ public class JDocEditor extends JPanel {
 		});
         // Button pour Bold
         JButton strongBtn = new JButton( getActionByName("font-bold"));
+        strongBtn.setText("B");
         // Button pour Italique
         JButton emBtn = new JButton( getActionByName("font-italic"));
+        emBtn.setText( "I" );
         // Button pour HighLight
         JButton highBtn = new JButton( "High" );
         highBtn.addActionListener( new ActionListener() {
@@ -219,8 +227,9 @@ public class JDocEditor extends JPanel {
 			}
 		});
         //
-        // JComboBox pour changer de style
-        String stylesList[]  = { "base", "title", "bold", "high" };	
+        // Label et JComboBox pour changer de style
+        String stylesList[]  = { "base", "title", "sec1", "sec2" };	
+        JLabel styleLabel = new JLabel( "Style:");
         //Create the combo box, select item at index 4 (index starts at 0.	
         JComboBox<String> stylesCBox = new JComboBox<String>( stylesList );
         stylesCBox.setSelectedIndex(0);
@@ -239,10 +248,11 @@ public class JDocEditor extends JPanel {
         JButton redoBtn = new JButton( _redoAction );
         //
         buttonPanel.add( newBtn );
+        buttonPanel.add( styleLabel );
+        buttonPanel.add( stylesCBox );
         buttonPanel.add( strongBtn );
         buttonPanel.add( emBtn );
         buttonPanel.add( highBtn );
-        buttonPanel.add( stylesCBox );
         buttonPanel.add( undoBtn );
         buttonPanel.add( redoBtn );
         buttonPanel.add( dumpBtn );
@@ -260,31 +270,22 @@ public class JDocEditor extends JPanel {
 	}
 	
 	public void initDocument() {
-        String initString[] =
-                { "Un exemple d'un gros paragraphe qui, je l'espère, va faire plusieurs lignes.",
-                  "C'est pour tester le comportement par défaut du curseur, encore appelé 'Caret'.",
-                  "En fait, j'aimerais comprendre comment opère le principe de sélection entre mot, phrase, paragrape ?",
-                  "On verra bien."+newline,
-                  "Et ça c'est juste une ligne.",
+        String initString[] = { 
+        		"Gros Titre"+newline,
+        		"Hop, on commence"+newline,
+        		"Un exemple d'un gros paragraphe qui, je l'espère, va faire plusieurs lignes.",
+        		"C'est pour tester le comportement par défaut du curseur, encore appelé 'Caret'.",
+        		"En fait, j'aimerais comprendre comment opère le principe de sélection entre mot, phrase, paragraphe ? On verra bien."+newline,
+        		"Puis, on continue"+newline,
+        		"Et ça c'est juste une ligne."+newline,
                 };
-
-        SimpleAttributeSet attr16 = new SimpleAttributeSet();
-        StyleConstants.setFontFamily(attr16, "SansSerif");
-        StyleConstants.setFontSize(attr16, 16);
-        SimpleAttributeSet attr20 = new SimpleAttributeSet();
-        StyleConstants.setFontFamily(attr20, "SansSerif");
-        StyleConstants.setFontSize(attr20, 20);
-        SimpleAttributeSet attr[] = {attr16, attr16, attr16, attr16, attr20};
-        
-        
-        //SimpleAttributeSet[] attrs = initAttributes(initString.length);
-        createStyles();
-        _styledDoc.setLogicalStyle(0, _styledDoc.getStyle("base") );
+        String styleString[] = { "title", "sec1", "base", "base", "base", "sec1", "base" };
         try {
             for (int i = 0; i < initString.length; i ++) {
-//                _styledDoc.insertString(_styledDoc.getLength(), initString[i],
-//                        attr[i]);
-            	_styledDoc.insertString(_styledDoc.getLength(), initString[i], null);
+            	_styledDoc.setLogicalStyle(_styledDoc.getLength(),
+            				_styledDoc.getStyle(styleString[i]) );
+            	_styledDoc.insertString(_styledDoc.getLength(), initString[i], null );
+            	
             }
         } catch (BadLocationException ble) {
             System.err.println("Couldn't insert initial text.");
@@ -292,26 +293,6 @@ public class JDocEditor extends JPanel {
         
         
     }
-	/** Create the various NamesStyles */
-	private void createStyles() {
-		// base
-		Style baseStyle = _styledDoc.addStyle( "base", null);
-		StyleConstants.setFontFamily( baseStyle, "SansSerif");
-		StyleConstants.setFontSize( baseStyle, 12);
-		// Title
-		Style titleStyle = _styledDoc.addStyle( "title", baseStyle);
-		StyleConstants.setFontSize( titleStyle, 22);
-		StyleConstants.setAlignment(titleStyle, StyleConstants.ALIGN_CENTER );
-		// bold
-		Style boldStyle = _styledDoc.addStyle( "bold", baseStyle);
-		StyleConstants.setBold(boldStyle, true);
-		// highlight
-		Style higlightStyle = _styledDoc.addStyle( "high", baseStyle);
-		StyleConstants.setBackground(higlightStyle, Color.yellow);
-		
-		// StyleConstants.FirstLineIndent
-		// StyleConstants.LeftIndent;
-	}
 	
 	//The following two methods allow us to find an
     //action provided by the editor kit by its name.
@@ -489,7 +470,7 @@ public class JDocEditor extends JPanel {
     	System.out.println("** Document to XML **");
 		XStream xStream = new XStream(new DomDriver());
 		xStream.registerConverter(new DocumentConverter());
-        xStream.alias("doc", javax.swing.text.DefaultStyledDocument.class);
+        xStream.alias("doc", MyStyledDocument.class);
         System.out.println(xStream.toXML(_styledDoc));
         
         File outfile = new File("tmp/document.xml");
@@ -505,12 +486,12 @@ public class JDocEditor extends JPanel {
     }
     /** Load Model en utilisant un DocumentConverter */
     void loadXML() {
-    	System.out.println("** Document to XML **");
+    	System.out.println("** XML to Document **");
 		XStream xStream = new XStream(new DomDriver());
 		xStream.registerConverter(new DocumentConverter());
-        xStream.alias("doc", javax.swing.text.DefaultStyledDocument.class);
+        xStream.alias("doc", MyStyledDocument.class);
         
-        _styledDoc = (StyledDocument) xStream.fromXML(new File("tmp/document.xml"));
+        _styledDoc = (MyStyledDocument) xStream.fromXML(new File("tmp/document.xml"));
         _textPane.setStyledDocument(_styledDoc);
     }
 }
