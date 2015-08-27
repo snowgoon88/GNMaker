@@ -90,6 +90,7 @@ import editor.example.TextComponentDemo.MyUndoableEditListener;
  *   ==> Niveau d'indentations
  * @todo : compacter et pretty/nettoyer un document
  *   ==> merger les contenus qui ont le même characterAttrSet
+ *   ==> c'est peut-être fait automatiquement lors de la relecture.
  * @todo : action undoables
  *   ==> s'inspirer de TextComponentDemo
  *   ==> Faire UNDO / REDO Action

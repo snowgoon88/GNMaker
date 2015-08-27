@@ -7,6 +7,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Element;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
@@ -59,18 +60,23 @@ public class DocumentConverter implements Converter {
 			HierarchicalStreamWriter writer,
 			MarshallingContext context,
 			DefaultStyledDocument doc) {
-		// Si Leaf, on regarde si bold et/ou italic
+		// Si Leaf (=> contenu), on regarde si bold et/ou italic
 		if( elem.isLeaf() ) {
 			AttributeSet attr =  elem.getAttributes();
-			String charStyle = "";
-	    	if( StyleConstants.isBold(attr)) {
-				charStyle += "bold_";
-			}
-			if( StyleConstants.isItalic(attr) ) {
-				charStyle += "italic_";
-			}
+
+			// Les différents styles de character
 			writer.startNode( "content");
-			writer.addAttribute("charStyle", charStyle);
+			if( StyleConstants.isBold(attr)) {
+	    		writer.addAttribute("bold", "true");
+			}
+			if( StyleConstants.isItalic(attr)) {
+	    		writer.addAttribute("italic", "true");
+			}
+			String colorStr = DocHighlighter.getHighlight(attr);
+			if( colorStr != null ) {
+				writer.addAttribute("highlight", colorStr);
+			}
+
 			try {
 				writer.setValue( elem.getDocument().getText(elem.getStartOffset(), 
 						elem.getEndOffset()-elem.getStartOffset()));
@@ -83,6 +89,7 @@ public class DocumentConverter implements Converter {
 		}
 		else {
 			writer.startNode( elem.getName() );
+			// Si paragraphe, on note le style
 			if( elem.getName().equalsIgnoreCase("paragraph") ) {
 				// style
 				writer.addAttribute("style",
@@ -107,18 +114,6 @@ public class DocumentConverter implements Converter {
 		// Prépare quelques effet de police de caractère
 		AttributeSet attrs = doc.getCharacterElement(0).getAttributes();
 		
-		SimpleAttributeSet baseFace = new SimpleAttributeSet(attrs);
-		StyleConstants.setFontFamily( baseFace, "SansSerif");
-		StyleConstants.setFontSize( baseFace, 16);
-		
-		SimpleAttributeSet boldFace = new SimpleAttributeSet(baseFace);
-		StyleConstants.setBold(boldFace, true);
-		SimpleAttributeSet italicFace = new SimpleAttributeSet( baseFace );
-		StyleConstants.setItalic(italicFace, true);
-		SimpleAttributeSet boldItalicFace = new SimpleAttributeSet( baseFace );
-		StyleConstants.setBold(boldItalicFace, true);
-		StyleConstants.setItalic(boldItalicFace, true);
-		
 		// section
 		System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
 		reader.moveDown();
@@ -130,37 +125,32 @@ public class DocumentConverter implements Converter {
 			System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
 			
 			// Style du paragraphe
-//			 /// /// doc.setLogicalStyle(doc.getLength(), style);
+			String styleStr = reader.getAttribute( "style" );
+			doc.setLogicalStyle(doc.getLength(), doc.getStyle(styleStr));
 			
 			// <content>
 			while (reader.hasMoreChildren()) {
 				reader.moveDown();
 				System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
-				String face = reader.getAttribute( "charStyle" );
-			
+				//String face = 
+				//System.out.println( "bold="+face);
 				String text = reader.getValue();
+				AttributeSet attrElem = doc.getCharacterElement(doc.getLength()).getAttributes();
+				MutableAttributeSet attr = new SimpleAttributeSet(attrElem);
+				if( reader.getAttribute( "bold" ) != null ) 
+					StyleConstants.setBold(attr, true);
+				if( reader.getAttribute( "italic" ) != null ) 
+					StyleConstants.setItalic(attr, true);
+				String colorStr = reader.getAttribute( "highlight" );
+				if( colorStr != null ) {
+					DocHighlighter.setHighlight(attr, colorStr);
+				}
 				try {
-					if (face.compareTo("") == 0) {
-						doc.insertString(doc.getLength(), text, baseFace );
-					}
-					else if ( face.compareTo("italic_") == 0) {
-						doc.insertString(doc.getLength(), text, italicFace);
-					}
-					else if (face.compareTo("bold_") == 0 ) {
-						doc.insertString(doc.getLength(), text, boldFace);
-					}
-					else if (face.compareTo("bold_italic_") == 0) {
-						doc.insertString(doc.getLength(), text, boldItalicFace);
-					}
-					else {
-						System.out.println("content="+text);
-						System.out.println("face="+face);
-						doc.insertString(doc.getLength(), "NOT_RECOGNISED", null);
-					}
+					doc.insertString(doc.getLength(), text, attr );
 				} catch (BadLocationException e) {
-					System.err.println("Couldn't insert loaded text.");
 					e.printStackTrace();
 				}
+				
 				reader.moveUp();
 			}
 			
