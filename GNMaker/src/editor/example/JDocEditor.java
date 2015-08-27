@@ -37,12 +37,15 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.AbstractElement;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.StyledEditorKit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -102,6 +105,9 @@ public class JDocEditor extends JPanel {
 	MyStyledDocument _styledDoc;
 	// Toutes les actions définie dans le EditorKit
 	HashMap<Object, Action> actions;
+	
+	// Highlight helpers
+	//DocHighlighter _highlighter = new DocHighlighter();
 	
 	//undo helpers
     UndoAction _undoAction;
@@ -185,13 +191,26 @@ public class JDocEditor extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SimpleAttributeSet highFace = new SimpleAttributeSet();
-				Style truc = _styledDoc.addStyle( "truc", null);
-				StyleConstants.setBackground(truc, Color.cyan);
-				StyleConstants.setBackground(highFace, Color.YELLOW);
-				_styledDoc.setCharacterAttributes(_textPane.getSelectionStart(),
-						_textPane.getSelectionEnd() - _textPane.getSelectionStart(),
-						truc, true);
+				// Vérifier si il y a déjà une couleur pour Highlighter.
+				StyledEditorKit editor = (StyledEditorKit) _textPane.getEditorKit();
+				MutableAttributeSet attr = editor.getInputAttributes();
+				
+				System.out.println("High : prev_highlight = " + DocHighlighter.getHighlight(attr));
+				// Déjà Highlight -> Unset
+				if( DocHighlighter.getHighlight(attr) != null ) {
+					// On remplace(true) en enlevant les attribut d'Highlight
+					DocHighlighter.unsetHighlight(attr);
+					_styledDoc.setCharacterAttributes(_textPane.getSelectionStart(),
+							_textPane.getSelectionEnd() - _textPane.getSelectionStart(),
+							attr, true /*remplace*/);
+				}
+				else {
+					// On ajoute (false) les attributs highlight
+					DocHighlighter.setHighlight(attr, "cyan");
+					_styledDoc.setCharacterAttributes(_textPane.getSelectionStart(),
+							_textPane.getSelectionEnd() - _textPane.getSelectionStart(),
+							attr, false /*ajoute*/);
+				}
 			}
 		});
         // Bouton pour XML
