@@ -111,9 +111,6 @@ public class DocumentConverter implements Converter {
 		
 		MyStyledDocument doc = new MyStyledDocument();
 		
-		// Prépare quelques effet de police de caractère
-		AttributeSet attrs = doc.getCharacterElement(0).getAttributes();
-		
 		// section
 		System.out.println("DocumentConverter.unmarshal() : "+reader.getNodeName());
 		reader.moveDown();

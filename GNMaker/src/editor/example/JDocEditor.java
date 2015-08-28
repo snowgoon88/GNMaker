@@ -4,7 +4,6 @@
 package editor.example;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -30,21 +29,13 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.AbstractElement;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -52,9 +43,6 @@ import javax.swing.undo.UndoManager;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-
-import data.Story;
-import editor.example.TextComponentDemo.MyUndoableEditListener;
 
 /**
  * Essai d'implémentation d'un Editeur WYSIWYG.
@@ -90,7 +78,7 @@ import editor.example.TextComponentDemo.MyUndoableEditListener;
  *   ==> Niveau d'indentations
  * @todo : compacter et pretty/nettoyer un document
  *   ==> merger les contenus qui ont le même characterAttrSet
- *   ==> c'est peut-être fait automatiquement lors de la relecture.
+ *   OUI ==> c'est peut-être fait automatiquement lors de la relecture 
  * @todo : action undoables
  *   ==> s'inspirer de TextComponentDemo
  *   ==> Faire UNDO / REDO Action
@@ -191,12 +179,13 @@ public class JDocEditor extends JPanel {
         highBtn.addActionListener( new ActionListener() {
 			
 			@Override
+			/** Change ou Unset la couleur de Highlight */
 			public void actionPerformed(ActionEvent e) {
-				// Vérifier si il y a déjà une couleur pour Highlighter.
+				// Les attributs actuel de l'élément de texte (cf StyledEditorKit)
 				StyledEditorKit editor = (StyledEditorKit) _textPane.getEditorKit();
 				MutableAttributeSet attr = editor.getInputAttributes();
-				
-				System.out.println("High : prev_highlight = " + DocHighlighter.getHighlight(attr));
+				//System.out.println("High : prev_highlight = " + DocHighlighter.getHighlight(attr));
+
 				// Déjà Highlight -> Unset
 				if( DocHighlighter.getHighlight(attr) != null ) {
 					// On remplace(true) en enlevant les attribut d'Highlight
