@@ -170,11 +170,11 @@ public class JDocEditor extends JPanel {
 		});
         // Button pour Bold
         JButton strongBtn = new JButton( getActionByName("font-bold"));
-        strongBtn.setText("B");
+        strongBtn.setText("<html><strong>B</strong></html>");
         // Button pour Italique
         JButton emBtn = new JButton( getActionByName("font-italic"));
-        emBtn.setText( "I" );
-        // Button pour HighLight
+        emBtn.setText( "<html><em>I</em></html>" );
+        // Button pour Highlight
         JButton highBtn = new JButton( "High" );
         highBtn.addActionListener( new ActionListener() {
 			

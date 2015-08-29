@@ -10,6 +10,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -162,6 +165,14 @@ public class TestEditor {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		// Look Nimbus
+		LookAndFeelInfo[] lafs = UIManager.getInstalledLookAndFeels();
+		for (LookAndFeelInfo lookAndFeelInfo : lafs) {
+			System.out.println(lookAndFeelInfo.getName()+" - " +lookAndFeelInfo.getClassName());
+		}
+		try {
+			UIManager.setLookAndFeel(lafs[1].getClassName());
+		} catch (Exception e) { }
 		TestEditor app = new TestEditor();
 		//app.testJTextPane(args);
 		app.testJDocEditor(args);
