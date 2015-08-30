@@ -44,6 +44,8 @@ import javax.swing.undo.UndoManager;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import data.converter.DocumentConverter;
+
 /**
  * Essai d'implémentation d'un Editeur WYSIWYG.
  * Inspiration de http://da2i.univ-lille1.fr/doc/tutorial-java/uiswing/components/generaltext.html

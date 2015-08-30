@@ -1,7 +1,7 @@
 /**
  * 
  */
-package editor.example;
+package data.converter;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -16,6 +16,9 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
+import editor.example.DocHighlighter;
+import editor.example.MyStyledDocument;
 
 
 /**

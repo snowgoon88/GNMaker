@@ -35,6 +35,7 @@ import data.MyStyledDocument;
 import data.Perso;
 import data.Story;
 import data.Zorga;
+import data.converter.DocumentConverter;
 import data.converter.PersoConverter;
 import data.converter.StoryConverter;
 import data.converter.ZorgaConverter;
@@ -74,14 +75,14 @@ public class TestGUI {
 //		}
 		
 		// -------
-		nbTest++;
-		res = testDocEditorV(args);
-		if (res) {
-			System.out.println("testDocEditorV >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testDocEditorV >> " + res);
-		}
+//		nbTest++;
+//		res = testDocEditorV(args);
+//		if (res) {
+//			System.out.println("testDocEditorV >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testDocEditorV >> " + res);
+//		}
 		
 		// -------
 //		nbTest++;
@@ -104,14 +105,14 @@ public class TestGUI {
 //		}
 		
 		// -------
-//		nbTest++;
-//		res = testEventV(args);
-//		if (res) {
-//			System.out.println("testEventV >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testEventV >> " + res);
-//		}
+		nbTest++;
+		res = testEventV(args);
+		if (res) {
+			System.out.println("testEventV >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testEventV >> " + res);
+		}
 		
 //		// -------
 //		nbTest++;
@@ -125,24 +126,14 @@ public class TestGUI {
 
 		
 		// -------
-//		nbTest++;
-//		res = testApplication(args);
-//		if (res) {
-//			System.out.println("testApplication >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testApplication >> " + res);
-//		}
-		
-//		// -------
-//		nbTest++;
-//		res = testComboBox(args);
-//		if (res) {
-//			System.out.println("testComboBox >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testComboBox >> " + res);
-//		}
+		nbTest++;
+		res = testApplication(args);
+		if (res) {
+			System.out.println("testApplication >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testApplication >> " + res);
+		}
 		
 		// ---------------------
 		if (nbTest > nbPassed) {
@@ -369,6 +360,9 @@ public class TestGUI {
 		xStream.registerConverter(new StoryConverter());
         xStream.registerConverter(new PersoConverter());
         xStream.registerConverter(new ZorgaConverter());
+        xStream.registerConverter(new DocumentConverter());
+        
+        xStream.alias("doc", MyStyledDocument.class);
         xStream.alias("story", Story.class);
         
         File storyFile = new File("tmp/story_test.xml");

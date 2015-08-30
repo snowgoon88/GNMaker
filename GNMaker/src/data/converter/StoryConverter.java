@@ -86,7 +86,8 @@ public class StoryConverter implements Converter {
 			writer.endNode();
 			// Write body
 			writer.startNode("body");
-			writer.setValue(evt.getBody());
+			//writer.setValue(evt.getBody());
+			context.convertAnother(evt.getBody());
 			writer.endNode();
 			// PersoEvent
 			for (Entry<Integer, Event.PersoEvent> entry : evt._listPE.entrySet()) {

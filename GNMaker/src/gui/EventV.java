@@ -29,6 +29,7 @@ import net.miginfocom.swing.MigLayout;
 import data.Event;
 import data.Perso;
 import data.Story;
+import editor.example.JDocEditor;
 
 /**
  * Display an Event qui peut être "expanded". On s'appuie sur MigLayout.
@@ -65,7 +66,8 @@ public class EventV extends MigPanel implements Observer {
 	
 	JButton _expanderBtn;
 	JTextField _title;
-	JTextArea _body;
+	//JTextArea _body;
+	DocEditorV _body;
 	PersoEventListV _persoList;
 	
 	/* In order to Log */
@@ -130,39 +132,40 @@ public class EventV extends MigPanel implements Observer {
 		_title.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				System.out.println("DOCUMENT REMOVE _title : "+e.toString());
+				logger.debug("DOCUMENT REMOVE _title : "+e.toString());
 				//_evt.setTitle(_title.getText());
 			}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				System.out.println("DOCUMENT INSERT _title : "+e.toString());
+				logger.debug("DOCUMENT INSERT _title : "+e.toString());
 				//_evt.setTitle(_title.getText());
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				System.out.println("DOCUMENT CHANGED _title : "+e.toString());
+				logger.debug("DOCUMENT CHANGED _title : "+e.toString());
 				// When properties change
 			}
 		});
 		this.add( _title,
 				"cell 0 0, grow 100"); // go to next line after this
-		_body = new JTextArea(_evt.getBody());
-		_body.setLineWrap(true);
-		_body.setWrapStyleWord(true);
-		_body.getDocument().addDocumentListener(new DocumentListener() {
+//		_body = new JTextArea(_evt.getBody());
+//		_body.setLineWrap(true);
+//		_body.setWrapStyleWord(true);
+		_body = new DocEditorV(_evt.getBody());
+		_evt.getBody().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				System.out.println("DOCUMENT REMOVE _body : "+e.toString());
+				logger.debug("DOCUMENT REMOVE _body : "+e.toString());
 				//_evt.setBody(_body.getText());
 			}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				System.out.println("DOCUMENT INSERT _body : "+e.toString());
+				logger.debug("DOCUMENT INSERT _body : "+e.toString());
 //				_evt.setBody(_body.getText());
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				System.out.println("DOCUMENT CHANGED _body : "+e.toString());
+				logger.debug("DOCUMENT CHANGED _body : "+e.toString());
 				// When properties change
 			}
 		});
@@ -209,8 +212,9 @@ public class EventV extends MigPanel implements Observer {
 			}
 			// "set_body" message
 			else if (arg.equals("set_body")) {
+				logger.warn( "NO ANSWER to 'set_body'");
 				// Ne marche pas
-				_body.setText(_evt.getBody());
+				//_body.setText(_evt.getBody());
 				//update(); // What is Visible ?
 			}
 		}

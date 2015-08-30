@@ -4,6 +4,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
 
+import javax.swing.text.BadLocationException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +15,7 @@ import org.apache.logging.log4j.Logger;
  * <ul>
  * <li>String: Un Titre</li>
  * <li>??? : Une Date</li>
- * <li>String: Un Body</li>
+ * <li>MyStyledDocument: Un Body</li>
  * <li>ListOf<PersoEvent> : les perso liés à l'Event.</li>
  * </ul>
  * <br>
@@ -37,7 +39,7 @@ public class Event extends Observable implements IElement, Observer {
 	/** Titre de l'événement */
 	String _title;
 	/** Corps de l'événement */
-	String _body;
+	MyStyledDocument _body;
 	/** Date de l'événement */
 	// Date _date;
 	/** Liste de Perso impliqués. */
@@ -52,10 +54,15 @@ public class Event extends Observable implements IElement, Observer {
 	 * @param _title Titre de l'événement
 	 * @param _body Descripion de l'événement
 	 */
-	public Event(Story story, String _title, String _body) {
+	public Event(Story story, String title, String body) {
 		_story = story;
-		this._title = _title;
-		this._body = _body;
+		this._title = title;
+		this._body = new MyStyledDocument();
+		try {
+			this._body.insertString(0, body, _body.getStyle("base"));
+		} catch (BadLocationException e) {
+			System.err.println("Event() : "+e.getMessage());
+		}
 		_listPE = new ListOf<Event.PersoEvent>();
 		
 		_story._persoList.addObserver(this);
@@ -104,19 +111,22 @@ public class Event extends Observable implements IElement, Observer {
 	/**
 	 * @return the _body
 	 */
-	public String getBody() {
+//	public String getBody() {
+//		return _body;
+//	}
+	public MyStyledDocument getBody() {
 		return _body;
 	}
 	/**
 	 * @param body the _body to set
 	 */
-	public void setBody(String body) {
-		this._body = body;
-		
-		logger.debug(getTitle()+" set_body");
-		setChanged();
-		notifyObservers("set_body");
-	}
+//	public void setBody(String body) {
+//		this._body = body;
+//		
+//		logger.debug(getTitle()+" set_body");
+//		setChanged();
+//		notifyObservers("set_body");
+//	}
 
 	/** 
 	 * Dump all Perso as a String.
@@ -125,7 +135,11 @@ public class Event extends Observable implements IElement, Observer {
 	public String sDump() {
 		StringBuffer str = new StringBuffer();
 		str.append( "Event : "+_title+" ("+getId()+")"+"\n");
-		str.append( _body+"\n");
+		try {
+			str.append( _body.getText(0,_body.getLength())+"\n");
+		} catch (BadLocationException e) {
+			System.err.println("Event.sDump() : "+e.getMessage());
+		}
 		str.append( _listPE.sDump());
 		str.append( "\n" );
 		return str.toString();

@@ -8,6 +8,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
 /**
+ * @todo : verifier XML save/load !!!
  * @todo : Commenter la Classe
  * Styles créés :
  * <ul>
