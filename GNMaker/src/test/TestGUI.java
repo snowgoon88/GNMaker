@@ -22,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.text.BadLocationException;
 
 import com.thoughtworks.xstream.XStream;
@@ -444,6 +446,15 @@ public class TestGUI {
 		// Set up a simple configuration that logs on the console.
 		// v1.2 -Dlog4j.configuration=log/log4j1.2.xml
 		// v2   -Dlog4j.configurationFile=log/log4j2.xml
+		
+		// Choisi le look en feel
+		LookAndFeelInfo[] lafs = UIManager.getInstalledLookAndFeels();
+		for (LookAndFeelInfo lookAndFeelInfo : lafs) {
+			System.out.println(lookAndFeelInfo.getName());
+		}
+		try {
+			UIManager.setLookAndFeel(lafs[1].getClassName());
+		} catch (Exception e) { }
 		
 		TestGUI app = new TestGUI();
 		app.run(args);
