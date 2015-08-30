@@ -3,6 +3,7 @@
  */
 package test;
 
+import gui.DocEditorV;
 import gui.EventV;
 import gui.EventListV;
 import gui.PersoEventListV;
@@ -21,12 +22,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import data.Event;
 import data.ListOf;
+import data.MyStyledDocument;
 import data.Perso;
 import data.Story;
 import data.Zorga;
@@ -67,6 +70,16 @@ public class TestGUI {
 //		} else {
 //			System.err.println("testPersoListV >> " + res);
 //		}
+		
+		// -------
+		nbTest++;
+		res = testDocEditorV(args);
+		if (res) {
+			System.out.println("testDocEditorV >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testDocEditorV >> " + res);
+		}
 		
 		// -------
 //		nbTest++;
@@ -110,14 +123,14 @@ public class TestGUI {
 
 		
 		// -------
-		nbTest++;
-		res = testApplication(args);
-		if (res) {
-			System.out.println("testApplication >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testApplication >> " + res);
-		}
+//		nbTest++;
+//		res = testApplication(args);
+//		if (res) {
+//			System.out.println("testApplication >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testApplication >> " + res);
+//		}
 		
 //		// -------
 //		nbTest++;
@@ -199,6 +212,44 @@ public class TestGUI {
 		return res;
 	}
 	
+	/**
+	 * Editor de Document.<br>
+	 * 
+	 * Permet de vérifier :
+	 * <ul>
+	 * <li> Affiche document, voit et change style de paragraphe </li>
+	 * </ul>
+	 */
+	boolean testDocEditorV(String[] args) {
+		// Crée un document
+		MyStyledDocument doc = new MyStyledDocument();
+		String newline = "\n";
+		String initString[] = { 
+        		"Gros Titre"+newline,
+        		"Hop, on commence"+newline,
+        		"Un exemple d'un gros paragraphe qui, je l'espère, va faire plusieurs lignes.",
+        		"C'est pour tester le comportement par défaut du curseur, encore appelé 'Caret'.",
+        		"En fait, j'aimerais comprendre comment opère le principe de sélection entre mot, phrase, paragraphe ? On verra bien."+newline,
+        		"Puis, on continue"+newline,
+        		"Et ça c'est juste une ligne."+newline,
+                };
+        String styleString[] = { "title", "sec1", "base", "base", "base", "sec1", "base" };
+        try {
+            for (int i = 0; i < initString.length; i ++) {
+            	doc.setLogicalStyle( doc.getLength(),
+            				doc.getStyle(styleString[i]) );
+            	doc.insertString( doc.getLength(), initString[i], null );
+            }
+        } catch (BadLocationException ble) {
+            System.err.println("Couldn't insert initial text.");
+        }
+        
+        // Crée viewer et affiche
+        DocEditorV comp = new DocEditorV(doc);
+        boolean res =  testComponent("DocEditorV", comp);
+		System.out.println("End of testDocEditorV");
+		return res;
+	}
 	
 	/**
 	 * Viewer de PersoEvent.<br>
