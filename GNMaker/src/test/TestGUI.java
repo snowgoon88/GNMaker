@@ -218,6 +218,8 @@ public class TestGUI {
 	 * Permet de vérifier :
 	 * <ul>
 	 * <li> Affiche document, voit et change style de paragraphe </li>
+	 * <li> Boutons Bold et Italic.</li>
+	 * <li> Undo/Redo.</li>
 	 * </ul>
 	 */
 	boolean testDocEditorV(String[] args) {

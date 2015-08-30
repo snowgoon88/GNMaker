@@ -10,18 +10,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import data.MyStyledDocument;
 
@@ -34,6 +46,7 @@ import data.MyStyledDocument;
  * <li>Character : On/Off 'bold' dans un Button</li>
  * <li>Character : On/Off 'italic' dans un Button</li>
  * <li>Character : Choisi couleur 'hightligh' ou pas dans un JCommandButton qui fait office de "SpliButton"</li>
+ * <li>Global : Undo/Redo les changements</li>
  * </ul>
  * 
  * @author snowgoon88@gmail.com
@@ -56,6 +69,18 @@ public class DocEditorV extends JPanel {
 	/** Un JToggleButton pour le italic */
 	JToggleButton _emBtn;
 	
+	//undo helpers
+    UndoAction _undoAction;
+    RedoAction _redoAction;
+    UndoManager _undo = new UndoManager();
+    
+    /** Boolean qui dit si on est en update des Bouton ou en action */
+    boolean _updateStyle = false;
+	
+    /* In order to Log */
+	private static Logger logger = LogManager.getLogger(EventV.class.getName());
+	
+    
 	/**
 	 * 
 	 */
@@ -72,9 +97,14 @@ public class DocEditorV extends JPanel {
 		
 		// TextPanel pour le document
 		_textPane = new JTextPane( _doc );
-		createActionTable(_textPane); // la liste des actions par défaut
-//		_textPane.setCaretPosition(0);
+		_textPane.setCaretPosition(0);
         _textPane.setMargin(new Insets(5,5,5,5));
+        
+        createActionTable(_textPane); // la liste des actions par défaut
+        // Create our own actions
+        _undoAction = new UndoAction();
+        _redoAction = new RedoAction();
+        
         // Dans une fenêtre avec Scroll
         // @todo : dimension, scroll optionnel
         JScrollPane scrollPane = new JScrollPane(_textPane);
@@ -91,10 +121,13 @@ public class DocEditorV extends JPanel {
         _styleCBox.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				@SuppressWarnings("unchecked")
-				JComboBox<String> cb = (JComboBox<String>) e.getSource();
-				_doc.setLogicalStyle(_textPane.getCaretPosition(), 
-						_doc.getStyle((String) cb.getSelectedItem()) );
+				logger.debug("_style : "+e.paramString());
+				if( _updateStyle == false ) {
+					@SuppressWarnings("unchecked")
+					JComboBox<String> cb = (JComboBox<String>) e.getSource();
+					_doc.setLogicalStyle(_textPane.getCaretPosition(), 
+							_doc.getStyle((String) cb.getSelectedItem()) );
+				}
 			}
 		});
         actionPanel.add( _styleCBox );
@@ -106,17 +139,29 @@ public class DocEditorV extends JPanel {
         _emBtn = new JToggleButton( getActionByName("font-italic") );
         _emBtn.setText("<html><em>I</em></html>");
         actionPanel.add( _emBtn );
+        actionPanel.add( new JSeparator(SwingConstants.VERTICAL) );
+        
+        // Undo/Redo buttons
+        JButton undoBtn = new JButton( _undoAction );
+        JButton redoBtn = new JButton( _redoAction );
+        actionPanel.add( undoBtn );
+        actionPanel.add( redoBtn );
         
         add( actionPanel, BorderLayout.NORTH );
         
         // Un Listener pour mettre à jour le _styleCBox
         _textPane.addCaretListener( new StyleListener() );
+        // Un Listener pour Undo/Redo
+        _doc.addUndoableEditListener(new MyUndoableEditListener());
         
         _textPane.setCaretPosition(0);
         updateStyle();
 	}
 	
 	void updateStyle() {
+		// sauvegarde état de update
+		boolean updateStyleSave = _updateStyle;
+		_updateStyle = true;
 		// Style de paragraphe
 		Style style =_doc.getLogicalStyle( _textPane.getCaretPosition() );
 		_styleCBox.setSelectedItem( style.getName() );
@@ -124,6 +169,9 @@ public class DocEditorV extends JPanel {
 		AttributeSet attr = _doc.getCharacterElement(_textPane.getCaretPosition()).getAttributes();
 		_strongBtn.setSelected( StyleConstants.isBold( attr ) );
 		_emBtn.setSelected( StyleConstants.isItalic( attr ) );
+		
+		// Restore
+		_updateStyle = updateStyleSave;
 	}
 
 	/** Une Classe qui met à jour _styleCBox en fonction de 
@@ -152,5 +200,73 @@ public class DocEditorV extends JPanel {
     /** Trouve une action de l'EditorKit par son nom */
     private Action getActionByName(String name) {
         return _actions.get(name);
+    }
+    
+    /** Listens for actions that can be undone */
+    protected class MyUndoableEditListener
+    implements UndoableEditListener {
+    	public void undoableEditHappened(UndoableEditEvent e) {
+    		//Remember the edit and update the menus.
+    		_undo.addEdit(e.getEdit());
+    		_undoAction.updateUndoState();
+    		_redoAction.updateRedoState();
+    		System.out.println("_undo : "+ _undo.getPresentationName());
+    	}
+    }
+    
+    class UndoAction extends AbstractAction {
+        public UndoAction() {
+            super("Undo");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            try {
+                _undo.undo();
+            } catch (CannotUndoException ex) {
+                System.out.println("Unable to undo: " + ex);
+                ex.printStackTrace();
+            }
+            updateUndoState();
+            _redoAction.updateRedoState();
+        }
+
+        protected void updateUndoState() {
+            if (_undo.canUndo()) {
+                setEnabled(true);
+                putValue(Action.NAME, _undo.getUndoPresentationName());
+            } else {
+                setEnabled(false);
+                putValue(Action.NAME, "Undo");
+            }
+        }
+    }
+
+    class RedoAction extends AbstractAction {
+        public RedoAction() {
+            super("Redo");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            try {
+                _undo.redo();
+            } catch (CannotRedoException ex) {
+                System.out.println("Unable to redo: " + ex);
+                ex.printStackTrace();
+            }
+            updateRedoState();
+            _undoAction.updateUndoState();
+        }
+
+        protected void updateRedoState() {
+            if (_undo.canRedo()) {
+                setEnabled(true);
+                putValue(Action.NAME, _undo.getRedoPresentationName());
+            } else {
+                setEnabled(false);
+                putValue(Action.NAME, "Redo");
+            }
+        }
     }
 }
