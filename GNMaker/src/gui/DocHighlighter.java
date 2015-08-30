@@ -1,7 +1,7 @@
 /**
  * 
  */
-package editor.example;
+package gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -69,7 +69,7 @@ public class DocHighlighter {
 	}
 	
 	/** Icones : carré avec couleur à l'intérieur */
-	public static Icon createHighlighIcon( String colorName ) {
+	public static Image createHighlighIcon( String colorName ) {
 		Image image = new BufferedImage(DEFAULT_ICON_SIZE,
 				DEFAULT_ICON_SIZE, BufferedImage.TYPE_INT_ARGB);
 		
@@ -89,7 +89,7 @@ public class DocHighlighter {
 		g.drawRect(0, 0, DEFAULT_ICON_SIZE-1, DEFAULT_ICON_SIZE-1);
 		
 		g.dispose();
-		return new ImageIcon(image);
+		return image;
 	}
 	public static Image createNormalIcon() {
 		Image image = new BufferedImage(DEFAULT_ICON_SIZE,

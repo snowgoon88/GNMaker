@@ -26,14 +26,25 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledEditorKit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.pushingpixels.flamingo.api.common.CommandButtonDisplayState;
+import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.common.JCommandButton.CommandButtonKind;
+import org.pushingpixels.flamingo.api.common.JCommandButton.CommandButtonPopupOrientationKind;
+import org.pushingpixels.flamingo.api.common.JCommandMenuButton;
+import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
+import org.pushingpixels.flamingo.api.common.popup.JCommandPopupMenu;
+import org.pushingpixels.flamingo.api.common.popup.JPopupPanel;
+import org.pushingpixels.flamingo.api.common.popup.PopupPanelCallback;
 
 import data.MyStyledDocument;
 
@@ -68,6 +79,8 @@ public class DocEditorV extends JPanel {
 	JToggleButton _strongBtn;
 	/** Un JToggleButton pour le italic */
 	JToggleButton _emBtn;
+	/** JCommandButton pour Highlight */
+	JCommandButton _highBtn;
 	
 	//undo helpers
     UndoAction _undoAction;
@@ -76,6 +89,10 @@ public class DocEditorV extends JPanel {
     
     /** Boolean qui dit si on est en update des Bouton ou en action */
     boolean _updateStyle = false;
+    
+    private static String COL_HIGHLIGHT[] = {
+    	"yellow", "cyan", "red", "green", "magenta", "grey" 
+    };
 	
     /* In order to Log */
 	private static Logger logger = LogManager.getLogger(EventV.class.getName());
@@ -139,8 +156,40 @@ public class DocEditorV extends JPanel {
         _emBtn = new JToggleButton( getActionByName("font-italic") );
         _emBtn.setText("<html><em>I</em></html>");
         actionPanel.add( _emBtn );
-        actionPanel.add( new JSeparator(SwingConstants.VERTICAL) );
         
+        // Highlighter
+        _highBtn = new JCommandButton("-rien", ImageWrapperResizableIcon.getIcon(DocHighlighter.createNormalIcon(),
+									new Dimension(10, 10)));
+        _highBtn.setCommandButtonKind(CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION);
+        _highBtn.setPopupOrientationKind(CommandButtonPopupOrientationKind.DOWNWARD);
+        _highBtn.setFlat(false);
+        _highBtn.setDisplayState(CommandButtonDisplayState.SMALL); // Seul Icon
+        _highBtn.setPopupCallback(new HighlightPopupCallback());
+        _highBtn.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		// Les attributs actuel de l'élément de texte (cf StyledEditorKit)
+				StyledEditorKit editor = (StyledEditorKit) _textPane.getEditorKit();
+				MutableAttributeSet attr = editor.getInputAttributes();
+        		if( _highBtn.getText().equalsIgnoreCase("-rien-")) {
+        			DocHighlighter.unsetHighlight(attr);
+					_doc.setCharacterAttributes(_textPane.getSelectionStart(),
+							_textPane.getSelectionEnd() - _textPane.getSelectionStart(),
+							attr, true /*remplace*/);
+        		}
+        		else {
+        			String colName = _highBtn.getText();
+        			DocHighlighter.setHighlight(attr, colName);
+					_doc.setCharacterAttributes(_textPane.getSelectionStart(),
+							_textPane.getSelectionEnd() - _textPane.getSelectionStart(),
+							attr, false /*ajoute*/);
+        		}
+				System.out.println("high ACTION = "+_highBtn.getText());
+			}
+		});
+		actionPanel.add( _highBtn );
+		
+		actionPanel.add( new JSeparator(SwingConstants.VERTICAL) );
+		
         // Undo/Redo buttons
         JButton undoBtn = new JButton( _undoAction );
         JButton redoBtn = new JButton( _redoAction );
@@ -214,6 +263,9 @@ public class DocEditorV extends JPanel {
     	}
     }
     
+    /**
+     * Action undo. 
+     */
     class UndoAction extends AbstractAction {
         public UndoAction() {
             super("Undo");
@@ -241,7 +293,9 @@ public class DocEditorV extends JPanel {
             }
         }
     }
-
+    /**
+     * Action redo. 
+     */
     class RedoAction extends AbstractAction {
         public RedoAction() {
             super("Redo");
@@ -269,4 +323,43 @@ public class DocEditorV extends JPanel {
             }
         }
     }
+    
+    /**
+     * Popup Menu pour le bouton Higlight.
+     */
+    class HighlightPopupCallback implements PopupPanelCallback {
+		@Override
+		public JPopupPanel getPopupPanel(JCommandButton commandButton) {
+
+			
+			JCommandPopupMenu simpleMenu = new JCommandPopupMenu();
+
+			ActionListener itemAction = new ActionListener() {	
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					JCommandMenuButton item = (JCommandMenuButton) e.getSource();
+					_highBtn.setIcon( item.getIcon() );
+					_highBtn.setText( item.getText() );
+				}
+			};
+			
+			JCommandMenuButton item = new 
+					JCommandMenuButton("-rien-", 
+							ImageWrapperResizableIcon.getIcon(DocHighlighter.createNormalIcon(),
+									new Dimension(10, 10)));
+			item.addActionListener( itemAction );
+			simpleMenu.addMenuButton( item );
+			
+			for (int i = 0; i < COL_HIGHLIGHT.length; i++) {
+				item = new JCommandMenuButton(COL_HIGHLIGHT[i], 
+								ImageWrapperResizableIcon.getIcon(DocHighlighter.createHighlighIcon(COL_HIGHLIGHT[i]),
+										new Dimension(10, 10)));
+				item.addActionListener( itemAction );
+				simpleMenu.addMenuButton( item );
+			}
+			
+			return simpleMenu;
+		}
+	};
 }
