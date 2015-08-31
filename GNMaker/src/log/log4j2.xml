@@ -6,10 +6,10 @@
     </Console>
   </appenders>
   <loggers>
-    <root level="warn">
+    <root level="trace">
       <appender-ref ref="Console"/>
     </root>
-    <logger name="data.converter.StoryConverter">
+    <logger name="data.converter.DocumentConverter">
       <level value="trace"/> 	
     </logger>
     <logger name="gui.DocEditor">

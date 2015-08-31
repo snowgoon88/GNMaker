@@ -14,9 +14,15 @@ import gui.ZorgaListV;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -75,14 +81,14 @@ public class TestGUI {
 //		}
 		
 		// -------
-//		nbTest++;
-//		res = testDocEditorV(args);
-//		if (res) {
-//			System.out.println("testDocEditorV >> " + res);
-//			nbPassed++;
-//		} else {
-//			System.err.println("testDocEditorV >> " + res);
-//		}
+		nbTest++;
+		res = testDocEditorV(args);
+		if (res) {
+			System.out.println("testDocEditorV >> " + res);
+			nbPassed++;
+		} else {
+			System.err.println("testDocEditorV >> " + res);
+		}
 		
 		// -------
 //		nbTest++;
@@ -105,14 +111,14 @@ public class TestGUI {
 //		}
 		
 		// -------
-		nbTest++;
-		res = testEventV(args);
-		if (res) {
-			System.out.println("testEventV >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testEventV >> " + res);
-		}
+//		nbTest++;
+//		res = testEventV(args);
+//		if (res) {
+//			System.out.println("testEventV >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testEventV >> " + res);
+//		}
 		
 //		// -------
 //		nbTest++;
@@ -134,8 +140,8 @@ public class TestGUI {
 		} else {
 			System.err.println("testApplication >> " + res);
 		}
-		
-		// ---------------------
+//		
+//		// ---------------------
 		if (nbTest > nbPassed) {
 			System.err.println("FAILURE : only "+nbPassed+" success out of "+nbTest);
 			System.exit(1);
@@ -216,6 +222,9 @@ public class TestGUI {
 	 * </ul>
 	 */
 	boolean testDocEditorV(String[] args) {
+		// Un Meta Panel pour le bouton Save :o)
+		JPanel main = new JPanel();
+		main.setLayout( new BorderLayout());
 		// Crée un document
 		MyStyledDocument doc = new MyStyledDocument();
 		String newline = "\n";
@@ -241,7 +250,40 @@ public class TestGUI {
         
         // Crée viewer et affiche
         DocEditorV comp = new DocEditorV(doc);
-        boolean res =  testComponent("DocEditorV", comp);
+        main.add(comp, BorderLayout.CENTER);
+        // Une action pour XML
+        JButton saveBtn = new JButton("SaveXML");
+        class SaveAction implements ActionListener {
+        	MyStyledDocument doc;
+        	public SaveAction( MyStyledDocument doc) {
+				this.doc = doc;
+			}
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				System.out.println("** Document to XML **");
+				XStream xStream = new XStream(new DomDriver());
+				xStream.registerConverter(new DocumentConverter());
+		        xStream.alias("doc", MyStyledDocument.class);
+		        System.out.println(xStream.toXML(this.doc));
+		        
+//		        File outfile = new File("tmp/doceditor.xml");
+//		        try {
+//					FileOutputStream writer = new FileOutputStream(outfile);
+//					xStream.toXML(doc, writer);
+//					writer.close();
+//				} catch (FileNotFoundException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+				
+			}
+		};
+		SaveAction saveAct = new SaveAction(doc);
+		saveBtn.addActionListener(saveAct);
+		main.add( saveBtn, BorderLayout.NORTH);
+        
+        boolean res =  testComponent("DocEditorV", main);
 		System.out.println("End of testDocEditorV");
 		return res;
 	}

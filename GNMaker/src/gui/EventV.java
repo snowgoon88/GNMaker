@@ -14,7 +14,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
+//import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -29,7 +29,7 @@ import net.miginfocom.swing.MigLayout;
 import data.Event;
 import data.Perso;
 import data.Story;
-import editor.example.JDocEditor;
+//import editor.example.JDocEditor;
 
 /**
  * Display an Event qui peut être "expanded". On s'appuie sur MigLayout.

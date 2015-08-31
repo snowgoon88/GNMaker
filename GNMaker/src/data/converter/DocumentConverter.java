@@ -11,15 +11,17 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import editor.example.DocHighlighter;
-import editor.example.MyStyledDocument;
-
+import gui.DocHighlighter;
+import data.MyStyledDocument;
 
 /**
  * Convert a Document to my "custom" XML using xStream.
@@ -27,6 +29,9 @@ import editor.example.MyStyledDocument;
  * @author snowgoon88@gmail.com
  */
 public class DocumentConverter implements Converter {
+	
+	/* In order to Log */
+	private static Logger logger = LogManager.getLogger(DocumentConverter.class.getName());
 
 	/* (non-Javadoc)
 	 * @see com.thoughtworks.xstream.converters.ConverterMatcher#canConvert(java.lang.Class)
@@ -49,6 +54,7 @@ public class DocumentConverter implements Converter {
 		
 		// Start root
 		Element root = doc.getDefaultRootElement();
+		logger.trace("sNODE root : "+root.getName());
 		writer.startNode( root.getName() );
 		
 		// Chacun des Child
@@ -57,6 +63,7 @@ public class DocumentConverter implements Converter {
 		}
 		
 		// End root
+		logger.trace("eNODE root : "+root.getName());
 		writer.endNode();
 	}
 	protected void writeElement( Element elem, 
@@ -68,19 +75,24 @@ public class DocumentConverter implements Converter {
 			AttributeSet attr =  elem.getAttributes();
 
 			// Les différents styles de character
+			logger.trace("sNODE content");
 			writer.startNode( "content");
 			if( StyleConstants.isBold(attr)) {
+				logger.trace("ATTR bold");
 	    		writer.addAttribute("bold", "true");
 			}
 			if( StyleConstants.isItalic(attr)) {
+				logger.trace("ATTR italic");
 	    		writer.addAttribute("italic", "true");
 			}
 			String colorStr = DocHighlighter.getHighlight(attr);
 			if( colorStr != null ) {
+				logger.trace("ATTR high");
 				writer.addAttribute("highlight", colorStr);
 			}
 
 			try {
+				logger.trace(">>value");
 				writer.setValue( elem.getDocument().getText(elem.getStartOffset(), 
 						elem.getEndOffset()-elem.getStartOffset()));
 				System.out.println("LU ["+elem.getDocument().getText(elem.getStartOffset(), 
@@ -88,19 +100,23 @@ public class DocumentConverter implements Converter {
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
+			logger.trace("eNODE content");
 			writer.endNode();
 		}
 		else {
+			logger.trace("sNODE : "+elem.getName());
 			writer.startNode( elem.getName() );
 			// Si paragraphe, on note le style
 			if( elem.getName().equalsIgnoreCase("paragraph") ) {
 				// style
+				logger.trace("ATTR style : "+doc.getLogicalStyle( elem.getStartOffset() ).getName());
 				writer.addAttribute("style",
 						doc.getLogicalStyle( elem.getStartOffset() ).getName());
 			}
 			for (int i = 0; i < elem.getElementCount(); i++) {
 				writeElement( elem.getElement(i), writer, context, doc);
 			}
+			logger.trace("eNODE : "+elem.getName());
 			writer.endNode();
 		}
 	}
