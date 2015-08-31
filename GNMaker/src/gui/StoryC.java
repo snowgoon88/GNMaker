@@ -20,9 +20,12 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import data.Event;
+import data.MyStyledDocument;
 import data.Story;
+import data.converter.DocumentConverter;
 import data.converter.PersoConverter;
 import data.converter.StoryConverter;
+import data.converter.ZorgaConverter;
 
 /**
  * @author snowgoon88@gmail.com
@@ -51,8 +54,11 @@ public class StoryC {
 		_xStream = new XStream(new DomDriver());
 		_xStream.registerConverter(new StoryConverter());
         _xStream.registerConverter(new PersoConverter());
+        _xStream.registerConverter(new ZorgaConverter());
+        _xStream.registerConverter(new DocumentConverter());
         _xStream.alias("story", Story.class);
-		
+        _xStream.alias("doc", MyStyledDocument.class);
+        
 		_jfc = new JFileChooser(_storyFile);
 		_jfc.addChoosableFileFilter(new XMLFileFilter());
 		

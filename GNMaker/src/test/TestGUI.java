@@ -81,14 +81,14 @@ public class TestGUI {
 //		}
 		
 		// -------
-		nbTest++;
-		res = testDocEditorV(args);
-		if (res) {
-			System.out.println("testDocEditorV >> " + res);
-			nbPassed++;
-		} else {
-			System.err.println("testDocEditorV >> " + res);
-		}
+//		nbTest++;
+//		res = testDocEditorV(args);
+//		if (res) {
+//			System.out.println("testDocEditorV >> " + res);
+//			nbPassed++;
+//		} else {
+//			System.err.println("testDocEditorV >> " + res);
+//		}
 		
 		// -------
 //		nbTest++;
@@ -407,7 +407,8 @@ public class TestGUI {
         xStream.alias("doc", MyStyledDocument.class);
         xStream.alias("story", Story.class);
         
-        File storyFile = new File("tmp/story_test.xml");
+//        File storyFile = new File("tmp/story_test.xml");
+        File storyFile = new File("tmp/doceditor.xml");
 		Story story = (Story) xStream.fromXML( storyFile );
 		System.out.println("** Story from XML **");
         System.out.println(story.sDump());

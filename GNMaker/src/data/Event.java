@@ -54,15 +54,27 @@ public class Event extends Observable implements IElement, Observer {
 	 * @param _title Titre de l'événement
 	 * @param _body Descripion de l'événement
 	 */
-	public Event(Story story, String title, String body) {
+//	public Event(Story story, String title, String body) {
+//		_story = story;
+//		_title = title;
+//		_body = new MyStyledDocument();
+//		try {
+//			_body.setLogicalStyle(0, _body.getStyle("base"));
+//			_body.insertString(0, body, null);
+//		} catch (BadLocationException e) {
+//			System.err.println("Event() : "+e.getMessage());
+//		}
+//		_body.dump( System.out );
+//		_listPE = new ListOf<Event.PersoEvent>();
+//		
+//		_story._persoList.addObserver(this);
+//	}
+	public Event(Story story, String title, MyStyledDocument body) {
 		_story = story;
-		this._title = title;
-		this._body = new MyStyledDocument();
-		try {
-			this._body.insertString(0, body, _body.getStyle("base"));
-		} catch (BadLocationException e) {
-			System.err.println("Event() : "+e.getMessage());
-		}
+		_title = title;
+		_body = body;
+		
+		_body.dump( System.out );
 		_listPE = new ListOf<Event.PersoEvent>();
 		
 		_story._persoList.addObserver(this);

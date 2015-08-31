@@ -13,6 +13,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import data.Event;
+import data.MyStyledDocument;
 import data.Perso;
 import data.Story;
 import data.Zorga;
@@ -175,7 +176,9 @@ public class StoryConverter implements Converter {
 				reader.moveUp();
 				// body
 				reader.moveDown();
-				String body = reader.getValue();
+//				String body = reader.getValue();
+//				Perso pers = (Perso)context.convertAnother(story, Perso.class);
+				MyStyledDocument body = (MyStyledDocument) context.convertAnother(story, MyStyledDocument.class);
 				reader.moveUp();
 				Event evt = new Event( story, title, body );
 				// PersoEvent

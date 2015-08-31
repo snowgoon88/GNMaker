@@ -4,16 +4,17 @@
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%-5level %class{1}.%method - %msg%n"/>
     </Console>
+    <File name="File" fileName="trace.log">
+      <PatternLayout pattern="%-5level %class{1}.%method - %msg%n"/>
+    </File>
   </appenders>
   <loggers>
-    <root level="trace">
+    <logger name="data.converter.DocumentConverter" level="TRACE">
+    </logger>
+    <logger name="gui.DocEditor" level="TRACE">
+    </logger>
+    <root level="WARN">
       <appender-ref ref="Console"/>
     </root>
-    <logger name="data.converter.DocumentConverter">
-      <level value="trace"/> 	
-    </logger>
-    <logger name="gui.DocEditor">
-        <level value="warn"></level>
-    </logger>
   </loggers>
  </configuration>
