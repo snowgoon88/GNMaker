@@ -125,7 +125,7 @@ public class DocEditorV extends JPanel {
         // Dans une fenêtre avec Scroll
         // @todo : dimension, scroll optionnel
         JScrollPane scrollPane = new JScrollPane(_textPane);
-        scrollPane.setPreferredSize(new Dimension(200, 200));
+        scrollPane.setPreferredSize(new Dimension(600, 50));
         add(scrollPane, BorderLayout.CENTER);
 		
 		// Action Panel

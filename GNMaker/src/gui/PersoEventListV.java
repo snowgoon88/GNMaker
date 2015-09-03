@@ -29,6 +29,7 @@ import net.miginfocom.swing.MigLayout;
 
 import data.Event;
 import data.Event.PersoEvent;
+import data.MyStyledDocument;
 import data.Perso;
 
 /**
@@ -283,7 +284,8 @@ public class PersoEventListV implements Observer {
 		/** Un JLabel pour le nom du Perso */
 		JLabel _persoName;
 		/** Un JTextArea pour la description */
-		JTextArea _peDescArea;
+//		JTextArea _peDescArea;
+		DocEditorV _peDescArea;
 		
 		/* In order to Log */
 		private static Logger loggerPE = LogManager.getLogger(PersoEventDescPanel.class.getName());
@@ -308,10 +310,27 @@ public class PersoEventListV implements Observer {
 			_persoName = new JLabel(_pe._perso.getName());
 			this.add(_persoName);
 			
-			_peDescArea = new JTextArea(_pe.getDesc());
-			_peDescArea.setLineWrap(true);
-			_peDescArea.setWrapStyleWord(true);
-			_peDescArea.getDocument().addDocumentListener(new MyTextAreaListener(_peDescArea, _pe));
+//			_peDescArea = new JTextArea(_pe.getDesc());
+//			_peDescArea.setLineWrap(true);
+//			_peDescArea.setWrapStyleWord(true);
+			_peDescArea = new DocEditorV( _pe.getDesc() );
+			_pe.getDesc().addDocumentListener(new DocumentListener() {
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+//					System.out.println("DOCUMENT REMOVE _title : "+e.toString());
+					//_pe.setDesc(_area.getText());
+				}
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+//					System.out.println("DOCUMENT INSERT _title : "+e.toString());
+					//_pe.setDesc(_area.getText());
+				}
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+//					System.out.println("DOCUMENT CHANGED _title : "+e.toString());
+					// When properties change
+				}
+			});
 			
 			// "wmin 100" est important, sinon ne rétrécit pas.
 			this.add(_peDescArea, "wmin 100");
@@ -334,7 +353,7 @@ public class PersoEventListV implements Observer {
 			else if (o instanceof Event.PersoEvent) {
 				// only "desc" message
 				if (arg.equals("set_desc")) {
-					_peDescArea.setText(_pe.getDesc());
+					//_peDescArea.setText(_pe.getDesc());
 					this.revalidate();
 					this.repaint();
 				}
@@ -344,33 +363,33 @@ public class PersoEventListV implements Observer {
 		
 	}
 	
-	/**
-	 * Listen for changes dans un PersoEventDescPanel._peDescArea
-	 * et appelle PersoEvent.setDesc().
-	 */
-	static class MyTextAreaListener implements DocumentListener {
-		JTextArea _area;
-		PersoEvent _pe;
-		
-		public MyTextAreaListener(JTextArea area, PersoEvent pe) {
-			_area = area;
-			_pe = pe;
-		}
-		
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-//			System.out.println("DOCUMENT REMOVE _title : "+e.toString());
-			//_pe.setDesc(_area.getText());
-		}
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-//			System.out.println("DOCUMENT INSERT _title : "+e.toString());
-			//_pe.setDesc(_area.getText());
-		}
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-//			System.out.println("DOCUMENT CHANGED _title : "+e.toString());
-			// When properties change
-		}
-	}
+//	/**
+//	 * Listen for changes dans un PersoEventDescPanel._peDescArea
+//	 * et appelle PersoEvent.setDesc().
+//	 */
+//	static class MyTextAreaListener implements DocumentListener {
+//		MyStyledDocument _area;
+//		PersoEvent _pe;
+//		
+//		public MyTextAreaListener(JTextArea area, PersoEvent pe) {
+//			_area = area;
+//			_pe = pe;
+//		}
+//		
+//		@Override
+//		public void removeUpdate(DocumentEvent e) {
+////			System.out.println("DOCUMENT REMOVE _title : "+e.toString());
+//			//_pe.setDesc(_area.getText());
+//		}
+//		@Override
+//		public void insertUpdate(DocumentEvent e) {
+////			System.out.println("DOCUMENT INSERT _title : "+e.toString());
+//			//_pe.setDesc(_area.getText());
+//		}
+//		@Override
+//		public void changedUpdate(DocumentEvent e) {
+////			System.out.println("DOCUMENT CHANGED _title : "+e.toString());
+//			// When properties change
+//		}
+//	}
 }

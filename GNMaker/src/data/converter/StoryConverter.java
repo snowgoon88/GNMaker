@@ -99,7 +99,8 @@ public class StoryConverter implements Converter {
 					writer.setValue(Boolean.toString(entry.getValue().getStatus()));
 					writer.endNode();
 					writer.startNode("desc");
-					writer.setValue(entry.getValue().getDesc());
+					//writer.setValue(entry.getValue().getDesc());
+					context.convertAnother(entry.getValue().getDesc());
 					writer.endNode();
 					writer.endNode();
 				}
@@ -195,7 +196,8 @@ public class StoryConverter implements Converter {
 					reader.moveUp();
 					// desc
 					reader.moveDown();
-					String desc =reader.getValue();
+					//String desc =reader.getValue();
+					MyStyledDocument desc = (MyStyledDocument) context.convertAnother(story, MyStyledDocument.class);
 					reader.moveUp();
 					reader.moveUp();
 					

@@ -54,21 +54,21 @@ public class Event extends Observable implements IElement, Observer {
 	 * @param _title Titre de l'événement
 	 * @param _body Descripion de l'événement
 	 */
-//	public Event(Story story, String title, String body) {
-//		_story = story;
-//		_title = title;
-//		_body = new MyStyledDocument();
-//		try {
-//			_body.setLogicalStyle(0, _body.getStyle("base"));
-//			_body.insertString(0, body, null);
-//		} catch (BadLocationException e) {
-//			System.err.println("Event() : "+e.getMessage());
-//		}
-//		_body.dump( System.out );
-//		_listPE = new ListOf<Event.PersoEvent>();
-//		
-//		_story._persoList.addObserver(this);
-//	}
+	public Event(Story story, String title, String body) {
+		_story = story;
+		_title = title;
+		_body = new MyStyledDocument();
+		try {
+			_body.setLogicalStyle(0, _body.getStyle("base"));
+			_body.insertString(0, body, null);
+		} catch (BadLocationException e) {
+			System.err.println("Event() : "+e.getMessage());
+		}
+		_body.dump( System.out );
+		_listPE = new ListOf<Event.PersoEvent>();
+		
+		_story._persoList.addObserver(this);
+	}
 	public Event(Story story, String title, MyStyledDocument body) {
 		_story = story;
 		_title = title;
@@ -93,6 +93,11 @@ public class Event extends Observable implements IElement, Observer {
 		PersoEvent pe = new PersoEvent( pers, status, desc);
 		_listPE.put( pe.getId(), pe);
 		
+	}
+	public void addPerso( Perso pers, boolean status, MyStyledDocument desc) {
+		logger.trace("adding : "+pers.sDump());
+		PersoEvent pe = new PersoEvent( pers, status, desc);
+		_listPE.put( pe.getId(), pe);
 	}
 	/**
 	 * Remove a Perso (si le Perso n'existe pas, rien n'est removed).
@@ -211,7 +216,7 @@ public class Event extends Observable implements IElement, Observer {
 	public static class PersoEvent extends Observable implements IElement {
 		public Perso _perso;
 		public boolean _status;
-		String _desc;
+		MyStyledDocument _desc;
 		
 		/** In order to Log */
 		private static Logger loggerPE = LogManager.getLogger(PersoEvent.class.getName());
@@ -221,27 +226,41 @@ public class Event extends Observable implements IElement, Observer {
 		 * @param _status
 		 * @param _desc
 		 */
-		public PersoEvent(Perso perso, boolean _status, String _desc) {
-			this._perso = perso;
-			this._status = _status;
-			this._desc = _desc;
+		public PersoEvent(Perso perso, boolean status, String desc) {
+			_perso = perso;
+			_status = status;
+			_desc = new MyStyledDocument();
+			try {
+				_desc.setLogicalStyle(0, _desc.getStyle("base"));
+				_desc.insertString(0, desc, null);
+			} catch (BadLocationException e) {
+				System.err.println("PersoEvent() : "+e.getMessage());
+			}
+		}
+		public PersoEvent(Perso perso, boolean status, MyStyledDocument desc ) {
+			_perso = perso;
+			_status = status;
+			_desc = desc;
 		}
 		/**
 		 * @return the _desc
 		 */
-		public String getDesc() {
+//		public String getDesc() {
+//			return _desc;
+//		}
+		public MyStyledDocument getDesc() {
 			return _desc;
 		}
 		/**
 		 * @param desc the _desc to set
 		 */
-		public void setDesc(String desc) {
-			this._desc = desc;
-			
-			loggerPE.debug(getId()+"set_desc");
-			setChanged();
-			notifyObservers("set_desc");
-		}
+//		public void setDesc(String desc) {
+//			this._desc = desc;
+//			
+//			loggerPE.debug(getId()+"set_desc");
+//			setChanged();
+//			notifyObservers("set_desc");
+//		}
 		
 		/**
 		 * @return the _status

@@ -1,0 +1,91 @@
+<story>
+  <name>A Story with no Name</name>
+  <zorga__list>
+    <zorga id="0">
+      <name>Alain</name>
+    </zorga>
+  </zorga__list>
+  <perso__list>
+    <perso id="0">
+      <name>Valeri BOTLINKO</name>
+      <player>Laurent D</player>
+      <zorga>0</zorga>
+    </perso>
+    <perso id="1">
+      <name>Barbera ERINSKA</name>
+      <player>Fanny M</player>
+      <zorga>0</zorga>
+    </perso>
+  </perso__list>
+  <event>
+    <title>Catastrophe Nedelin</title>
+    <body>
+      <section>
+        <paragraph style="base">
+          <content>V. Botlinko fait exploser une fusée intentionnellement : 120 morts</content>
+        </paragraph>
+        <paragraph style="base">
+          <content>
+</content>
+        </paragraph>
+      </section>
+    </body>
+    <perso__event id="0">
+      <status>false</status>
+      <desc>
+        <section>
+          <paragraph style="base">
+            <content>Dans le but de destabiliser Korolev, Botlinko sabote le système de guidage d&apos;un fusée. Mais le nouvel ergol est trop instable et la fusée explose.
+Le bilan est de 120 morts.</content>
+        </paragraph>
+        <paragraph style="base">
+          <content>
+</content>
+        </paragraph>
+        </section>
+      </desc>
+    </perso__event>
+    <perso__event id="1">
+      <status>false</status>
+      <desc>
+        <section>
+          <paragraph style="base">
+            <content>-</content>
+        </paragraph>
+        <paragraph style="base">
+          <content>
+</content>
+        </paragraph>
+        </section>
+      </desc>
+    </perso__event>
+  </event>
+  <event>
+    <title>Visite impromtue</title>
+    <body>
+      <section>
+        <paragraph style="base">
+          <content>B. Erinska revoit sa &quot;fantômette&quot; (O. Petrequin).</content>
+        </paragraph>
+        <paragraph style="base">
+          <content>
+</content>
+        </paragraph>
+      </section>
+    </body>
+    <perso__event id="1">
+      <status>false</status>
+      <desc>
+        <section>
+          <paragraph style="base">
+            <content>Une silhouette féminine surgit de la nuit, freinée par son propulseur individuel.</content>
+        </paragraph>
+        <paragraph style="base">
+          <content>
+</content>
+        </paragraph>
+        </section>
+      </desc>
+    </perso__event>
+  </event>
+</story>
