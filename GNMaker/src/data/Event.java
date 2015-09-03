@@ -58,13 +58,9 @@ public class Event extends Observable implements IElement, Observer {
 		_story = story;
 		_title = title;
 		_body = new MyStyledDocument();
-		try {
-			_body.setLogicalStyle(0, _body.getStyle("base"));
-			_body.insertString(0, body, null);
-		} catch (BadLocationException e) {
-			System.err.println("Event() : "+e.getMessage());
-		}
+		_body.setText(body);
 		_body.dump( System.out );
+		
 		_listPE = new ListOf<Event.PersoEvent>();
 		
 		_story._persoList.addObserver(this);
@@ -137,13 +133,13 @@ public class Event extends Observable implements IElement, Observer {
 	/**
 	 * @param body the _body to set
 	 */
-//	public void setBody(String body) {
-//		this._body = body;
-//		
-//		logger.debug(getTitle()+" set_body");
-//		setChanged();
-//		notifyObservers("set_body");
-//	}
+	public void setBody(String body) {
+		_body.setText(body);
+		
+		logger.debug(getTitle()+" set_body");
+		setChanged();
+		notifyObservers("set_body");
+	}
 
 	/** 
 	 * Dump all Perso as a String.
@@ -218,6 +214,7 @@ public class Event extends Observable implements IElement, Observer {
 		public boolean _status;
 		MyStyledDocument _desc;
 		
+		
 		/** In order to Log */
 		private static Logger loggerPE = LogManager.getLogger(PersoEvent.class.getName());
 		
@@ -230,12 +227,7 @@ public class Event extends Observable implements IElement, Observer {
 			_perso = perso;
 			_status = status;
 			_desc = new MyStyledDocument();
-			try {
-				_desc.setLogicalStyle(0, _desc.getStyle("base"));
-				_desc.insertString(0, desc, null);
-			} catch (BadLocationException e) {
-				System.err.println("PersoEvent() : "+e.getMessage());
-			}
+			_desc.setText(desc);
 		}
 		public PersoEvent(Perso perso, boolean status, MyStyledDocument desc ) {
 			_perso = perso;
@@ -254,13 +246,13 @@ public class Event extends Observable implements IElement, Observer {
 		/**
 		 * @param desc the _desc to set
 		 */
-//		public void setDesc(String desc) {
-//			this._desc = desc;
-//			
-//			loggerPE.debug(getId()+"set_desc");
-//			setChanged();
-//			notifyObservers("set_desc");
-//		}
+		public void setDesc(String desc) {
+			_desc.setText(desc);
+			
+			loggerPE.debug(getId()+"set_desc");
+			setChanged();
+			notifyObservers("set_desc");
+		}
 		
 		/**
 		 * @return the _status
@@ -299,6 +291,7 @@ public class Event extends Observable implements IElement, Observer {
 			str.append( _desc+"\n");
 			return str.toString();
 		}
+
 	}
 
 	

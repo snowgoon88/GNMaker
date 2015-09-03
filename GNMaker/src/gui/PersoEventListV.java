@@ -29,7 +29,6 @@ import net.miginfocom.swing.MigLayout;
 
 import data.Event;
 import data.Event.PersoEvent;
-import data.MyStyledDocument;
 import data.Perso;
 
 /**

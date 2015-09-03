@@ -123,7 +123,6 @@ public class DocEditorV extends JPanel {
         _redoAction = new RedoAction();
         
         // Dans une fenêtre avec Scroll
-        // @todo : dimension, scroll optionnel
         JScrollPane scrollPane = new JScrollPane(_textPane);
         scrollPane.setPreferredSize(new Dimension(600, 50));
         add(scrollPane, BorderLayout.CENTER);
@@ -337,7 +336,6 @@ public class DocEditorV extends JPanel {
 			ActionListener itemAction = new ActionListener() {	
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
 					JCommandMenuButton item = (JCommandMenuButton) e.getSource();
 					_highBtn.setIcon( item.getIcon() );
 					_highBtn.setText( item.getText() );

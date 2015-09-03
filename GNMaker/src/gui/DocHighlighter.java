@@ -6,11 +6,8 @@ package gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -91,6 +88,7 @@ public class DocHighlighter {
 		g.dispose();
 		return image;
 	}
+	/** Icones : carré barré de rouge */
 	public static Image createNormalIcon() {
 		Image image = new BufferedImage(DEFAULT_ICON_SIZE,
 				DEFAULT_ICON_SIZE, BufferedImage.TYPE_INT_ARGB);

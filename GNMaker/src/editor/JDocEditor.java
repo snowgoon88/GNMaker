@@ -1,7 +1,9 @@
 /**
  * 
  */
-package editor.example;
+package editor;
+
+import gui.DocHighlighter;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -44,6 +46,7 @@ import javax.swing.undo.UndoManager;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import data.MyStyledDocument;
 import data.converter.DocumentConverter;
 
 /**
